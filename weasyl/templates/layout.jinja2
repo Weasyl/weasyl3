@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+  <head>
+
+    <meta charset="utf-8" />
+    <link rel="dns-prefetch" href="//ajax.googleapis.com" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
+
+    <title>{% block title %}{% endblock %} | Weasyl</title>
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css" />
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/style/public.css" type="text/css" />
+
+    <script src="/static/js/modernizr.development.js"></script>
+    <script>
+      if('webkitRequestAnimationFrame' in window) {
+      document.getElementsByTagName('html')[0].className+=' webkit-background-clip';
+      }
+    </script>
+
+  </head>
+
+  <body>
+
+    <a href="#main" id="skip-to-content">Skip to content</a>
+
+    <header class="page-header" role="banner">
+
+      <a href="index.htm" class="header-logo block" tabindex="0">
+	<img class="mark" src="/static/images/logo-mark.svg" alt="Weasyl logomark" />
+	<img class="type" src="/static/images/logo-type.svg" alt="Weasyl" />
+      </a>
+
+      <nav class="header-nav small-menu" role="navigation">
+	<a href="#" tabindex="0" class="color-comment bg-comment block">Explore</a>
+	<a href="#" tabindex="0" class="color-stat bg-stat block">Forums</a>
+	<a href="#" tabindex="0" class="color-journal bg-journal block">Help</a>
+	<form action="#searchPage" method="get" class="header-search-form">
+	  <label class="header-search-label bg-note">
+	    <input type="text" name="s" class="header-search-input text-input" />
+	    <span class="header-search-icon icon icon-search"></span>
+	  </label>
+	</form>
+      </nav><!-- .header-nav -->
+
+      <div class="header-user group guest">
+	<p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome!</span> <a href="#signinpage" class="toggle" data-toggle-target="#login-modal">Sign in</a> <span class="type-alt">or</span> <a href="#newaccount">create a new account</a></span></p>
+      </div><!-- .header-user -->
+
+      <a class="small-menu-toggle toggle icon icon-nav-gears max-m" data-toggle-target=".small-menu" aria-hidden="true"></a>
+
+    </header><!-- .page-header -->
+
+
+    <section role="main" id="main">
+
+    {% block body %}{% endblock %}
+
+    </section><!-- #main -->
+
+
+    <footer class="page-footer" role="contentinfo">
+      <nav class="footer-nav grid">
+	<dl class="grid-item">
+	  <dt><a class="footer-logo" href="index.htm"><img class="mark" src="/static/images/logo-mark-light.svg" alt="Weasyl logomark" /></a></dt>
+	  <dd><a href="#">Share</a></dd>
+	  <dd><a href="#">Explore</a></dd>
+	  <dd><a href="#">Settings</a></dd>
+	  <dd><a href="#">Sign out</a></dd>
+	</dl>
+	<dl class="grid-item">
+	  <dt><h4 class="title secondary">About</h4></dt>
+	  <dd><a href="#">About Weasyl</a></dd>
+	  <dd><a href="#">FAQ</a></dd>
+	  <dd><a href="#">Staff</a></dd>
+	  <dd><a href="#">Awesome people</a></dd>
+	</dl>
+	<dl class="grid-item">
+	  <dt><h4 class="title secondary">Community</h4></dt>
+	  <dd><a href="#">Forums</a></dd>
+	  <dd><a href="#">Tumblr</a></dd>
+	  <dd><a href="#"><span class="icon icon-social icon-tw">Twitter:</span> @Weasyl</a></dd>
+	  <dd><a href="#"><span class="icon icon-social icon-tw">Twitter:</span> @WeasylDev</a></dd>
+	</dl>
+	<dl class="grid-item">
+	  <dt><h4 class="title secondary">Policy</h4></dt>
+	  <dd><a href="#">Community Guidelines</a></dd>
+	  <dd><a href="#">Terms of Service</a></dd>
+	  <dd><a href="#">Copyright Policy</a></dd>
+	  <dd><a href="#">Staff Code of Conduct</a></dd>
+	  <dd><a href="#">Privacy Policy</a></dd>
+	</dl>
+	<dl class="grid-item">
+	  <dt><h4 class="title secondary">Support</h4></dt>
+	  <dd><a href="#">Help topics</a></dd>
+	  <dd><a href="#">Ratings guidelines</a></dd>
+	  <dd><a href="#">Support forum</a></dd>
+	  <dd><a href="mailto:support@weasyl.com">support@weasyl.com</a></dd>
+	  <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
+	</dl>
+	<div class="grid-item decoration"><img src="/static/images/wesley.png" alt="" /></div>
+      </nav>
+      <div class="footer-info type-secondary">
+	<p class="footer-stats">591 users active in the last hour; 4136 users active in the last day</p>
+	<p class="footer-copyright">&copy; 2012&ndash;2014 Weasyl LLC</p>
+	<p class="footer-revision">52da019</p>
+      </div>
+    </footer>
+
+
+    <script src="/static/js/scripts.js"></script>
+
+
+  </body>
+</html>
