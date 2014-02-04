@@ -1,17 +1,21 @@
 from pyramid.config import Configurator
-from pyramid.renderers import render_to_response
+
+from .session import WeasylSession
+from .models.meta import configure as configure_db
 
 
-def signin(request):
-    return render_to_response('signin.jinja2', {})
-
-
-def make_app():
-    config = Configurator()
+def make_app(global_config, **settings):
+    settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
+    config = Configurator(
+        settings=settings,
+        session_factory=WeasylSession,
+    )
+    configure_db(config, settings)
     config.include('pyramid_jinja2')
+    config.include('pyramid_deform')
+    config.include('deform_jinja2')
     config.add_route('signin', '/signin')
-    config.add_view(signin, route_name='signin')
     config.add_static_view(name='static', path='weasyl:static')
     config.add_jinja2_search_path('weasyl:templates')
-    app = config.make_wsgi_app()
-    return app
+    config.scan('weasyl.views')
+    return config.make_wsgi_app()
