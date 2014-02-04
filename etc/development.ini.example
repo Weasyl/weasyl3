@@ -1,0 +1,61 @@
+[app:main]
+use = egg:weasyl
+#filter-with = sentry
+
+pyramid.reload_templates = true
+pyramid.debug_authorization = false
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = en
+pyramid.includes =
+    pyramid_debugtoolbar
+
+debugtoolbar.intercept_exc = debug
+debugtoolbar.intercept_redirect = true
+
+sqlalchemy.url = postgresql:///weasyl33
+
+#[filter:sentry]
+#use = egg:weasyl#sentry
+#sentry.dsn = http://...
+
+[server:main]
+use = egg:waitress
+host = 0.0.0.0
+port = 8880
+
+# Begin logging configuration
+
+[loggers]
+keys = root, weasyl, sqlalchemy
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = INFO
+handlers = console
+
+[logger_weasyl]
+level = DEBUG
+handlers =
+qualname = weasyl
+
+[logger_sqlalchemy]
+level = INFO
+handlers =
+qualname = sqlalchemy
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s
+
+# End logging configuration
