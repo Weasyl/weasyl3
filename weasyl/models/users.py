@@ -57,6 +57,63 @@ class AuthBCrypt(Base):
         self.hashsum = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(13))
 
 
+class Profile(Base):
+    __tablename__ = 'profile'
+
+    userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'), primary_key=True)
+    username = sa.Column(sa.String(40), nullable=False, unique=True)
+    full_name = sa.Column(sa.String(100), nullable=False)
+    catchphrase = sa.Column(sa.String(200), nullable=False, server_default='')
+    artist_type = sa.Column(sa.String(100), nullable=False, server_default='')
+    unixtime = sa.Column(WeasylTimestampColumn, nullable=False)
+    profile_text = sa.Column(sa.Text, nullable=False, server_default='')
+    settings = sa.Column(sa.String(20), nullable=False, server_default='ccci')
+    stream_url = sa.Column(sa.String(500), nullable=False, server_default='')
+    page_views = sa.Column(sa.Integer, nullable=False, server_default='0')
+    config = sa.Column(CharSettingsColumn({
+        'b': 'show-birthday',
+        '2': '12-hour-time',
+
+        'l': 'use-only-tag-blacklist',
+
+        'g': 'tagging-disabled',
+        'd': 'premium',
+
+        'w': 'staff-shouts-only',
+        'x': 'friend-shouts-only',
+        'y': 'staff-notes-only',
+        'z': 'friend-notes-only',
+        'h': 'hide-profile-from-guests',
+        'i': 'hide-profile-stats',
+        'k': 'disallow-others-tag-removal',
+        'r': 'disallow-others-tag-editing',
+
+        's': 'watch-user-submissions',
+        'c': 'watch-user-collections',
+        'f': 'watch-user-characters',
+        't': 'watch-user-stream-status',
+        'j': 'watch-user-journals',
+
+        'o': 'watch-group-collections',
+        'n': 'watch-group-journals',
+        'e': 'watch-group-events',
+    }, {
+        'tagging-level': {
+            'm': 'max-rating-moderate',
+            'a': 'max-rating-mature',
+            'p': 'max-rating-explicit',
+        },
+        'thumbnail-bar': {
+            'O': 'collections',
+            'A': 'characters',
+        },
+    }), nullable=False, server_default='')
+    stream_time = sa.Column(sa.Integer)
+    stream_text = sa.Column(sa.String)
+
+    user = orm.relationship(Login, backref=orm.backref('profile', uselist=False))
+
+
 class Session(Base):
     __tablename__ = 'sessions'
 

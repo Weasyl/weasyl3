@@ -4,7 +4,7 @@ import sys
 from pyramid.threadlocal import get_current_request
 import raven
 
-from .session import make_session_id
+from .sessions import make_session_id
 
 
 log = logging.getLogger(__name__)

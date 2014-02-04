@@ -12,9 +12,9 @@
 
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css" />
     <link href="http://fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="/static/style/public.css" type="text/css" />
+    <link rel="stylesheet" href="{{ 'weasyl:static/style/public.css' | static_url }}" type="text/css" />
 
-    <script src="/static/js/modernizr.development.js"></script>
+    <script src="{{ 'weasyl:static/js/modernizr.development.js' | static_url }}"></script>
     <script>
       if('webkitRequestAnimationFrame' in window) {
       document.getElementsByTagName('html')[0].className+=' webkit-background-clip';
@@ -30,8 +30,8 @@
     <header class="page-header" role="banner">
 
       <a href="index.htm" class="header-logo block" tabindex="0">
-	<img class="mark" src="/static/images/logo-mark.svg" alt="Weasyl logomark" />
-	<img class="type" src="/static/images/logo-type.svg" alt="Weasyl" />
+	<img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_url }}" alt="Weasyl logomark" />
+	<img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_url }}" alt="Weasyl" />
       </a>
 
       <nav class="header-nav small-menu" role="navigation">
@@ -46,9 +46,16 @@
 	</form>
       </nav><!-- .header-nav -->
 
+      {% if request.session['userid'] %}
+      <div class="header-user group">
+	<a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="HurtInTheDirt's avatar" /></a>
+	<p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome back,</span> <a href="#" class="username">catcatcatcatcatcatcatcatcatcatcatcatcat</a></span></p>
+      </div><!-- .header-user -->
+      {% else %}
       <div class="header-user group guest">
 	<p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome!</span> <a href="#signinpage" class="toggle" data-toggle-target="#login-modal">Sign in</a> <span class="type-alt">or</span> <a href="#newaccount">create a new account</a></span></p>
       </div><!-- .header-user -->
+      {% endif %}
 
       <a class="small-menu-toggle toggle icon icon-nav-gears max-m" data-toggle-target=".small-menu" aria-hidden="true"></a>
 
@@ -64,13 +71,24 @@
 
     <footer class="page-footer" role="contentinfo">
       <nav class="footer-nav grid">
+	{% if request.session['userid'] %}
 	<dl class="grid-item">
-	  <dt><a class="footer-logo" href="index.htm"><img class="mark" src="/static/images/logo-mark-light.svg" alt="Weasyl logomark" /></a></dt>
+	  <dt>
+	    <a class="footer-logo" href="index.htm">
+	      <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_url }}"
+		   alt="Weasyl logomark" />
+	    </a>
+	  </dt>
 	  <dd><a href="#">Share</a></dd>
 	  <dd><a href="#">Explore</a></dd>
 	  <dd><a href="#">Settings</a></dd>
-	  <dd><a href="#">Sign out</a></dd>
+	  <dd>
+	    <form action="{{ 'signout' | route_url }}" method="post">
+	      <button type="submit" name="signout" class="action disclose">Sign out</button>
+	    </form>
+	  </dd>
 	</dl>
+	{% endif %}
 	<dl class="grid-item">
 	  <dt><h4 class="title secondary">About</h4></dt>
 	  <dd><a href="#">About Weasyl</a></dd>
@@ -101,7 +119,9 @@
 	  <dd><a href="mailto:support@weasyl.com">support@weasyl.com</a></dd>
 	  <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
 	</dl>
-	<div class="grid-item decoration"><img src="/static/images/wesley.png" alt="" /></div>
+	<div class="grid-item decoration">
+	  <img src="{{ 'weasyl:static/images/wesley.png' | static_url }}" alt="" />
+	</div>
       </nav>
       <div class="footer-info type-secondary">
 	<p class="footer-stats">591 users active in the last hour; 4136 users active in the last day</p>
@@ -111,7 +131,7 @@
     </footer>
 
 
-    <script src="/static/js/scripts.js"></script>
+    <script src="{{ 'weasyl:static/js/scripts.js' | static_url }}"></script>
 
 
   </body>

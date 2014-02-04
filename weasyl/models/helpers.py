@@ -10,13 +10,14 @@ from sqlalchemy.ext.mutable import Mutable, MutableDict
 from sqlalchemy import types
 
 from ..legacy import UNIXTIME_OFFSET
+from .. import constants
 
 
 log = logging.getLogger(__name__)
 
 
 def reverse_dict(d):
-    return dict((v, k) for k, v in d.items())
+    return {v: k for k, v in d.items()}
 
 
 class CharSettings(Mutable):
@@ -196,3 +197,21 @@ class JSONValuesColumn(types.TypeDecorator):
 
 
 MutableDict.associate_with(JSONValuesColumn)
+
+
+class EnumColumn(types.TypeDecorator):
+    impl = types.INTEGER
+
+    def __init__(self, enum_values):
+        super().__init__()
+        self.enum_values = enum_values
+        self.reverse_enum_values = reverse_dict(enum_values)
+
+    def process_bind_param(self, value, dialect):
+        return self.reverse_enum_values.get(value, value)
+
+    def process_result_value(self, value, dialect):
+        return self.enum_values.get(value, value)
+
+
+RatingColumn = EnumColumn(constants.RATING_NAME)
