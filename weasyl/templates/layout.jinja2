@@ -30,30 +30,30 @@
     <header class="page-header" role="banner">
 
       <a href="index.htm" class="header-logo block" tabindex="0">
-	<img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_url }}" alt="Weasyl logomark" />
-	<img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_url }}" alt="Weasyl" />
+        <img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_url }}" alt="Weasyl logomark" />
+        <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_url }}" alt="Weasyl" />
       </a>
 
       <nav class="header-nav small-menu" role="navigation">
-	<a href="#" tabindex="0" class="color-comment bg-comment block">Explore</a>
-	<a href="#" tabindex="0" class="color-stat bg-stat block">Forums</a>
-	<a href="#" tabindex="0" class="color-journal bg-journal block">Help</a>
-	<form action="#searchPage" method="get" class="header-search-form">
-	  <label class="header-search-label bg-note">
-	    <input type="text" name="s" class="header-search-input text-input" />
-	    <span class="header-search-icon icon icon-search"></span>
-	  </label>
-	</form>
+        <a href="#" tabindex="0" class="color-comment bg-comment block">Explore</a>
+        <a href="#" tabindex="0" class="color-stat bg-stat block">Forums</a>
+        <a href="#" tabindex="0" class="color-journal bg-journal block">Help</a>
+        <form action="#searchPage" method="get" class="header-search-form">
+          <label class="header-search-label bg-note">
+            <input type="text" name="s" class="header-search-input text-input" />
+            <span class="header-search-icon icon icon-search"></span>
+          </label>
+        </form>
       </nav><!-- .header-nav -->
 
       {% if request.session['userid'] %}
       <div class="header-user group">
-	<a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="HurtInTheDirt's avatar" /></a>
-	<p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome back,</span> <a href="#" class="username">catcatcatcatcatcatcatcatcatcatcatcatcat</a></span></p>
+        <a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="HurtInTheDirt's avatar" /></a>
+        <p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome back,</span> <a href="#" class="username">catcatcatcatcatcatcatcatcatcatcatcatcat</a></span></p>
       </div><!-- .header-user -->
       {% else %}
       <div class="header-user group guest">
-	<p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome!</span> <a href="#signinpage" class="toggle" data-toggle-target="#login-modal">Sign in</a> <span class="type-alt">or</span> <a href="#newaccount">create a new account</a></span></p>
+        <p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome!</span> <a href="#signinpage" class="toggle" data-toggle-target="#login-modal">Sign in</a> <span class="type-alt">or</span> <a href="#newaccount">create a new account</a></span></p>
       </div><!-- .header-user -->
       {% endif %}
 
@@ -71,68 +71,66 @@
 
     <footer class="page-footer" role="contentinfo">
       <nav class="footer-nav grid">
-	{% if request.session['userid'] %}
-	<dl class="grid-item">
-	  <dt>
-	    <a class="footer-logo" href="index.htm">
-	      <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_url }}"
-		   alt="Weasyl logomark" />
-	    </a>
-	  </dt>
-	  <dd><a href="#">Share</a></dd>
-	  <dd><a href="#">Explore</a></dd>
-	  <dd><a href="#">Settings</a></dd>
-	  <dd>
-	    <form action="{{ 'signout' | route_url }}" method="post">
-	      <button type="submit" name="signout" class="action disclose">Sign out</button>
-	    </form>
-	  </dd>
-	</dl>
-	{% endif %}
-	<dl class="grid-item">
-	  <dt><h4 class="title secondary">About</h4></dt>
-	  <dd><a href="#">About Weasyl</a></dd>
-	  <dd><a href="#">FAQ</a></dd>
-	  <dd><a href="#">Staff</a></dd>
-	  <dd><a href="#">Awesome people</a></dd>
-	</dl>
-	<dl class="grid-item">
-	  <dt><h4 class="title secondary">Community</h4></dt>
-	  <dd><a href="#">Forums</a></dd>
-	  <dd><a href="#">Tumblr</a></dd>
-	  <dd><a href="#"><span class="icon icon-social icon-tw">Twitter:</span> @Weasyl</a></dd>
-	  <dd><a href="#"><span class="icon icon-social icon-tw">Twitter:</span> @WeasylDev</a></dd>
-	</dl>
-	<dl class="grid-item">
-	  <dt><h4 class="title secondary">Policy</h4></dt>
-	  <dd><a href="#">Community Guidelines</a></dd>
-	  <dd><a href="#">Terms of Service</a></dd>
-	  <dd><a href="#">Copyright Policy</a></dd>
-	  <dd><a href="#">Staff Code of Conduct</a></dd>
-	  <dd><a href="#">Privacy Policy</a></dd>
-	</dl>
-	<dl class="grid-item">
-	  <dt><h4 class="title secondary">Support</h4></dt>
-	  <dd><a href="#">Help topics</a></dd>
-	  <dd><a href="#">Ratings guidelines</a></dd>
-	  <dd><a href="#">Support forum</a></dd>
-	  <dd><a href="mailto:support@weasyl.com">support@weasyl.com</a></dd>
-	  <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
-	</dl>
-	<div class="grid-item decoration">
-	  <img src="{{ 'weasyl:static/images/wesley.png' | static_url }}" alt="" />
-	</div>
+        {% if request.session['userid'] %}
+        <dl class="grid-item">
+          <dt>
+            <a class="footer-logo" href="index.htm">
+              <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_url }}"
+             alt="Weasyl logomark" />
+            </a>
+          </dt>
+          <dd><a href="#">Share</a></dd>
+          <dd><a href="#">Explore</a></dd>
+          <dd><a href="#">Settings</a></dd>
+          <dd>
+            <form action="{{ 'signout' | route_url }}" method="post">
+              <button type="submit" name="signout" class="action disclose">Sign out</button>
+            </form>
+          </dd>
+        </dl>
+        {% endif %}
+        <dl class="grid-item">
+          <dt><h4 class="title secondary">About</h4></dt>
+          <dd><a href="#">About Weasyl</a></dd>
+          <dd><a href="#">FAQ</a></dd>
+          <dd><a href="#">Staff</a></dd>
+          <dd><a href="#">Awesome people</a></dd>
+        </dl>
+        <dl class="grid-item">
+          <dt><h4 class="title secondary">Community</h4></dt>
+          <dd><a href="#">Forums</a></dd>
+          <dd><a href="#">Tumblr</a></dd>
+          <dd><a href="#"><span class="icon icon-social icon-tw">Twitter:</span> @Weasyl</a></dd>
+          <dd><a href="#"><span class="icon icon-social icon-tw">Twitter:</span> @WeasylDev</a></dd>
+        </dl>
+        <dl class="grid-item">
+          <dt><h4 class="title secondary">Policy</h4></dt>
+          <dd><a href="#">Community Guidelines</a></dd>
+          <dd><a href="#">Terms of Service</a></dd>
+          <dd><a href="#">Copyright Policy</a></dd>
+          <dd><a href="#">Staff Code of Conduct</a></dd>
+          <dd><a href="#">Privacy Policy</a></dd>
+        </dl>
+        <dl class="grid-item">
+          <dt><h4 class="title secondary">Support</h4></dt>
+          <dd><a href="#">Help topics</a></dd>
+          <dd><a href="#">Ratings guidelines</a></dd>
+          <dd><a href="#">Support forum</a></dd>
+          <dd><a href="mailto:support@weasyl.com">support@weasyl.com</a></dd>
+          <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
+        </dl>
+        <div class="grid-item decoration">
+          <img src="{{ 'weasyl:static/images/wesley.png' | static_url }}" alt="" />
+        </div>
       </nav>
       <div class="footer-info type-secondary">
-	<p class="footer-stats">591 users active in the last hour; 4136 users active in the last day</p>
-	<p class="footer-copyright">&copy; 2012&ndash;2014 Weasyl LLC</p>
-	<p class="footer-revision">52da019</p>
+        <p class="footer-stats">591 users active in the last hour; 4136 users active in the last day</p>
+        <p class="footer-copyright">© 2012–2014 Weasyl LLC</p>
+        <p class="footer-revision">52da019</p>
       </div>
     </footer>
 
-
     <script src="{{ 'weasyl:static/js/scripts.js' | static_url }}"></script>
-
 
   </body>
 </html>
