@@ -39,3 +39,9 @@ class Submission(Base):
     fave_count = sa.Column(sa.Integer, nullable=False, server_default='0')
 
     login = relationship(Login, backref='submissions')
+
+    def to_json(self):
+        return {
+            'title': self.title,
+            'rating': self.rating,
+        }
