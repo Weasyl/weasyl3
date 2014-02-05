@@ -2,53 +2,68 @@
 
 var forEach = Array.prototype.forEach;
 
-/*
-* Minimal classList shim for IE 9
-* By Devon Govett
-* MIT LICENSE
-*/
-if (!("classList" in document.documentElement) && Object.defineProperty && typeof HTMLElement !== 'undefined') {
+if (!document.documentElement.classList && Object.defineProperty && typeof HTMLElement !== 'undefined') {
+    var DOMTokenList = function DOMTokenList() {
+        throw new TypeError('Illegal constructor.');
+    };
+
+    DOMTokenList.prototype.add = function() {
+        var classes = this._element.className.match(/\S+/g) || [];
+
+        for (var i = 0; i < arguments.length; i++) {
+            var class_ = arguments[i];
+
+            if (classes.indexOf(class_) === -1) {
+                this._element.className += ' ' + class_;
+            }
+        }
+    };
+
+    DOMTokenList.prototype.remove = function() {
+        var classes = this._element.className.match(/\S+/g) || [];
+        var remove = Array.prototype.slice.call(arguments);
+
+        this._element.className = classes.filter(function(existingClass) {
+            return remove.indexOf(existingClass) === -1;
+        }).join(" ");
+    };
+
+    DOMTokenList.prototype.toggle = function(class_, to) {
+        if (to === undefined) {
+            to = !this.contains(class_);
+        }
+
+        if (to) {
+            this.add(class_);
+        } else {
+            this.remove(class_);
+        }
+
+        return to;
+    };
+
+    DOMTokenList.prototype.contains = function(class_) {
+        var classes = this._element.className.match(/\S+/g) || [];
+
+        return classes.indexOf(class_) !== -1;
+    };
+
+    Object.defineProperty(DOMTokenList.prototype, 'length', {
+        get: function() {
+            var classes = this._element.className.match(/\S+/g) || [];
+
+            return classes.length;
+        }
+    });
+
     Object.defineProperty(HTMLElement.prototype, 'classList', {
         get: function() {
-            var self = this;
-            function update(fn) {
-                return function(value) {
-                    var classes = self.className.split(/\s+/),
-                    index = classes.indexOf(value);
-                    
-                    fn(classes, index, value);
-                    self.className = classes.join(" ");
-                }
-            }
-            
-            var ret = {
-                add: update(function(classes, index, value) {
-                    ~index || classes.push(value);
-                }),
-                
-                remove: update(function(classes, index) {
-                    ~index && classes.splice(index, 1);
-                }),
-                
-                toggle: update(function(classes, index, value) {
-                    ~index ? classes.splice(index, 1) : classes.push(value);
-                }),
-                
-                contains: function(value) {
-                    return !!~self.className.split(/\s+/).indexOf(value);
-                },
-                
-                item: function(i) {
-                    return self.className.split(/\s+/)[i] || null;
-                }
-            };
-            Object.defineProperty(ret, 'length', {
-                get: function() {
-                    return self.className.split(/\s+/).length;
+            return Object.create(DOMTokenList.prototype, {
+                _element: {
+                    value: this,
+                    writable: false
                 }
             });
-            
-            return ret;
         }
     });
 }
@@ -66,31 +81,25 @@ function toArray(obj) {
 // helper functions: replace jquery parents() method
 function getParents(obj) {
     var parents = [];
-    while ( obj.tagName.toLowerCase() != 'html' ) {
+    while ( obj !== document.documentElement ) {
         parents.push(obj);
         obj = obj.parentNode;
     }
     return parents;
 }
+
 function getParentsByTagName(obj, tag) {
-    var parents = [];
-    while ( obj.tagName.toLowerCase() != 'html' ) {
-        if ( obj.tagName.toLowerCase() == tag.toLowerCase() ) {
-            parents.push(obj);
-        }
-        obj = obj.parentNode;
-    }
-    return parents;
+    tag = tag.toLowerCase();
+
+    return getParents(obj).filter(function(el) {
+        return el.tagName.toLowerCase() === tag;
+    });
 }
+
 function getParentsByClassName(obj, cl) {
-    var parents = [];
-    while ( obj.tagName.toLowerCase() != 'html' ) {
-        if ( obj.classList.contains(cl) ) {
-            parents.push(obj);
-        }
-        obj = obj.parentNode;
-    }
-    return parents;
+    return getParents(obj).filter(function(el) {
+        return el.classList.contains(cl);
+    });
 }
 
 
@@ -156,7 +165,7 @@ function wzlMosaic(el) {
 
             // assign closest aspect
             for ( var j = 0; j < aspectRatios.length; j++ ) {
-                if (closestRatio == null || Math.abs(aspectRatios[j] - aspectRatio) < Math.abs(closestRatio - aspectRatio)) {
+                if (closestRatio === null || Math.abs(aspectRatios[j] - aspectRatio) < Math.abs(closestRatio - aspectRatio)) {
                     closestRatio = aspectRatios[j];
                 }
             }
@@ -253,8 +262,7 @@ function wzlMosaic(el) {
                 }
             }
 
-            // not sure why the redundant parseInt() is necessary, but so it goes
-            posX = posX + parseInt(tileSizeX);
+            posX += tileSizeX;
         }
 
         // walk through and fit each tile
@@ -298,15 +306,15 @@ function wzlMosaic(el) {
                 placeTile(curTile);
             } else if ( spaceAvail[0] >= 2 && thisTile.getAttribute('data-resizeable2') == 1 ) {
                 // alert('shrunk to 2');
-                tileSizeX = thisTile.getAttribute('data-size2X');
-                tileSizeY = thisTile.getAttribute('data-size2Y');
+                tileSizeX = parseInt(thisTile.getAttribute('data-size2X'));
+                tileSizeY = parseInt(thisTile.getAttribute('data-size2Y'));
                 thisTile.setAttribute('data-sizeX', tileSizeX);
                 thisTile.setAttribute('data-sizeY', tileSizeY);
                 placeTile(curTile);
             } else if ( spaceAvail[0] >= 1 && thisTile.getAttribute('data-resizeable1') == 1 ) {
                 // alert('shrunk to 1');
-                tileSizeX = thisTile.getAttribute('data-size1X');
-                tileSizeY = thisTile.getAttribute('data-size1Y');
+                tileSizeX = parseInt(thisTile.getAttribute('data-size1X'));
+                tileSizeY = parseInt(thisTile.getAttribute('data-size1Y'));
                 thisTile.setAttribute('data-sizeX', tileSizeX);
                 thisTile.setAttribute('data-sizeY', tileSizeY);
                 placeTile(curTile);
@@ -432,7 +440,7 @@ function wzlMosaic(el) {
 // <el class="toggle" data-toggle-target="[next|parentnext|css-selector]" />
 function wzlToggles(el) {
     var toggleTarget = el.getAttribute('data-toggle-target'),
-        targetObject = false;
+        targetObject = null;
 
     if ( toggleTarget == 'next' ) {
         targetObject = el.nextElementSibling;
@@ -625,20 +633,23 @@ function getTopOffset(el) {
     return y;
 }
 (function() {
-    var el = document.getElementsByClassName('sticky-top')[0],
-        container = document.getElementsByClassName('col-main')[0],
+    var el = document.querySelector('.sticky-top'),
+        container = document.querySelector('.col-main'),
         elPos = getTopOffset(el),
         elHeight, scrollPos, footerPos;
-        
+
+    if (!el) {
+        return;
+    }
+
     function setup() {
         elHeight = el.offsetHeight;
         container.style.minHeight = elHeight + 'px';
         footerPos = getTopOffset(document.getElementsByClassName('page-footer')[0]);
     }
+
     window.addEventListener('load', setup);
-    window.addEventListener('resize:end', function(event) {
-        setup();
-    }, false);
+    window.addEventListener('resize:end', setup, false);
 
     document.addEventListener('scroll', function() {
         scrollPos = window.pageYOffset;
@@ -654,7 +665,6 @@ function getTopOffset(el) {
         }
     });
 })();
-
 
 document.documentElement.classList.remove('no-js');
 document.documentElement.classList.add('js');
