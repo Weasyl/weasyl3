@@ -23,6 +23,9 @@ class _BaseObject:
         return {col.name: getattr(self, col.name)
                 for col in object_mapper(self).mapped_table.c}
 
+    def __json__(self, request):
+        return self.to_json()
+
 
 Base = declarative_base(cls=_BaseObject)
 DBSession = Base.DBSession = scoped_session(sessionmaker())

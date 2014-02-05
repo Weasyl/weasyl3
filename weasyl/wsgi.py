@@ -1,12 +1,18 @@
+import datetime
+
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
+from pyramid.renderers import JSON
 
 from .models.meta import configure as configure_db
 from .resources import RootResource
 from .sessions import WeasylSession
-from .views.urls import configure as configure_urls
-from . import cache, staff
+from . import cache, staff, predicates
+
+
+def datetime_adapter(obj, request):
+    return obj.isoformat()
 
 
 def make_app(global_config, **settings):
@@ -30,7 +36,11 @@ def make_app(global_config, **settings):
     config.include('deform_jinja2')
     config.add_static_view(name='static', path='weasyl:static')
     config.add_jinja2_search_path('weasyl:templates')
-    #configure_urls(config)
+    config.add_view_predicate('api', predicates.APIPredicate)
+
+    json_renderer = JSON()
+    json_renderer.add_adapter(datetime.datetime, datetime_adapter)
+    config.add_renderer('json', json_renderer)
 
     config.set_authentication_policy(
         SessionAuthenticationPolicy(prefix='', callback=staff.groupfinder))

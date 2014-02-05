@@ -15,14 +15,14 @@ from .forms import FormView
 log = logging.getLogger(__name__)
 
 
-class Login(CSRFSchema):
+class Signin(CSRFSchema):
     username = c.SchemaNode(c.String(), description='Username or e-mail')
     password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
 
 
 @view_config(name='signin', context=RootResource, renderer='signin.jinja2', permission='signin')
-class LoginView(FormView):
-    schema = Login()
+class SigninView(FormView):
+    schema = Signin()
     buttons = 'signin',
 
     def signin_success(self, appstruct):
@@ -33,7 +33,7 @@ class LoginView(FormView):
 
 
 @view_config(name='signout', context=RootResource, renderer='signout.jinja2', permission='signout')
-class LogoutView(FormView):
+class SignoutView(FormView):
     schema = CSRFSchema()
     buttons = 'signout',
 

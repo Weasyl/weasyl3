@@ -8,12 +8,22 @@ from .models.content import Submission
 log = logging.getLogger(__name__)
 
 
+def make_location_aware(func):
+    def __getitem__(self, segment):
+        ret = func(self, segment)
+        ret.__name__ = segment
+        ret.__parent__ = self
+        return ret
+    return __getitem__
+
+
 class SubmissionsResource:
     def __init__(self, request):
         self.request = request
 
+    @make_location_aware
     def __getitem__(self, segment):
-        submission = Submission.query.get_or_404(int(segment))
+        submission = Submission.query.get_or_404(segment)
         return SubmissionResource(self.request, submission)
 
 
@@ -23,7 +33,26 @@ class SubmissionResource:
         self.submission = submission
 
 
-class RootResource:
+class MethodDispatchResource:
+    def __init__(self, request):
+        self.request = request
+
+    @make_location_aware
+    def __getitem__(self, segment):
+        factory = getattr(self, 'segment_' + segment, None)
+        if factory is None:
+            raise KeyError(segment)
+        return factory(self.request)
+
+
+class APIResource(MethodDispatchResource):
+    segment_submissions = SubmissionsResource
+
+
+class RootResource(MethodDispatchResource):
+    __name__ = ''
+    __parent__ = None
+
     __acl__ = [
         (Deny, Authenticated, 'signin'),
         (Allow, Everyone, 'signin'),
@@ -31,13 +60,5 @@ class RootResource:
         (Deny, Everyone, 'signout'),
     ]
 
-    def __init__(self, request):
-        self.request = request
-
-    def __getitem__(self, segment):
-        factory = getattr(self, 'segment_' + segment, None)
-        if factory is None:
-            raise KeyError(segment)
-        return factory(self.request)
-
     segment_submissions = SubmissionsResource
+    segment_api = APIResource

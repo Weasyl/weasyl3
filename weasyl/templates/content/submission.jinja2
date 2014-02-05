@@ -1,1 +1,6 @@
-{{ sub }}
+{% extends "layout.jinja2" %}
+
+{% block title %}{{ submission.title }}{% endblock %}
+{% block body %}
+{{ submission }}
+{% endblock %}
