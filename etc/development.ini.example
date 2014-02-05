@@ -13,7 +13,12 @@ pyramid.includes =
 debugtoolbar.intercept_exc = debug
 debugtoolbar.intercept_redirect = true
 
-sqlalchemy.url = postgresql:///weasyl33
+sqlalchemy.url = postgresql:///weasyl
+
+cache.backend = dogpile.cache.memcached
+cache.arguments.url = 127.0.0.1:11211
+
+weasyl.static_root = /path/to/your/weasyl-old/checkout
 
 #[filter:sentry]
 #use = egg:weasyl#sentry
