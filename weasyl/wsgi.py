@@ -3,7 +3,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 
 from .models.meta import configure as configure_db
-from .resources import Root
+from .resources import RootResource
 from .sessions import WeasylSession
 from .views.urls import configure as configure_urls
 from . import cache, staff
@@ -21,7 +21,7 @@ def make_app(global_config, **settings):
     config = Configurator(
         settings=settings,
         session_factory=WeasylSession,
-        root_factory=Root,
+        root_factory=RootResource,
     )
 
     configure_db(config, settings)
@@ -30,7 +30,7 @@ def make_app(global_config, **settings):
     config.include('deform_jinja2')
     config.add_static_view(name='static', path='weasyl:static')
     config.add_jinja2_search_path('weasyl:templates')
-    configure_urls(config)
+    #configure_urls(config)
 
     config.set_authentication_policy(
         SessionAuthenticationPolicy(prefix='', callback=staff.groupfinder))

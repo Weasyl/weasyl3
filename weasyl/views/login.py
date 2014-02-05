@@ -8,6 +8,7 @@ from pyramid.view import view_config
 from pyramid import httpexceptions
 
 from ..login import try_login
+from ..resources import RootResource
 from .forms import FormView
 
 
@@ -19,7 +20,7 @@ class Login(CSRFSchema):
     password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
 
 
-@view_config(route_name='signin', renderer='signin.jinja2', permission='signin')
+@view_config(name='signin', context=RootResource, renderer='signin.jinja2', permission='signin')
 class LoginView(FormView):
     schema = Login()
     buttons = 'signin',
@@ -31,7 +32,7 @@ class LoginView(FormView):
             '/', headers=remember(self.request, userid))
 
 
-@view_config(route_name='signout', renderer='signout.jinja2', permission='signout')
+@view_config(name='signout', context=RootResource, renderer='signout.jinja2', permission='signout')
 class LogoutView(FormView):
     schema = CSRFSchema()
     buttons = 'signout',
