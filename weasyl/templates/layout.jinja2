@@ -11,13 +11,13 @@
     <title>{% block title %}{% endblock %} | Weasyl</title>
 
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css" />
-    <link href="http://fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
+    <link href="//fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ 'weasyl:static/style/public.css' | static_url }}" type="text/css" />
 
     <script src="{{ 'weasyl:static/js/modernizr.development.js' | static_url }}"></script>
     <script>
-      if('webkitRequestAnimationFrame' in window) {
-      document.getElementsByTagName('html')[0].className+=' webkit-background-clip';
+      if ('webkitRequestAnimationFrame' in window) {
+        document.documentElement.className += ' webkit-background-clip';
       }
     </script>
 
