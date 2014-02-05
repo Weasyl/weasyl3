@@ -11,9 +11,9 @@ class UserNeedsNewPassword(Exception):
     pass
 
 
-def try_login(request, username, password):
+def try_login(username, password):
     user = (
-        request.db.query(Login)
+        Login.query
         .filter_by(login_name=login_name(username))
         .first())
     if user is None:
@@ -22,5 +22,5 @@ def try_login(request, username, password):
         raise UserNeedsNewPassword()
     if not user.bcrypt.does_authenticate(password):
         raise LoginFailed()
-    request.session['userid'] = user.userid
     user.last_login = now()
+    return user.userid

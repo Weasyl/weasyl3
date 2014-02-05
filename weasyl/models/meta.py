@@ -36,7 +36,7 @@ def configure(config, settings):
 
 
 def db(request):
-    session = DBSession(query_cls=BaseQuery)
+    session = DBSession()
 
     def cleanup(request):
         if request.exception:

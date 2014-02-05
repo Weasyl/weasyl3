@@ -84,6 +84,7 @@
           <dd><a href="#">Settings</a></dd>
           <dd>
             <form action="{{ 'signout' | route_url }}" method="post">
+              <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
               <button type="submit" name="signout" class="action disclose">Sign out</button>
             </form>
           </dd>

@@ -32,7 +32,7 @@ class WeasylSession(collections.MutableMapping):
         cookie = self.request.cookies.get(self._cookie_name)
         self._session_obj = None
         if cookie is not None:
-            self._session_obj = self.request.db.query(Session).get(cookie)
+            self._session_obj = Session.query.get(cookie)
         if self._session_obj is not None:
             self._dict.update(self._session_obj.additional_data)
             self._dict.update({k: getattr(self._session_obj, k) for k in self._static_fields})
@@ -56,6 +56,7 @@ class WeasylSession(collections.MutableMapping):
             self._dict[item] = None
         else:
             del self._dict[item]
+        self._changed = True
 
     def __len__(self):
         return len(self._dict)

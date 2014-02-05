@@ -1,0 +1,15 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Sign Out{% endblock %}
+{% block body %}
+<div class="content">
+  <div class="title-wrap small-width">
+    <h3 class="title primary">Sign Out</h3>
+  </div>
+  <form action="" method="post" class="login-form standard-form small-width">
+    <p>Are you sure you want to sign out?</p>
+    {{ form['csrf_token'].serialize() | safe }}
+    <button type="submit" name="signout" class="action disclose" tabindex="1">Sign out</button>
+  </form>
+</div><!-- .home-update -->
+{% endblock %}
