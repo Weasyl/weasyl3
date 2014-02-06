@@ -1,20 +1,23 @@
 {% extends "layout.jinja2" %}
 
-{% macro show_comment(c) %}
+{% macro show_comment(comment) %}
 <li class="comment">
   <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
   <article class="comment-box">
     <header class="comment-info">
-      {{ f.user_link(c.poster) }} {{ f.datetime(c.unixtime) }}
+      {{ f.user_link(comment.poster) }} {{ f.datetime(comment.unixtime) }}
     </header>
     <section class="comment-content formatted">
-      {{ c.content | markdown }}
+      {{ comment.content | markdown }}
     </section>
     <ul class="comment-actions action-set">
       <li><a href="#" class="action small">Reply</a></li>
       <li><a href="#" class="icon icon-action-warning">Report</a></li>
     </ul>
   </article>
+  <ol>
+    {% for subc in comment.subcomments %}{{ show_comment(subc) }}{% endfor %}
+  </ol>
 </li><!-- .comment -->
 {% endmacro %}
 
@@ -93,7 +96,7 @@
       </form><!-- .comment -->
 
       <ol class="comment-tree">
-        {% for comment in submission.comments %}{{ show_comment(comment) }}{% endfor %}
+        {% for comment in submission.comment_tree() %}{{ show_comment(comment) }}{% endfor %}
       </ol>
     </div><!-- .toggle-target-s -->
 

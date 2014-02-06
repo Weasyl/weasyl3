@@ -1,5 +1,5 @@
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import contains_eager, relationship
 import sqlalchemy as sa
 
 from ..text import slug_for
@@ -73,6 +73,27 @@ class Submission(Base):
             parts.append(slug_for(self.title))
         return request.resource_path(None, *parts)
 
+    def comment_tree(self):
+        comments = (
+            Comment.query
+            .filter_by(targetid=self.submitid)
+            .join(Login)
+            .options(contains_eager(Comment.poster))
+            .order_by(Comment.unixtime.asc())
+            .all())
+
+        comment_map = {}
+        ret = []
+        for c in comments:
+            comment_map[c.commentid] = c
+            c.subcomments = []
+            if c.parentid:
+                comment_map[c.parentid].subcomments.append(c)
+            else:
+                ret.append(c)
+
+        return ret
+
 
 class Comment(Base):
   __tablename__ = 'submitcomment'
@@ -90,3 +111,5 @@ class Comment(Base):
 
   target = relationship(Submission, backref='comments')
   poster = relationship(Login, backref='comments')
+
+  subcomments = ()
