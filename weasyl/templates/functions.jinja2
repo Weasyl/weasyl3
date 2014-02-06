@@ -5,3 +5,7 @@
 {% macro by_user(user) -%}
 <span class="type-alt">by</span> {{ user_link(user) }}
 {%- endmacro %}
+
+{% macro datetime(dt) %}
+<time class="type-secondary type-alt" datetime="dt.isoformat()">{{ request.format_datetime(dt) }}</time>
+{% endmacro %}

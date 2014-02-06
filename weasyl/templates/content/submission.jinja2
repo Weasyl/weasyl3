@@ -1,5 +1,23 @@
 {% extends "layout.jinja2" %}
 
+{% macro show_comment(c) %}
+<li class="comment">
+  <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
+  <article class="comment-box">
+    <header class="comment-info">
+      {{ f.user_link(c.poster) }} {{ f.datetime(c.unixtime) }}
+    </header>
+    <section class="comment-content formatted">
+      {{ c.content | markdown }}
+    </section>
+    <ul class="comment-actions action-set">
+      <li><a href="#" class="action small">Reply</a></li>
+      <li><a href="#" class="icon icon-action-warning">Report</a></li>
+    </ul>
+  </article>
+</li><!-- .comment -->
+{% endmacro %}
+
 {% block title %}{{ submission.title }}{% endblock %}
 {% block body %}
 <div class="sub-container">
@@ -26,12 +44,11 @@
     <div class="sub-owner">
       <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="Usernameguy's avatar" /></a>
       <div class="info">
-        {{ f.user_link(submission.owner) }}
-        <time datetime="2013-12-04 14:30" class="type-secondary type-alt">4 December, 2013 at 14:30</time>
+        {{ f.user_link(submission.owner) }} {{ f.datetime(submission.unixtime) }}
       </div>
     </div><!-- .sub-owner -->
     <div class="formatted sub-description">
-      <p>Art description. McSweeney's wolf PBR&amp;B chillwave esse chia, kale chips occaecat Neutra culpa cray selfies hashtag twee next level. Excepteur mlkshk locavore, drinking vinegar Odd Future photo booth gluten-free messenger bag fashion axe craft beer. Bushwick dolor bitters, single-origin coffee nihil DIY nisi swag fingerstache.</p>
+      {{ submission.content | markdown }}
     </div><!-- .sub-description -->
     <div class="sub-tags">
       {% for tag in submission.tags | sort -%}
@@ -76,148 +93,7 @@
       </form><!-- .comment -->
 
       <ol class="comment-tree">
-        <li class="comment">
-          <a class="avatar" href="#"><img src="http://lorempixel.com/201/201" alt="" /></a>
-          <article class="comment-box">
-            <header class="comment-info">
-              <a href="#" class="username">Shortname</a>
-              <time class="type-secondary type-alt" datetime="2013-12-04 14:33">4 December 2013 at 14:33</time>
-            </header>
-            <section class="comment-content formatted">
-              <p>Single-line comment yay</p>
-            </section>
-            <ul class="comment-actions action-set">
-              <li><a href="#" class="action small">Reply</a></li>
-              <li><a href="#" class="icon icon-action-warning">Report</a></li>
-            </ul>
-          </article>
-          <ol>
-            <li class="comment">
-              <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
-              <article class="comment-box owner">
-                <header class="comment-info">
-                  <a href="#" class="username">Usernameguy</a>
-                  <span class="comment-attr owner">(page owner)</span>
-                  <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-                </header>
-                <section class="comment-content formatted">
-                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-                </section>
-                <ul class="comment-actions action-set">
-                  <li><a href="#" class="action small">Reply</a></li>
-                  <li><a href="#" class="icon icon-action-warning">Report</a></li>
-                </ul>
-              </article>
-              <ol>
-                <li class="comment">
-                  <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
-                  <article class="comment-box">
-                    <header class="comment-info">
-                      <a href="#" class="username">Usernameguy</a>
-                      <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-                    </header>
-                    <section class="comment-content formatted">
-                      <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally. Portland post-ironic American Apparel, Williamsburg before they sold out sriracha readymade iPhone brunch organic Carles tousled. Occupy Pinterest deep v kitsch chia cornhole. Bitters Bushwick put a bird on it, Neutra church-key trust fund umami art party Wes Anderson Vice yr American Apparel butcher.</p>
-                    </section>
-                    <ul class="comment-actions action-set">
-                      <li><a href="#" class="action small">Reply</a></li>
-                      <li><a href="#" class="icon icon-action-warning">Report</a></li>
-                    </ul>
-                  </article>
-                  <ol>
-                    <li class="comment">
-                      <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
-                      <article class="comment-box staff">
-                        <header class="comment-info">
-                          <a href="#" class="username">Usernameguy</a>
-                          <span class="comment-attr staff">(mod)</span>
-                          <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-                        </header>
-                        <section class="comment-content formatted">
-                          <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-                        </section>
-                        <ul class="comment-actions action-set">
-                          <li><a href="#" class="action small">Reply</a></li>
-                          <li><a href="#" class="icon icon-action-warning">Report</a></li>
-                        </ul>
-                      </article>
-                      <a href="#" class="action disclose small">Continue conversation</a>
-                    </li><!-- .comment -->
-                  </ol>
-                </li><!-- .comment -->
-              </ol>
-            </li><!-- .comment -->
-            <li class="comment">
-              <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
-              <article class="comment-box">
-                <header class="comment-info">
-                  <a href="#" class="username">Usernameguy</a>
-                  <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-                </header>
-                <section class="comment-content formatted">
-                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-                </section>
-                <ul class="comment-actions action-set">
-                  <li><a href="#" class="action small">Reply</a></li>
-                  <li><a href="#" class="icon icon-action-warning">Report</a></li>
-                </ul>
-              </article>
-            </li><!-- .comment -->
-          </ol>
-        </li><!-- .comment -->
-        <li class="comment">
-          <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
-          <article class="comment-box">
-            <header class="comment-info">
-              <a href="#" class="username">Longername McNamertonguydude</a>
-              <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-            </header>
-            <section class="comment-content formatted">
-              <blockquote>
-                <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-                <p>Beard selvage keffiyeh</p>
-              </blockquote>
-              <p>8-bit polaroid Intelligentsia cray 90's bicycle rights butcher kale chips cliche. Hashtag direct trade whatever, swag lo-fi Pinterest readymade freegan tattooed single-origin coffee. Drinking vinegar messenger bag twee 3 wolf moon Portland. Actually ethnic shabby chic squid swag, narwhal gluten-free stumptown distillery polaroid leggings vinyl bitters YOLO.</p>
-            </section>
-            <ul class="comment-actions action-set">
-              <li><a href="#" class="action small">Reply</a></li>
-              <li><a href="#" class="icon icon-action-warning">Report</a></li>
-            </ul>
-          </article>
-        </li><!-- .comment -->
-        <li class="comment">
-          <a class="avatar" href="#"><img src="http://lorempixel.com/197/197" alt="" /></a>
-          <article class="comment-box">
-            <header class="comment-info">
-              <a href="#" class="username">Wow</a>
-              <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-            </header>
-            <section class="comment-content formatted">
-              <p>Vinyl Banksy Portland bespoke. Plaid ethical VHS, mumblecore kitsch freegan Intelligentsia next level skateboard gentrify. Four loko wolf wayfarers Godard stumptown, direct trade Banksy authentic trust fund whatever literally. Ethical scenester art party, bicycle rights iPhone fanny pack distillery XOXO cliche. Dreamcatcher sriracha occupy mustache, next level VHS fixie church-key.</p>
-
-              <blockquote>
-                <blockquote>
-                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-                </blockquote>
-                <p>Skateboard Marfa chia, Truffaut organic pop-up iPhone sriracha mlkshk +1 whatever. Meggings narwhal seitan ethical, asymmetrical four loko mumblecore fingerstache squid.</p>
-              </blockquote>
-
-              <p>YOLO tousled beard cliche, church-key Portland Odd Future whatever kogi fingerstache fanny pack. Vegan trust fund jean shorts Godard, 3 wolf moon Shoreditch cred single-origin coffee hoodie:</p>
-
-              <ul>
-                <li>Freegan vegan bitters, tattooed bicycle rights forage food truck salvia gluten-free pug mlkshk Helvetica retro High Life ugh</li>
-                <li>Aesthetic gastropub cray, swag Vice Bushwick tousled</li>
-                <li>Tofu brunch Odd Future Thundercats Austin</li>
-              </ul>
-
-              <p>Kitsch vegan tote bag locavore cardigan, trust fund gluten-free. Fashion axe drinking vinegar hashtag High Life Carles semiotics YOLO. Kogi pour-over Banksy irony, Carles gastropub +1 ugh pop-up. Marfa brunch twee fingerstache, cray pickled forage hoodie blog Neutra jean shorts sustainable scenester organic wayfarers. Portland post-ironic American Apparel, Williamsburg before they sold out sriracha readymade iPhone brunch organic Carles tousled. Occupy Pinterest deep v kitsch chia cornhole. Bitters Bushwick put a bird on it, Neutra church-key trust fund umami art party Wes Anderson Vice yr American Apparel butcher.</p>
-            </section>
-            <ul class="comment-actions action-set">
-              <li><a href="#" class="action small">Reply</a></li>
-              <li><a href="#" class="icon icon-action-warning">Report</a></li>
-            </ul>
-          </article>
-        </li><!-- .comment -->
+        {% for comment in submission.comments %}{{ show_comment(comment) }}{% endfor %}
       </ol>
     </div><!-- .toggle-target-s -->
 

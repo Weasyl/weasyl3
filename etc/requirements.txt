@@ -10,6 +10,7 @@ waitress==0.8.8
 anyjson==0.3.3
 decorator==3.4.0
 dogpile.cache==0.5.3
+misaka==1.0.3
 psycopg2==2.5.2
 py-bcrypt==0.4
 python3-memcached==1.51

@@ -72,3 +72,21 @@ class Submission(Base):
         if with_slug:
             parts.append(slug_for(self.title))
         return request.resource_path(None, *parts)
+
+
+class Comment(Base):
+  __tablename__ = 'submitcomment'
+
+  commentid = sa.Column(sa.Integer, nullable=False, primary_key=True)
+  userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'))
+  targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), index=True)
+  parentid = sa.Column(sa.Integer, nullable=False, server_default='0')
+  content = sa.Column(sa.Text, nullable=False)
+  unixtime = sa.Column(WeasylTimestampColumn, nullable=False)
+  indent = sa.Column(sa.Integer, nullable=False, server_default='0')
+  settings = sa.Column(CharSettingsColumn({
+      'h': 'hidden',
+  }), nullable=False, server_default='')
+
+  target = relationship(Submission, backref='comments')
+  poster = relationship(Login, backref='comments')

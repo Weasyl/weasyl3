@@ -19,10 +19,15 @@ def path_for(request, obj, *a, **kw):
     return obj.canonical_path(request, *a, **kw)
 
 
+def format_datetime(request, dt):
+    return dt.strftime('%d %B %Y at %H:%M:%S')
+
+
 def make_app(global_config, **settings):
     settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
     settings['jinja2.filters'] = """
         static_path = pyramid_jinja2.filters:static_path_filter
+        markdown = weasyl.text.markdown_filter
     """
     settings['cache.wrap'] = [cache.ThreadCacheProxy, cache.JSONProxy]
 
@@ -40,6 +45,7 @@ def make_app(global_config, **settings):
     config.add_jinja2_search_path('weasyl:templates')
     config.add_view_predicate('api', predicates.APIPredicate)
     config.add_request_method(path_for)
+    config.add_request_method(format_datetime)
 
     json_renderer = JSON()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
