@@ -40,7 +40,7 @@ class MediaItem(Base):
     def to_json(self, recursive=1, link=None):
         ret = super(MediaItem, self).to_json()
         if link.link_type == 'submission':
-            login_name = link.submission.login.login_name
+            login_name = link.submission.owner.login_name
             ret['display_url'] = '/~%s/submission/%s/%s-%s-%s.%s' % (
                 login_name, link.submitid, login_name,
                 slug_for(link.submission.title), self.mediaid, self.file_type)

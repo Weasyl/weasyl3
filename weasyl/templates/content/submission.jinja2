@@ -30,7 +30,9 @@
     <h2 class="title-complement">{{ f.by_user(submission.owner) }}</h2>
   </header>
 
-  <a class="sub-zoom-toggle" href="http://lorempixel.com/1920/1080"><img class="sub-image" src="http://lorempixel.com/1920/1080" alt="sub image" /></a>
+  <a class="sub-zoom-toggle" href="{{ submission.submission_media['display_url'] }}">
+    <img class="sub-image" src="{{ submission.cover_media['display_url'] }}" alt="sub image" />
+  </a>
 
   <ul class="action-set sub-actions">
     <li><a href="#" class="action"><span class="icon icon-action-star"></span> Favorite</a></li>

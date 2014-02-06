@@ -22,14 +22,14 @@ def get_user_media(userid):
     return get_multi_user_media(userid)[0]
 
 
-def build_populator(identity, media_attr, multi_get):
+def build_populator(identity, multi_get):
     def populator(objects):
         keys_to_fetch = [getattr(o, identity) for o in objects]
         for o, value in zip(objects, multi_get(*keys_to_fetch)):
-            setattr(o, media_attr, value)
+            o.media = value
         return objects
     return populator
 
 
-populate_with_submission_media = build_populator('submitid', 'sub_media', get_multi_submission_media)
-populate_with_user_media = build_populator('userid', 'user_media', get_multi_user_media)
+populate_with_submission_media = build_populator('submitid', get_multi_submission_media)
+populate_with_user_media = build_populator('userid', get_multi_user_media)

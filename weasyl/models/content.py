@@ -1,3 +1,4 @@
+from pyramid.decorator import reify
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import contains_eager, relationship
 import sqlalchemy as sa
@@ -97,6 +98,27 @@ class Submission(Base):
         from ..media import populate_with_user_media
         populate_with_user_media(users)
         return ret
+
+    @reify
+    def media(self):
+        from ..media import get_submission_media
+        return get_submission_media(self.submitid)
+
+    @reify
+    def submission_media(self):
+        ret = self.media.get('submission')
+        if ret:
+            return ret[0]
+        return None
+
+    @reify
+    def cover_media(self):
+        ret = self.media.get('cover')
+        if not ret and self.submission_media:
+            ret = self.submission_media['described'].get('cover')
+        if ret:
+            return ret[0]
+        return None
 
 
 class Comment(Base):

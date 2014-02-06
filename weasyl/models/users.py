@@ -42,13 +42,13 @@ class Login(Base):
         return request.resource_path(None, *parts)
 
     @reify
-    def user_media(self):
+    def media(self):
         from ..media import get_user_media
         return get_user_media(self.userid)
 
     @property
     def avatar(self):
-        return self.user_media['avatar'][0]
+        return self.media['avatar'][0]
 
 
 class AuthBCrypt(Base):
