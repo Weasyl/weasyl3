@@ -46,10 +46,15 @@
         </form>
       </nav><!-- .header-nav -->
 
-      {% if request.session['userid'] %}
+      {% if request.session.user %}
       <div class="header-user group">
         <a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="HurtInTheDirt's avatar" /></a>
-        <p class="text-container align-vert"><span class="text"><span class="type-alt">Welcome back,</span> <a href="#" class="username">catcatcatcatcatcatcatcatcatcatcatcatcat</a></span></p>
+        <p class="text-container align-vert">
+	  <span class="text">
+	    <span class="type-alt">Welcome back,</span>
+	    <a href="{{ request.session.user.canonical_url(request) }}" class="username">{{ request.session.user.profile.username }}</a>
+	  </span>
+	</p>
       </div><!-- .header-user -->
       {% else %}
       <div class="header-user group guest">

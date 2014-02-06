@@ -1,6 +1,7 @@
 from sqlalchemy.orm import relationship
 import sqlalchemy as sa
 
+from ..text import slug_for
 from .helpers import CharSettingsColumn, RatingColumn, WeasylTimestampColumn
 from .meta import Base
 from .users import Login
@@ -45,3 +46,11 @@ class Submission(Base):
             'title': self.title,
             'rating': self.rating,
         }
+
+    def canonical_url(self, request, operation='view', with_slug=None):
+        if with_slug is None:
+            with_slug = operation == 'view'
+        parts = ['submissions', str(self.submitid), operation]
+        if with_slug:
+            parts.append(slug_for(self.title))
+        return request.resource_url(None, *parts)

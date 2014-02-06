@@ -8,7 +8,7 @@ from pyramid.renderers import JSON
 from .models.meta import configure as configure_db
 from .resources import RootResource
 from .sessions import WeasylSession
-from . import cache, staff, predicates
+from . import authorization, cache, predicates
 
 
 def datetime_adapter(obj, request):
@@ -43,7 +43,7 @@ def make_app(global_config, **settings):
     config.add_renderer('json', json_renderer)
 
     config.set_authentication_policy(
-        SessionAuthenticationPolicy(prefix='', callback=staff.groupfinder))
+        SessionAuthenticationPolicy(prefix='', callback=authorization.groupfinder))
     config.set_authorization_policy(ACLAuthorizationPolicy())
 
     config.scan('weasyl.views')

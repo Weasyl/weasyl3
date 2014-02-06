@@ -18,6 +18,11 @@ def make_location_aware(func):
 
 
 class SubmissionsResource:
+    __acl__ = [
+        (Allow, 'g:mod', 'view'),
+        (Allow, 'g:mod', 'view-anything'),
+    ]
+
     def __init__(self, request):
         self.request = request
 
@@ -31,6 +36,21 @@ class SubmissionResource:
     def __init__(self, request, submission):
         self.request = request
         self.submission = submission
+
+    @property
+    def __acl__(self):
+        if 'hidden' in self.submission.settings:
+            return [
+                (Deny, Everyone, 'view'),
+            ]
+        elif 'friends-only' in self.submission.settings:
+            return [
+                (Deny, Everyone, 'view'),
+            ]
+        else:
+            return [
+                (Allow, Everyone, 'view'),
+            ]
 
 
 class MethodDispatchResource:

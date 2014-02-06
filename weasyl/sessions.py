@@ -95,6 +95,12 @@ class WeasylSession(collections.MutableMapping):
         self.changed()
         return ret
 
+    @property
+    def user(self):
+        if self._session_obj is None:
+            return None
+        return self._session_obj.user
+
     def _serialize(self, request, response):
         if self._invalidated:
             response.delete_cookie(self._cookie_name)
