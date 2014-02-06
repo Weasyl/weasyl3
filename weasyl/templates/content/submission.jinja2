@@ -2,7 +2,7 @@
 
 {% macro show_comment(comment) %}
 <li class="comment">
-  <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
+  {{ f.user_avatar(comment.poster) }}
   <article class="comment-box">
     <header class="comment-info">
       {{ f.user_link(comment.poster) }} {{ f.datetime(comment.unixtime) }}
@@ -45,7 +45,7 @@
 
   <div class="sub-basic lighter group">
     <div class="sub-owner">
-      <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="Usernameguy's avatar" /></a>
+      {{ f.user_avatar(submission.owner) }}
       <div class="info">
         {{ f.user_link(submission.owner) }} {{ f.datetime(submission.unixtime) }}
       </div>
@@ -83,10 +83,11 @@
   <section class="sub-comments">
     <h4 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">13 comments</h4>
     <div class="toggle-target-max-m">
+      {% if request.session.user %}
       <form action="#" class="comment" method="post">
-        <a class="avatar" href="#"><img src="http://lorempixel.com/200/200" alt="Usernameguy's avatar" /></a>
+        {{ f.user_avatar(request.session.user) }}
         <div class="comment-box hypothetical">
-          <div class="comment-info"><a href="#" class="username">AbrahammerLincolnlog</a></div>
+          <div class="comment-info">{{ f.user_link(request.session.user) }}</div>
           <textarea name="comment" id="comment-98avdja" class="comment-entry" placeholder="Share your thoughts &#8230;"></textarea>
           <ul class="comment-actions action-set">
             <li><a href="#" class="action small">Formatting help</a></li>
@@ -94,6 +95,7 @@
           <button type="submit" class="comment-submit action disclose">Save</button>
         </div><!-- .comment-box -->
       </form><!-- .comment -->
+      {% endif %}
 
       <ol class="comment-tree">
         {% for comment in submission.comment_tree() %}{{ show_comment(comment) }}{% endfor %}

@@ -2,10 +2,16 @@
 <a href="{{ request.path_for(user) }}" class="username">{{ user.profile.username }}</a>
 {%- endmacro %}
 
+{% macro user_avatar(user) -%}
+<a href="{{ request.path_for(user) }}" class="avatar">
+  <img src="{{ user.avatar['display_url'] }}">
+</a>
+{%- endmacro %}
+
 {% macro by_user(user) -%}
 <span class="type-alt">by</span> {{ user_link(user) }}
 {%- endmacro %}
 
 {% macro datetime(dt) %}
-<time class="type-secondary type-alt" datetime="dt.isoformat()">{{ request.format_datetime(dt) }}</time>
+<time class="type-secondary type-alt" datetime="{{ dt.isoformat() }}">{{ request.format_datetime(dt) }}</time>
 {% endmacro %}

@@ -48,7 +48,7 @@
 
       {% if request.session.user %}
       <div class="header-user group">
-        <a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="HurtInTheDirt's avatar" /></a>
+        {{ f.user_avatar(request.session.user) }}
         <p class="text-container align-vert">
 	  <span class="text">
 	    <span class="type-alt">Welcome back,</span> {{ f.user_link(request.session.user) }}

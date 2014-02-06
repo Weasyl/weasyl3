@@ -84,6 +84,7 @@ class Submission(Base):
 
         comment_map = {}
         ret = []
+        users = set()
         for c in comments:
             comment_map[c.commentid] = c
             c.subcomments = []
@@ -91,7 +92,10 @@ class Submission(Base):
                 comment_map[c.parentid].subcomments.append(c)
             else:
                 ret.append(c)
+            users.add(c.poster)
 
+        from ..media import populate_with_user_media
+        populate_with_user_media(users)
         return ret
 
 

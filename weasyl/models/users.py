@@ -1,6 +1,7 @@
 import logging
 
 import bcrypt
+from pyramid.decorator import reify
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy import orm
 import sqlalchemy as sa
@@ -39,6 +40,15 @@ class Login(Base):
         if operation is not None:
             parts.append(operation)
         return request.resource_path(None, *parts)
+
+    @reify
+    def user_media(self):
+        from ..media import get_user_media
+        return get_user_media(self.userid)
+
+    @property
+    def avatar(self):
+        return self.user_media['avatar'][0]
 
 
 class AuthBCrypt(Base):
