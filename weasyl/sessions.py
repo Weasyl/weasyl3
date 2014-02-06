@@ -116,4 +116,3 @@ class WeasylSession(collections.MutableMapping):
             setattr(self._session_obj, k, additional_data.pop(k, None))
         self._session_obj.additional_data = additional_data
         request.db.flush()
-        log.debug('%r %s', self._session_obj, self._session_obj.sessionid)
