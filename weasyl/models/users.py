@@ -34,11 +34,11 @@ class Login(Base):
     }), nullable=False, server_default='')
     email = sa.Column(sa.String(100), nullable=False, server_default='')
 
-    def canonical_url(self, request, operation=None):
+    def canonical_path(self, request, operation=None):
         parts = ['~' + self.login_name]
         if operation is not None:
             parts.append(operation)
-        return request.resource_url(None, *parts)
+        return request.resource_path(None, *parts)
 
 
 class AuthBCrypt(Base):

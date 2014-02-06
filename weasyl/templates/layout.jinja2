@@ -12,9 +12,9 @@
 
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css" />
     <link href="//fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="{{ 'weasyl:static/style/public.css' | static_url }}" type="text/css" />
+    <link rel="stylesheet" href="{{ 'weasyl:static/style/public.css' | static_path }}" type="text/css" />
 
-    <script src="{{ 'weasyl:static/js/modernizr.development.js' | static_url }}"></script>
+    <script src="{{ 'weasyl:static/js/modernizr.development.js' | static_path }}"></script>
     <script>
       if ('webkitRequestAnimationFrame' in window) {
         document.documentElement.className += ' webkit-background-clip';
@@ -30,8 +30,8 @@
     <header class="page-header" role="banner">
 
       <a href="index.htm" class="header-logo block" tabindex="0">
-        <img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_url }}" alt="Weasyl logomark" />
-        <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_url }}" alt="Weasyl" />
+        <img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_path }}" alt="Weasyl logomark" />
+        <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_path }}" alt="Weasyl" />
       </a>
 
       <nav class="header-nav small-menu" role="navigation">
@@ -52,7 +52,7 @@
         <p class="text-container align-vert">
 	  <span class="text">
 	    <span class="type-alt">Welcome back,</span>
-	    <a href="{{ request.session.user.canonical_url(request) }}" class="username">{{ request.session.user.profile.username }}</a>
+	    <a href="{{ request.path_for(request.session.user) }}" class="username">{{ request.session.user.profile.username }}</a>
 	  </span>
 	</p>
       </div><!-- .header-user -->
@@ -76,11 +76,11 @@
 
     <footer class="page-footer" role="contentinfo">
       <nav class="footer-nav grid">
-        {% if request.session['userid'] %}
+        {% if request.session.user %}
         <dl class="grid-item">
           <dt>
             <a class="footer-logo" href="index.htm">
-              <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_url }}"
+              <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_path }}"
              alt="Weasyl logomark" />
             </a>
           </dt>
@@ -88,7 +88,7 @@
           <dd><a href="#">Explore</a></dd>
           <dd><a href="#">Settings</a></dd>
           <dd>
-            <form action="{{ None | model_url('signout') }}" method="post">
+            <form action="{{ request.resource_path(None, 'signout') }}" method="post">
               <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
               <button type="submit" name="signout" class="action disclose">Sign out</button>
             </form>
@@ -126,7 +126,7 @@
           <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
         </dl>
         <div class="grid-item decoration">
-          <img src="{{ 'weasyl:static/images/wesley.png' | static_url }}" alt="" />
+          <img src="{{ 'weasyl:static/images/wesley.png' | static_path }}" alt="" />
         </div>
       </nav>
       <div class="footer-info type-secondary">
@@ -136,7 +136,7 @@
       </div>
     </footer>
 
-    <script src="{{ 'weasyl:static/js/scripts.js' | static_url }}"></script>
+    <script src="{{ 'weasyl:static/js/scripts.js' | static_path }}"></script>
 
   </body>
 </html>

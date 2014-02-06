@@ -47,10 +47,10 @@ class Submission(Base):
             'rating': self.rating,
         }
 
-    def canonical_url(self, request, operation='view', with_slug=None):
+    def canonical_path(self, request, operation='view', with_slug=None):
         if with_slug is None:
             with_slug = operation == 'view'
         parts = ['submissions', str(self.submitid), operation]
         if with_slug:
             parts.append(slug_for(self.title))
-        return request.resource_url(None, *parts)
+        return request.resource_path(None, *parts)

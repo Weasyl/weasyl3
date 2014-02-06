@@ -15,12 +15,14 @@ def datetime_adapter(obj, request):
     return obj.isoformat()
 
 
+def path_for(request, obj, *a, **kw):
+    return obj.canonical_path(request, *a, **kw)
+
+
 def make_app(global_config, **settings):
     settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
     settings['jinja2.filters'] = """
-        model_url = pyramid_jinja2.filters:model_url_filter
-        route_url = pyramid_jinja2.filters:route_url_filter
-        static_url = pyramid_jinja2.filters:static_url_filter
+        static_path = pyramid_jinja2.filters:static_path_filter
     """
     settings['cache.wrap'] = [cache.ThreadCacheProxy, cache.JSONProxy]
 
@@ -37,6 +39,7 @@ def make_app(global_config, **settings):
     config.add_static_view(name='static', path='weasyl:static')
     config.add_jinja2_search_path('weasyl:templates')
     config.add_view_predicate('api', predicates.APIPredicate)
+    config.add_request_method(path_for)
 
     json_renderer = JSON()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
