@@ -117,7 +117,7 @@ class Profile(Base):
     stream_time = sa.Column(sa.Integer)
     stream_text = sa.Column(sa.String)
 
-    user = orm.relationship(Login, backref=orm.backref('profile', uselist=False))
+    user = orm.relationship(Login, backref=orm.backref('profile', uselist=False, lazy='joined'))
 
 
 class Session(Base):

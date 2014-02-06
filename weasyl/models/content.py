@@ -1,3 +1,4 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 import sqlalchemy as sa
 
@@ -5,6 +6,21 @@ from ..text import slug_for
 from .helpers import CharSettingsColumn, RatingColumn, WeasylTimestampColumn
 from .meta import Base
 from .users import Login
+
+
+class Tag(Base):
+  __tablename__ = "searchtag"
+
+  tagid = sa.Column(sa.Integer, primary_key=True)
+  title = sa.Column(sa.Text, nullable=False, unique=True)
+
+
+class SubmissionTag(Base):
+  __tablename__ = 'searchmapsubmit'
+
+  tagid = sa.Column(sa.Integer, sa.ForeignKey('searchtag.tagid'), primary_key=True)
+  targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), primary_key=True)
+  settings = sa.Column(sa.String, nullable=False, server_default='')
 
 
 class Submission(Base):
@@ -40,6 +56,8 @@ class Submission(Base):
     fave_count = sa.Column(sa.Integer, nullable=False, server_default='0')
 
     owner = relationship(Login, backref='submissions')
+    tag_objects = relationship(Tag, secondary=SubmissionTag.__table__)
+    tags = association_proxy('tag_objects', 'title')
 
     def to_json(self):
         return {

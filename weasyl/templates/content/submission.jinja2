@@ -34,12 +34,9 @@
       <p>Art description. McSweeney's wolf PBR&amp;B chillwave esse chia, kale chips occaecat Neutra culpa cray selfies hashtag twee next level. Excepteur mlkshk locavore, drinking vinegar Odd Future photo booth gluten-free messenger bag fashion axe craft beer. Bushwick dolor bitters, single-origin coffee nihil DIY nisi swag fingerstache.</p>
     </div><!-- .sub-description -->
     <div class="sub-tags">
-      <a href="#" class="tag">tag</a>
-      <a href="#" class="tag">longer_tag</a>
-      <a href="#" class="tag">cat</a>
-      <a href="#" class="tag">caaaaaaaaat</a>
-      <a href="#" class="tag">catcatcatcatcat</a>
-      <a href="#" class="tag">photography</a>
+      {% for tag in submission.tags | sort -%}
+      <a href="#" class="tag">{{ tag }}</a>
+      {%- endfor %}
       <a href="#" class="action disclose small">Modify</a>
     </div><!-- .sub-tags -->
   </div><!-- .sub-basic -->
