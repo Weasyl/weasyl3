@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js">
-
+  {% import 'functions.jinja2' as f with context %}
   <head>
 
     <meta charset="utf-8" />
@@ -51,8 +51,7 @@
         <a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="HurtInTheDirt's avatar" /></a>
         <p class="text-container align-vert">
 	  <span class="text">
-	    <span class="type-alt">Welcome back,</span>
-	    <a href="{{ request.path_for(request.session.user) }}" class="username">{{ request.session.user.profile.username }}</a>
+	    <span class="type-alt">Welcome back,</span> {{ f.user_link(request.session.user) }}
 	  </span>
 	</p>
       </div><!-- .header-user -->

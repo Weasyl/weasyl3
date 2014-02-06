@@ -39,7 +39,7 @@ class Submission(Base):
     sorttime = sa.Column(sa.Integer, nullable=False)
     fave_count = sa.Column(sa.Integer, nullable=False, server_default='0')
 
-    login = relationship(Login, backref='submissions')
+    owner = relationship(Login, backref='submissions')
 
     def to_json(self):
         return {

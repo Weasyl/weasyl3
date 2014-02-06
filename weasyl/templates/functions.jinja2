@@ -1,0 +1,7 @@
+{% macro user_link(user) -%}
+<a href="{{ request.path_for(user) }}" class="username">{{ user.profile.username }}</a>
+{%- endmacro %}
+
+{% macro by_user(user) -%}
+<span class="type-alt">by</span> {{ user_link(user) }}
+{%- endmacro %}

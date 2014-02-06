@@ -2,5 +2,302 @@
 
 {% block title %}{{ submission.title }}{% endblock %}
 {% block body %}
-{{ submission }}
+<div class="sub-container">
+
+  <header class="title-wrap">
+    <h1 class="title primary">{{ submission.title }}</h1>
+    <h2 class="title-complement">{{ f.by_user(submission.owner) }}</h2>
+  </header>
+
+  <a class="sub-zoom-toggle" href="http://lorempixel.com/1920/1080"><img class="sub-image" src="http://lorempixel.com/1920/1080" alt="sub image" /></a>
+
+  <ul class="action-set sub-actions">
+    <li><a href="#" class="action"><span class="icon icon-action-star"></span> Favorite</a></li>
+    <li><a href="#" class="action"><span class="icon icon-action-heart"></span> Recommend</a></li>
+    <li><a href="#" class="action"><span class="icon icon-action-warning"></span> Report</a></li>
+  </ul>
+
+</div><!-- .sub-container -->
+
+
+<div class="content content-group">
+
+  <div class="sub-basic lighter group">
+    <div class="sub-owner">
+      <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="Usernameguy's avatar" /></a>
+      <div class="info">
+        {{ f.user_link(submission.owner) }}
+        <time datetime="2013-12-04 14:30" class="type-secondary type-alt">4 December, 2013 at 14:30</time>
+      </div>
+    </div><!-- .sub-owner -->
+    <div class="formatted sub-description">
+      <p>Art description. McSweeney's wolf PBR&amp;B chillwave esse chia, kale chips occaecat Neutra culpa cray selfies hashtag twee next level. Excepteur mlkshk locavore, drinking vinegar Odd Future photo booth gluten-free messenger bag fashion axe craft beer. Bushwick dolor bitters, single-origin coffee nihil DIY nisi swag fingerstache.</p>
+    </div><!-- .sub-description -->
+    <div class="sub-tags">
+      <a href="#" class="tag">tag</a>
+      <a href="#" class="tag">longer_tag</a>
+      <a href="#" class="tag">cat</a>
+      <a href="#" class="tag">caaaaaaaaat</a>
+      <a href="#" class="tag">catcatcatcatcat</a>
+      <a href="#" class="tag">photography</a>
+      <a href="#" class="action disclose small">Modify</a>
+    </div><!-- .sub-tags -->
+  </div><!-- .sub-basic -->
+
+  <div class="sub-stats">
+    <h4 class="title secondary toggle disclose title-toggle-max-m max-m" data-toggle-target="next">Stats</h4>
+    <!-- would love to use a dl here, but order is wrong and multiple columns is a drag -->
+    <ul class="stats-list grid toggle-target-max-m">
+      <li class="grid-item"><strong class="stat">{{ submission.page_views }}</strong> Views</li>
+      <li class="grid-item"><strong class="stat">13</strong> Comments</li>
+      <li class="grid-item"><strong class="stat">25</strong> Favorites</li>
+      <li class="grid-item"><strong class="stat">{{ submission.rating.title() }}</strong> Rating</li>
+      <li class="grid-item"><strong class="stat">712 KiB</strong> Size</li>
+      <li class="grid-item"><strong class="stat">Photography</strong> Category</li>
+      <!-- <li class="grid-item"><strong class="stat">SONY</strong> Manufacturer</li>
+           <li class="grid-item"><strong class="stat">NEX-6</strong> Model</li>
+      <li class="grid-item"><strong class="stat">JPEG</strong> Compression</li>
+      <li class="grid-item"><strong class="stat">1/100 sec</strong> Exposure time</li>
+      <li class="grid-item"><strong class="stat">f/2.8</strong> Aperture</li>
+      <li class="grid-item"><strong class="stat">35mm</strong> Focal length</li> -->
+    </ul>
+  </div><!-- .sub-stats -->
+
+  <section class="sub-comments">
+    <h4 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">13 comments</h4>
+    <div class="toggle-target-max-m">
+      <form action="#" class="comment" method="post">
+        <a class="avatar" href="#"><img src="http://lorempixel.com/200/200" alt="Usernameguy's avatar" /></a>
+        <div class="comment-box hypothetical">
+          <div class="comment-info"><a href="#" class="username">AbrahammerLincolnlog</a></div>
+          <textarea name="comment" id="comment-98avdja" class="comment-entry" placeholder="Share your thoughts &#8230;"></textarea>
+          <ul class="comment-actions action-set">
+            <li><a href="#" class="action small">Formatting help</a></li>
+          </ul>
+          <button type="submit" class="comment-submit action disclose">Save</button>
+        </div><!-- .comment-box -->
+      </form><!-- .comment -->
+
+      <ol class="comment-tree">
+        <li class="comment">
+          <a class="avatar" href="#"><img src="http://lorempixel.com/201/201" alt="" /></a>
+          <article class="comment-box">
+            <header class="comment-info">
+              <a href="#" class="username">Shortname</a>
+              <time class="type-secondary type-alt" datetime="2013-12-04 14:33">4 December 2013 at 14:33</time>
+            </header>
+            <section class="comment-content formatted">
+              <p>Single-line comment yay</p>
+            </section>
+            <ul class="comment-actions action-set">
+              <li><a href="#" class="action small">Reply</a></li>
+              <li><a href="#" class="icon icon-action-warning">Report</a></li>
+            </ul>
+          </article>
+          <ol>
+            <li class="comment">
+              <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+              <article class="comment-box owner">
+                <header class="comment-info">
+                  <a href="#" class="username">Usernameguy</a>
+                  <span class="comment-attr owner">(page owner)</span>
+                  <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                </header>
+                <section class="comment-content formatted">
+                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                </section>
+                <ul class="comment-actions action-set">
+                  <li><a href="#" class="action small">Reply</a></li>
+                  <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                </ul>
+              </article>
+              <ol>
+                <li class="comment">
+                  <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                  <article class="comment-box">
+                    <header class="comment-info">
+                      <a href="#" class="username">Usernameguy</a>
+                      <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                    </header>
+                    <section class="comment-content formatted">
+                      <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally. Portland post-ironic American Apparel, Williamsburg before they sold out sriracha readymade iPhone brunch organic Carles tousled. Occupy Pinterest deep v kitsch chia cornhole. Bitters Bushwick put a bird on it, Neutra church-key trust fund umami art party Wes Anderson Vice yr American Apparel butcher.</p>
+                    </section>
+                    <ul class="comment-actions action-set">
+                      <li><a href="#" class="action small">Reply</a></li>
+                      <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                    </ul>
+                  </article>
+                  <ol>
+                    <li class="comment">
+                      <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                      <article class="comment-box staff">
+                        <header class="comment-info">
+                          <a href="#" class="username">Usernameguy</a>
+                          <span class="comment-attr staff">(mod)</span>
+                          <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                        </header>
+                        <section class="comment-content formatted">
+                          <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                        </section>
+                        <ul class="comment-actions action-set">
+                          <li><a href="#" class="action small">Reply</a></li>
+                          <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                        </ul>
+                      </article>
+                      <a href="#" class="action disclose small">Continue conversation</a>
+                    </li><!-- .comment -->
+                  </ol>
+                </li><!-- .comment -->
+              </ol>
+            </li><!-- .comment -->
+            <li class="comment">
+              <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+              <article class="comment-box">
+                <header class="comment-info">
+                  <a href="#" class="username">Usernameguy</a>
+                  <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                </header>
+                <section class="comment-content formatted">
+                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                </section>
+                <ul class="comment-actions action-set">
+                  <li><a href="#" class="action small">Reply</a></li>
+                  <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                </ul>
+              </article>
+            </li><!-- .comment -->
+          </ol>
+        </li><!-- .comment -->
+        <li class="comment">
+          <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
+          <article class="comment-box">
+            <header class="comment-info">
+              <a href="#" class="username">Longername McNamertonguydude</a>
+              <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+            </header>
+            <section class="comment-content formatted">
+              <blockquote>
+                <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                <p>Beard selvage keffiyeh</p>
+              </blockquote>
+              <p>8-bit polaroid Intelligentsia cray 90's bicycle rights butcher kale chips cliche. Hashtag direct trade whatever, swag lo-fi Pinterest readymade freegan tattooed single-origin coffee. Drinking vinegar messenger bag twee 3 wolf moon Portland. Actually ethnic shabby chic squid swag, narwhal gluten-free stumptown distillery polaroid leggings vinyl bitters YOLO.</p>
+            </section>
+            <ul class="comment-actions action-set">
+              <li><a href="#" class="action small">Reply</a></li>
+              <li><a href="#" class="icon icon-action-warning">Report</a></li>
+            </ul>
+          </article>
+        </li><!-- .comment -->
+        <li class="comment">
+          <a class="avatar" href="#"><img src="http://lorempixel.com/197/197" alt="" /></a>
+          <article class="comment-box">
+            <header class="comment-info">
+              <a href="#" class="username">Wow</a>
+              <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+            </header>
+            <section class="comment-content formatted">
+              <p>Vinyl Banksy Portland bespoke. Plaid ethical VHS, mumblecore kitsch freegan Intelligentsia next level skateboard gentrify. Four loko wolf wayfarers Godard stumptown, direct trade Banksy authentic trust fund whatever literally. Ethical scenester art party, bicycle rights iPhone fanny pack distillery XOXO cliche. Dreamcatcher sriracha occupy mustache, next level VHS fixie church-key.</p>
+
+              <blockquote>
+                <blockquote>
+                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                </blockquote>
+                <p>Skateboard Marfa chia, Truffaut organic pop-up iPhone sriracha mlkshk +1 whatever. Meggings narwhal seitan ethical, asymmetrical four loko mumblecore fingerstache squid.</p>
+              </blockquote>
+
+              <p>YOLO tousled beard cliche, church-key Portland Odd Future whatever kogi fingerstache fanny pack. Vegan trust fund jean shorts Godard, 3 wolf moon Shoreditch cred single-origin coffee hoodie:</p>
+
+              <ul>
+                <li>Freegan vegan bitters, tattooed bicycle rights forage food truck salvia gluten-free pug mlkshk Helvetica retro High Life ugh</li>
+                <li>Aesthetic gastropub cray, swag Vice Bushwick tousled</li>
+                <li>Tofu brunch Odd Future Thundercats Austin</li>
+              </ul>
+
+              <p>Kitsch vegan tote bag locavore cardigan, trust fund gluten-free. Fashion axe drinking vinegar hashtag High Life Carles semiotics YOLO. Kogi pour-over Banksy irony, Carles gastropub +1 ugh pop-up. Marfa brunch twee fingerstache, cray pickled forage hoodie blog Neutra jean shorts sustainable scenester organic wayfarers. Portland post-ironic American Apparel, Williamsburg before they sold out sriracha readymade iPhone brunch organic Carles tousled. Occupy Pinterest deep v kitsch chia cornhole. Bitters Bushwick put a bird on it, Neutra church-key trust fund umami art party Wes Anderson Vice yr American Apparel butcher.</p>
+            </section>
+            <ul class="comment-actions action-set">
+              <li><a href="#" class="action small">Reply</a></li>
+              <li><a href="#" class="icon icon-action-warning">Report</a></li>
+            </ul>
+          </article>
+        </li><!-- .comment -->
+      </ol>
+    </div><!-- .toggle-target-s -->
+
+  </section><!-- .sub-comments -->
+
+  <div class="sub-related">
+    <h4 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">More in &#8220;Landscapes&#8221;</h4>
+    <div class="toggle-target-max-m">
+      <div class="title-wrap"><h5 class="title tertiary">Older</h5></div>
+      <div class="grid thumbs-grid full">
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/221" alt="" />
+              <div class="rating explicit">Rated explicit</div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/276" alt="" />
+              <div class="rating explicit">Rated explicit</div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/259" alt="" />
+              <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/109" alt="" />
+              <div class="rating mature">Rated mature</div>
+              <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/226" alt="" />
+            </div>
+        </a></div>
+      </div><!-- .thumbs-grid -->
+
+      <div class="title-wrap"><h5 class="title tertiary">Newer</h5></div>
+      <div class="grid thumbs-grid full">
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/221" alt="" />
+              <div class="rating explicit">Rated explicit</div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/276" alt="" />
+              <div class="rating explicit">Rated explicit</div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/259" alt="" />
+              <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/109" alt="" />
+              <div class="rating mature">Rated mature</div>
+              <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+            </div>
+        </a></div>
+        <div class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/226" alt="" />
+            </div>
+        </a></div>
+      </div><!-- .thumbs-grid -->
+    </div>
+  </div><!-- .sub-related -->
+
+</div><!-- .content -->
 {% endblock %}
