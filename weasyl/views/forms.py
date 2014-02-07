@@ -7,7 +7,6 @@ from ..models.users import Login
 
 class FormView(_FormView):
     def failure(self, exc):
-        print(list(exc.error.paths()))
         return {'form': exc.field}
 
     def show(self, form):

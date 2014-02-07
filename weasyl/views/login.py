@@ -34,7 +34,6 @@ class SigninView(FormView):
     buttons = 'signin',
 
     def signin_success(self, appstruct):
-        print(appstruct)
         return httpexceptions.HTTPSeeOther(
             '/', headers=remember(self.request, appstruct['user'].userid))
 
