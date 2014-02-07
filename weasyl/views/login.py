@@ -8,29 +8,35 @@ from pyramid.security import remember, forget
 from pyramid.view import view_config
 from pyramid import httpexceptions
 
-from ..login import try_login
+from ..login import LoginFailed, try_login
 from ..resources import RootResource
-from .forms import FormView
+from .forms import FormView, User
 
 
 log = logging.getLogger(__name__)
 
 
 class Signin(CSRFSchema):
-    username = c.SchemaNode(c.String(), description='Username or e-mail')
+    user = c.SchemaNode(User(), description='Username')
     password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
+
+
+def login_form_validator(node, value):
+    try:
+        try_login(**value)
+    except LoginFailed as e:
+        raise c.Invalid(node, e.args[0]) from e
 
 
 @view_config(name='signin', context=RootResource, renderer='signin.jinja2', permission='signin')
 class SigninView(FormView):
-    schema = Signin()
+    schema = Signin(validator=login_form_validator)
     buttons = 'signin',
 
     def signin_success(self, appstruct):
-        del appstruct['csrf_token']
-        userid = try_login(**appstruct)
+        print(appstruct)
         return httpexceptions.HTTPSeeOther(
-            '/', headers=remember(self.request, userid))
+            '/', headers=remember(self.request, appstruct['user'].userid))
 
 
 @view_config(name='signout', context=RootResource, renderer='signout.jinja2', permission='signout')

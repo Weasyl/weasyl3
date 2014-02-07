@@ -19,7 +19,7 @@
 {% macro login_form(form) %}
 <form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
   {{ form['csrf_token'].serialize() | safe }}
-  {{ form['username'].serialize() | safe }}
+  {{ form['user'].serialize() | safe }}
   {{ form['password'].serialize() | safe }}
   <button type="submit" name="signin" class="action disclose" tabindex="1">Sign in</button>
   <ul class="actions">
