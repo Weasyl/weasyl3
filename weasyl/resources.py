@@ -3,6 +3,7 @@ import logging
 from pyramid.security import Allow, Deny, Everyone, Authenticated
 
 from .models.content import Submission
+from .models.users import Login
 
 
 log = logging.getLogger(__name__)
@@ -53,6 +54,34 @@ class SubmissionResource:
             ]
 
 
+class UsersResource:
+    def __init__(self, request):
+        self.request = request
+
+    @make_location_aware
+    def __getitem__(self, segment):
+        user = Login.query.filter_by(login_name=segment).first_or_404()
+        return UserResource(self.request, user)
+
+
+class UserResource:
+    def __init__(self, request, user):
+        self.request = request
+        self.user = user
+
+    @property
+    def __acl__(self):
+        if 'hide-profile-from-guests' in self.user.profile.settings:
+            return [
+                (Allow, Authenticated, 'view'),
+                (Deny, Everyone, 'view'),
+            ]
+        else:
+            return [
+                (Allow, Everyone, 'view'),
+            ]
+
+
 class MethodDispatchResource:
     def __init__(self, request):
         self.request = request
@@ -67,6 +96,7 @@ class MethodDispatchResource:
 
 class APIResource(MethodDispatchResource):
     segment_submissions = SubmissionsResource
+    segment_users = UsersResource
 
 
 class RootResource(MethodDispatchResource):
@@ -81,4 +111,10 @@ class RootResource(MethodDispatchResource):
     ]
 
     segment_submissions = SubmissionsResource
+    segment_users = UsersResource
     segment_api = APIResource
+
+    def __getitem__(self, segment):
+        if segment.startswith('~'):
+            return UsersResource(self.request)[segment[1:]]
+        return super().__getitem__(segment)

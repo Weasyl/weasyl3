@@ -1,0 +1,396 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Profile{% endblock %}
+{% block body %}
+
+{% if user.banner %}
+<div class="user-banner"><img src="{{ user.banner['display_url'] }}" alt="" /></div>
+{% endif %}
+
+<header class="user-header">
+  {{ f.user_avatar(user, 'user-avatar') }}
+  <div class="user-basic page-title-bar col">
+    <h1 class="title user-username">{{ f.user_link(user) }}</h1>
+    <p class="user-title type-alt">{{ user.profile.full_name }}</p>
+    <ul class="action-set user-actions">
+      <li><a href="#" class="action active"><span class="icon icon-action-star"></span> Following</a></li>
+      <li><a href="#" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
+      <li><a href="#" class="action"><span class="icon icon-action-note"></span> Message</a></li>
+      <li><a href="#" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
+    </ul>
+  </div><!-- .user-basic -->
+  <nav class="col-side">
+    <ul class="nav-list grid user-nav">
+      <li class="grid-item active"><a class="action" href="#">Profile</a></li>
+      <li class="grid-item"><a class="action" href="#">Works</a></li>
+      <li class="grid-item"><a class="action" href="#">Journal</a></li>
+      <li class="grid-item"><a class="action" href="#">Commissions <span class="dot bg-positive">(open)</span></a></li>
+      <li class="grid-item"><a class="action" href="#">Collections</a></li>
+      <li class="grid-item"><a class="action" href="#">Characters</a></li>
+      <li class="grid-item"><a class="action" href="#">Favorites</a></li>
+      <li class="grid-item"><a class="action" href="#">Shouts</a></li>
+    </ul>
+  </nav><!-- .user-col-nav -->
+</header><!-- .user-header -->
+
+
+<div class="col-main-wrap"><!-- float layout helper -->
+  <div class="content user-content col-main content-group">
+
+    <div class="user-latest">
+      <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Latest</h3>
+      <div class="grid thumbs-grid full toggle-target-max-m">
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/200" alt="" />
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/120/300" alt="" />
+              <div class="rating moderate">Rated moderate</div>
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/150/227" alt="" />
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/300" alt="" />
+              <div class="type"><div class="ribbon"><span class="icon icon-type-lit">Literature</span></div></div>
+              <div class="rating mature">Rated mature</div>
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/221" alt="" />
+              <div class="rating explicit">Rated explicit</div>
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/276" alt="" />
+              <div class="rating explicit">Rated explicit</div>
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/259" alt="" />
+              <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/109" alt="" />
+              <div class="rating mature">Rated mature</div>
+              <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/226" alt="" />
+            </div>
+        </a></figure>
+        <figure class="grid-item"><a href="submission.htm" class="item-container">
+            <div class="thumb-container">
+              <img class="thumb" src="http://lorempixel.com/300/110" alt="" />
+            </div>
+        </a></figure>
+        <div><a href="#" class="action disclose">Full works</a></div>
+      </div><!-- .thumbs-grid -->
+    </div><!-- .user-latest -->
+
+    <div class="user-about">
+      <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Profile</h3>
+      <div class="formatted toggle-target-max-m">
+        <p>
+          <strong class="icon icon-location">Location:</strong> Cityname, ST, Countryname<br />
+          <strong class="icon icon-stopwatch"></strong> Member for 1 year, 6 months
+        </p>
+        <p>
+          <span class="dot bg-positive"></span> Commissions: <strong class="color-positive">Open</strong><!-- , <a href="" class="action small disclose">$10&ndash;$400</a> --><br />
+          <span class="dot bg-neutral"></span> Trades: <strong class="color-neutral">Sometimes</strong><br />
+          <span class="dot bg-negative"></span> Requests: <strong class="color-negative">Closed</strong>
+        </p>
+
+        <p>A short bio about this user, written by him/herself.</p>
+        <p>Godard readymade hella Echo Park Helvetica, craft beer meggings lo-fi yr Shoreditch hoodie ennui stumptown. Readymade chambray before they sold out letterpress dreamcatcher trust fund Schlitz, viral Vice Tumblr bitters synth next level salvia. Banksy cornhole retro, pork belly Truffaut fingerstache hella.</p>
+        <p>Art party Pinterest Wes Anderson, Vice post-ironic Brooklyn letterpress Austin tote bag. Forage Helvetica craft beer, cornhole Shoreditch XOXO master cleanse vegan bitters messenger bag selvage next level keffiyeh Godard. Cred ugh fashion axe, ethnic hashtag quinoa High Life vinyl banh mi viral church-key narwhal Shoreditch irony. Semiotics post-ironic Tonx Wes Anderson fashion axe viral, lomo YOLO raw denim asymmetrical vinyl gastropub beard retro.</p>
+        <p>Thundercats next level sustainable, gentrify Tonx Helvetica ethical +1 PBR swag polaroid.</p>
+      </div>
+    </div><!-- .user-about -->
+
+    <div class="user-highlight content-group">
+      <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Featured work</h3>
+      <div class="toggle-target-max-m">
+        <h3 class="title secondary"><a href="#">This Is the Title of the Thing</a></h3>
+        <h4 class="title-complement">Featured work, shared 2 weeks ago</h4>
+        <div class="user-featured">
+          <a href="submission.htm" class="thumb-container"><img class="thumb" src="http://lorempixel.com/800/600" alt="" /></a>
+        </div><!-- .user-featured -->
+      </div>
+
+      <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Latest Journal</h3>
+      <div class="toggle-target-max-m">
+        <h3 class="title secondary"><a href="#">Journal Wow Neat</a></h3>
+        <h4 class="title-complement">Latest journal, written 9 days ago</h4>
+        <div class="formatted user-journal cut">
+          <!-- .cut if this is not the full text -->
+          <p>Photo booth tattooed gluten-free Wes Anderson, typewriter paleo pug trust fund street art wolf stumptown. Cosby sweater Tonx Terry Richardson, food truck DIY bitters aesthetic stumptown sartorial master cleanse Blue Bottle hella Echo Park vegan. Blue Bottle fashion axe sriracha banjo, umami salvia blog. Cornhole pork belly tattooed 90's, retro single-origin coffee mixtape irony fingerstache chillwave Portland selfies freegan salvia.</p>
+          <p>Stumptown craft beer kogi, banjo raw denim authentic cornhole Tumblr seitan irony hella cred direct trade XOXO. Actually Wes Anderson twee, biodiesel next level Shoreditch tote bag mlkshk four loko single-origin coffee selvage PBR&amp;B. Chia McSweeney's Echo Park, wolf bespoke ugh squid cornhole gastropub four loko fashion axe swag Portland Etsy. Pop-up try-hard tofu seitan, disrupt readymade mixtape tote bag vegan High Life wayfarers next level.</p>
+          <!-- cut off after a reasonable amount of text? allow user to define cut a la livejournal? -->
+        </div><!-- .user-journal -->
+        <div class="user-more"><a href="#" class="action disclose">Read more (4 comments)</a></div>
+      </div>
+    </div><!-- .user-highlight -->
+
+    <div class="user-activity content-group">
+      <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Activity</h3>
+      <ol class="activity-list toggle-target-max-m">
+        <li>
+          <p><span class="icon icon-comment">Comment: </span> Left <a href="user.htm" class="username">Boomerang26</a> a shout <time datetime="[the time]">2 hours ago</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-journal">Journal: </span> New journal entry: <a href="#">Journal Wow Neat</a> <time datetime="[the time]">5 hours ago</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-comment">Comment: </span> Commented on <a href="submission.htm">A Picture of a Mountain or Something</a> by <a href="user.htm" class="username">CatCatCatCatCatCatCatCatCatCat</a> <time datetime="[the time]">Yesterday</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-stat">Stat: </span> Began following <a class="username" href="user.htm">TwinkleToes</a> <time datetime="[the time]">Yesterday</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-star">Favorite: </span> Favorited <a href="submission.htm">This Is a Kitty</a> by <a class="username" href="user.htm">TwinkleToes</a> <time datetime="[the time]">Yesterday</time></p>
+          <a href="submission.htm" class="thumb-container">
+            <img class="thumb" src="http://lorempixel.com/248/232" alt="" />
+            <div class="rating moderate">Rated moderate</div>
+          </a>
+        </li>
+        <li>
+          <p><span class="icon icon-art">Art: </span> New artwork: <a href="#">This Is the Title of the Thing</a> <time datetime="[the time]">2 days ago</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-art">Art: </span> New artwork: <a href="#">A Really Long Title Sit Dolor Consectetur et Cetera and So Forth</a> <time datetime="[the time]">A week ago</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-star">Favorite: </span> Favorited <a href="submission.htm">Wow</a> by <a class="username" href="user.htm">Wow</a> <time datetime="[the time]">A week ago</time></p>
+          <a href="submission.htm" class="thumb-container">
+            <img class="thumb" src="http://lorempixel.com/300/150" alt="" />
+          </a>
+        </li>
+        <li>
+          <p><span class="icon icon-heart"></span> Usernameguy and <a href="user.htm" class="username">Boomerang26</a> are now friends <time datetime="[the time]">12 December 2013</time></p>
+        </li>
+        <li>
+          <p><span class="icon icon-journal">Journal: </span> New journal entry: <a href="#">Don't Send Me Friend Requests</a> <time datetime="[the time]">11 December 2013</time></p>
+        </li>
+        <!-- option to load more? -->
+      </ol>
+
+      <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Connections</h3>
+      <div class="user-connections toggle-target-max-m">
+        <h4><a href="#" class="action disclose">Following 76</a></h4>
+        <ul class="grid compact">
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+        </ul>
+        <h4><a href="#" class="action disclose">Followed by 140</a></h4>
+        <ul class="grid compact">
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+        </ul>
+        <h4><a href="#" class="action disclose">5 friends</a></h4>
+        <ul class="grid compact">
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+        </ul>
+      </div>
+    </div><!-- .user-activity -->
+
+
+    <div class="user-comments">
+      <h4 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Shouts</h4>
+      <div class="toggle-target-max-m">
+        <form action="#" class="comment" method="post">
+          <a class="avatar" href="#"><img src="http://lorempixel.com/200/200" alt="Usernameguy's avatar" /></a>
+          <div class="comment-box hypothetical">
+            <div class="comment-info"><a href="#" class="username">AbrahammerLincolnlog</a></div>
+            <textarea name="comment" id="comment-98avdja" class="comment-entry" placeholder="Share your thoughts &#8230;"></textarea>
+            <ul class="comment-actions action-set">
+              <li><a href="#" class="action small">Formatting help</a></li>
+            </ul>
+            <button type="submit" class="comment-submit action disclose">Save</button>
+          </div><!-- .comment-box -->
+        </form><!-- .comment -->
+
+        <ol class="comment-tree">
+          <li class="comment">
+            <a class="avatar" href="#"><img src="http://lorempixel.com/201/201" alt="" /></a>
+            <article class="comment-box">
+              <header class="comment-info">
+                <a href="#" class="username">Shortname</a>
+                <time class="type-secondary type-alt" datetime="2013-12-04 14:33">4 December 2013 at 14:33</time>
+              </header>
+              <section class="comment-content formatted">
+                <p>Single-line comment yay</p>
+              </section>
+              <ul class="comment-actions action-set">
+                <li><a href="#" class="action small">Reply</a></li>
+                <li><a href="#" class="icon icon-action-warning">Report</a></li>
+              </ul>
+            </article>
+            <ol>
+              <li class="comment">
+                <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                <article class="comment-box owner">
+                  <header class="comment-info">
+                    <a href="#" class="username">Usernameguy</a>
+                    <span class="comment-attr owner">(page owner)</span>
+                    <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                  </header>
+                  <section class="comment-content formatted">
+                    <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                  </section>
+                  <ul class="comment-actions action-set">
+                    <li><a href="#" class="action small">Reply</a></li>
+                    <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                  </ul>
+                </article>
+                <ol>
+                  <li class="comment">
+                    <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                    <article class="comment-box">
+                      <header class="comment-info">
+                        <a href="#" class="username">Usernameguy</a>
+                        <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                      </header>
+                      <section class="comment-content formatted">
+                        <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally. Portland post-ironic American Apparel, Williamsburg before they sold out sriracha readymade iPhone brunch organic Carles tousled. Occupy Pinterest deep v kitsch chia cornhole. Bitters Bushwick put a bird on it, Neutra church-key trust fund umami art party Wes Anderson Vice yr American Apparel butcher.</p>
+                      </section>
+                      <ul class="comment-actions action-set">
+                        <li><a href="#" class="action small">Reply</a></li>
+                        <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                      </ul>
+                    </article>
+                  </li><!-- .comment -->
+                </ol>
+              </li><!-- .comment -->
+              <li class="comment">
+                <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                <article class="comment-box">
+                  <header class="comment-info">
+                    <a href="#" class="username">Usernameguy</a>
+                    <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+                  </header>
+                  <section class="comment-content formatted">
+                    <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                  </section>
+                  <ul class="comment-actions action-set">
+                    <li><a href="#" class="action small">Reply</a></li>
+                    <li><a href="#" class="icon icon-action-warning">Report</a></li>
+                  </ul>
+                </article>
+              </li><!-- .comment -->
+            </ol>
+          </li><!-- .comment -->
+          <li class="comment">
+            <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
+            <article class="comment-box">
+              <header class="comment-info">
+                <a href="#" class="username">Longername McNamertonguydude</a>
+                <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+              </header>
+              <section class="comment-content formatted">
+                <blockquote>
+                  <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
+                  <p>Beard selvage keffiyeh</p>
+                </blockquote>
+                <p>8-bit polaroid Intelligentsia cray 90's bicycle rights butcher kale chips cliche. Hashtag direct trade whatever, swag lo-fi Pinterest readymade freegan tattooed single-origin coffee. Drinking vinegar messenger bag twee 3 wolf moon Portland. Actually ethnic shabby chic squid swag, narwhal gluten-free stumptown distillery polaroid leggings vinyl bitters YOLO.</p>
+              </section>
+              <ul class="comment-actions action-set">
+                <li><a href="#" class="action small">Reply</a></li>
+                <li><a href="#" class="icon icon-action-warning">Report</a></li>
+              </ul>
+            </article>
+          </li><!-- .comment -->
+          <li class="comment">
+            <a class="avatar" href="#"><img src="http://lorempixel.com/197/197" alt="" /></a>
+            <article class="comment-box">
+              <header class="comment-info">
+                <a href="#" class="username">Wow</a>
+                <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
+              </header>
+              <section class="comment-content formatted">
+                <p>Vinyl Banksy Portland bespoke. Plaid ethical VHS, mumblecore kitsch freegan Intelligentsia next level skateboard gentrify. Four loko wolf wayfarers Godard stumptown, direct trade Banksy authentic trust fund whatever literally. Ethical scenester art party, bicycle rights iPhone fanny pack distillery XOXO cliche. Dreamcatcher sriracha occupy mustache, next level VHS fixie church-key.</p>
+              </section>
+              <ul class="comment-actions action-set">
+                <li><a href="#" class="action small">Reply</a></li>
+                <li><a href="#" class="icon icon-action-warning">Report</a></li>
+              </ul>
+            </article>
+          </li><!-- .comment -->
+        </ol>
+        <div class="user-more"><a href="#" class="action disclose">See all 102 shouts</a></div>
+      </div>
+    </div><!-- .user-comments -->
+  </div><!-- .user-content -->
+</div><!-- .user-content-wrap -->
+
+
+<div class="content-2 col-side-after content-group">
+  <ul class="stats-list grid user-stats">
+    <li class="grid-item"><strong class="stat">2041</strong> Profile Views</li>
+    <li class="grid-item"><strong class="stat">140</strong> Followers</li>
+    <li class="grid-item"><strong class="stat">76</strong> Following</li>
+    <li class="grid-item"><strong class="stat">102</strong> Favorites given</li>
+    <li class="grid-item"><strong class="stat">139</strong> Comments given</li>
+    <li class="grid-item"><strong class="stat">6</strong> Times you've visited</li>
+  </ul>
+  <ul class="user-social grid social-list">
+    <li class="grid-item"><a href="#" title="AIM"><strong class="icon icon-social icon-aim">AIM:</strong> aimusername</a></li>
+    <li class="grid-item"><a href="#" title="Bebo"><strong class="icon icon-social icon-bebo">Bebo:</strong> beboname</a></li>
+    <li class="grid-item"><a href="#" title="Behance"><strong class="icon icon-social icon-behance">Behance:</strong> behanceprofile</a></li>
+    <li class="grid-item"><a href="#" title="deviantArt"><strong class="icon icon-social icon-da">deviantArt:</strong> dausername</a></li>
+    <li class="grid-item"><a href="#" title="Dribbble"><strong class="icon icon-social icon-dribbble">Dribbble:</strong> dribbblepage</a></li>
+    <li class="grid-item"><a href="#" title="Email"><strong class="icon icon-social icon-email">Email:</strong> email@address.com</a></li>
+    <li class="grid-item"><a href="#" title="Facebook"><strong class="icon icon-social icon-fb">Facebook:</strong> facebookname</a></li>
+    <li class="grid-item"><a href="#" title="Flickr"><strong class="icon icon-social icon-flickr">Flickr:</strong> flickrpage</a></li>
+    <li class="grid-item"><a href="#" title="Fur Affinity"><strong class="icon icon-social icon-fa">Fur Affinity:</strong> fausername</a></li>
+    <li class="grid-item"><a href="#" title="Github"><strong class="icon icon-social icon-github">Github:</strong> githubusername</a></li>
+    <li class="grid-item"><a href="#" title="Google Plus"><strong class="icon icon-social icon-g">Google Plus:</strong> googlename</a></li>
+    <li class="grid-item"><a href="#" title="ICQ"><strong class="icon icon-social icon-icq">ICQ:</strong> 129831289318</a></li>
+    <li class="grid-item"><a href="#" title="Inkbunny"><strong class="icon icon-social icon-ib">InkBunny:</strong> ibusername</a></li>
+    <li class="grid-item"><a href="#" title="Last.fm"><strong class="icon icon-social icon-lastfm">Last.fm:</strong> lastfmusername</a></li>
+    <li class="grid-item"><a href="#" title="LinkedIn"><strong class="icon icon-social icon-li">LinkedIn:</strong> linkedinpage</a></li>
+    <li class="grid-item"><a href="#" title="LiveJournal"><strong class="icon icon-social icon-lj">LiveJournal:</strong> ljusername</a></li>
+    <li class="grid-item"><a href="#" title="MSN"><strong class="icon icon-social icon-msn">MSN:</strong> msnname</a></li>
+    <li class="grid-item"><a href="#" title="MySpace"><strong class="icon icon-social icon-myspace">MySpace:</strong> myspacepage</a></li>
+    <li class="grid-item"><a href="#" title="Path"><strong class="icon icon-social icon-path">Path:</strong> pathprofile</a></li>
+    <li class="grid-item"><a href="#" title="Pinterest"><strong class="icon icon-social icon-pin">Pinterest:</strong> pinterestpage</a></li>
+    <li class="grid-item"><a href="#" title="PSN"><strong class="icon icon-social icon-psn">PSN:</strong> psnusername</a></li>
+    <li class="grid-item"><a href="#" title="Reddit"><strong class="icon icon-social icon-reddit">Reddit:</strong> redditname</a></li>
+    <li class="grid-item"><a href="#" title="Skype"><strong class="icon icon-social icon-skype">Skype:</strong> skypename</a></li>
+    <li class="grid-item"><a href="#" title="Snapchat"><strong class="icon icon-social icon-snapchat">Snapchat:</strong> snapchat</a></li>
+    <li class="grid-item"><a href="#" title="SoFurry"><strong class="icon icon-social icon-sofurry">SoFurry:</strong> sfusername</a></li>
+    <li class="grid-item"><a href="#" title="Soundcloud"><strong class="icon icon-social icon-soundcloud">Soundcloud:</strong> soundcloudpage</a></li>
+    <li class="grid-item"><a href="#" title="Steam"><strong class="icon icon-social icon-steam">Steam:</strong> steamusername</a></li>
+    <li class="grid-item"><a href="#" title="Tumblr"><strong class="icon icon-social icon-tumblr">Tumblr:</strong> tumblrpage</a></li>
+    <li class="grid-item"><a href="#" title="Twitter"><strong class="icon icon-social icon-tw">Twitter:</strong> @twittername</a></li>
+    <li class="grid-item"><a href="#" title="Vimeo"><strong class="icon icon-social icon-vimeo">Vimeo:</strong> vimeoprofile</a></li>
+    <li class="grid-item"><a href="#" title="XBox Live"><strong class="icon icon-social icon-xbl">XBox Live:</strong> xblname</a></li>
+    <li class="grid-item"><a href="#" title="Yahoo"><strong class="icon icon-social icon-yahoo">Yahoo:</strong> yahoosomething</a></li>
+    <li class="grid-item"><a href="#" title="YouTube"><strong class="icon icon-social icon-yt">YouTube:</strong> youtubepage</a></li>
+  </ul>
+</div><!-- .user-supplement -->
+{% endblock %}

@@ -46,9 +46,22 @@ class Login(Base):
         from ..media import get_user_media
         return get_user_media(self.userid)
 
-    @property
+    @reify
     def avatar(self):
         return self.media['avatar'][0]
+
+    @reify
+    def banner(self):
+        if not self.media.get('banner'):
+            return None
+        return self.media['banner'][0]
+
+    def __json__(self, request):
+        return {
+            'login': self.login_name,
+            'username': self.profile.username,
+            'full_name': self.profile.full_name,
+        }
 
 
 class AuthBCrypt(Base):
