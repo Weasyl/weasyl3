@@ -1,3 +1,5 @@
+from pyramid.threadlocal import get_current_request
+
 from .cache import region
 from .models.media import SubmissionMediaLink, UserMediaLink
 
@@ -5,13 +7,15 @@ from .models.media import SubmissionMediaLink, UserMediaLink
 @SubmissionMediaLink.register_cache
 @region.cache_multi_on_arguments()
 def get_multi_submission_media(*submitids):
-    return SubmissionMediaLink.bucket_links(submitids)
+    request = get_current_request()
+    return SubmissionMediaLink.bucket_links(request, submitids)
 
 
 @UserMediaLink.register_cache
 @region.cache_multi_on_arguments()
 def get_multi_user_media(*userids):
-    return UserMediaLink.bucket_links(userids)
+    request = get_current_request()
+    return UserMediaLink.bucket_links(request, userids)
 
 
 def get_submission_media(submitid):

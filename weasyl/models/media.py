@@ -37,20 +37,22 @@ class MediaItem(Base):
             DBSession.add(obj)
         return obj
 
-    def to_json(self, recursive=1, link=None):
-        ret = super(MediaItem, self).to_json()
+    def to_json(self, request, recursive=1, link=None):
+        ret = super(MediaItem, self).to_json(request)
         if link.link_type == 'submission':
             login_name = link.submission.owner.login_name
-            ret['display_url'] = '/~%s/submission/%s/%s-%s-%s.%s' % (
-                login_name, link.submitid, login_name,
-                slug_for(link.submission.title), self.mediaid, self.file_type)
+            ret['display_url'] = request.resource_path(
+                None, '~' + login_name, 'submissions', str(link.submitid),
+                '%s-%s-%s.%s' % (
+                    login_name, slug_for(link.submission.title), self.mediaid,
+                    self.file_type))
         else:
             ret['display_url'] = self.display_url
         if recursive > 0:
             buckets = collections.defaultdict(list)
             for link in self.described:
                 buckets[link.link_type].append(
-                    link.media_item.to_json(recursive=recursive - 1, link=link))
+                    link.media_item.to_json(request, recursive=recursive - 1, link=link))
             ret['described'] = dict(buckets)
         else:
             ret['described'] = {}
@@ -103,8 +105,8 @@ class DiskMediaItem(MediaItem):
         registry = get_current_registry()
         return os.path.join(registry.settings['weasyl.static_root'], self.file_path)
 
-    def to_json(self, recursive=1, link=None):
-        ret = super(DiskMediaItem, self).to_json(recursive=recursive, link=link)
+    def to_json(self, request, recursive=1, link=None):
+        ret = super(DiskMediaItem, self).to_json(request, recursive=recursive, link=link)
         ret['full_file_path'] = self.full_file_path
         return ret
 
@@ -148,11 +150,11 @@ class _LinkMixin(object):
         cls.refresh_cache(identity)
 
     @classmethod
-    def bucket_links(cls, identities):
+    def bucket_links(cls, request, identities):
         if not identities:
             return []
         pairs = (
-            DBSession.query(MediaItem, cls)
+            request.db.query(MediaItem, cls)
             .with_polymorphic([DiskMediaItem])
             .join(cls, *cls._linkjoin)
             .options(joinedload('described'))
@@ -161,7 +163,7 @@ class _LinkMixin(object):
             .all())
         buckets = collections.defaultdict(lambda: collections.defaultdict(list))
         for media_item, link in pairs:
-            media_data = media_item.to_json(link=link)
+            media_data = media_item.to_json(request, link=link)
             media_data['link_attributes'] = link.attributes
             buckets[getattr(link, cls._identity)][link.link_type].append(media_data)
         return [dict(buckets[identity]) for identity in identities]
