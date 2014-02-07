@@ -6,15 +6,6 @@
   <div class="title-wrap small-width">
     <h3 class="title primary">Sign In</h3>
   </div>
-  <form action="" method="post" class="login-form standard-form small-width">
-    {{ form['csrf_token'].serialize() | safe }}
-    {{ form['username'].serialize() | safe }}
-    {{ form['password'].serialize() | safe }}
-    <button type="submit" name="signin" class="action disclose" tabindex="1">Sign in</button>
-    <ul class="actions">
-      <li><a href="#">Create a new account</a></li>
-      <li><a href="#">Forgot your info?</a></li>
-    </ul>
-  </form>
+  {{ f.login_form(form) }}
 </div><!-- .home-update -->
 {% endblock %}

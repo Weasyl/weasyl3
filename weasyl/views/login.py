@@ -1,6 +1,7 @@
 import logging
 
 import colander as c
+from deform.form import Form
 import deform.widget as w
 from pyramid_deform import CSRFSchema
 from pyramid.security import remember, forget
@@ -39,3 +40,10 @@ class SignoutView(FormView):
 
     def signout_success(self, appstruct):
         return httpexceptions.HTTPSeeOther('/', headers=forget(self.request))
+
+
+def login_forms(request):
+    return {
+        'signin': Form(Signin().bind(request=request)),
+        'signout': Form(CSRFSchema().bind(request=request)),
+    }

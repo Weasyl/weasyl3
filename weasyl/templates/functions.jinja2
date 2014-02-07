@@ -15,3 +15,16 @@
 {% macro datetime(dt) %}
 <time class="type-secondary type-alt" datetime="{{ dt.isoformat() }}">{{ request.format_datetime(dt) }}</time>
 {% endmacro %}
+
+{% macro login_form(form) %}
+<form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
+  {{ form['csrf_token'].serialize() | safe }}
+  {{ form['username'].serialize() | safe }}
+  {{ form['password'].serialize() | safe }}
+  <button type="submit" name="signin" class="action disclose" tabindex="1">Sign in</button>
+  <ul class="actions">
+    <li><a href="#">Create a new account</a></li>
+    <li><a href="#">Forgot your info?</a></li>
+  </ul>
+</form>
+{% endmacro %}
