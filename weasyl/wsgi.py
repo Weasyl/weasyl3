@@ -8,6 +8,7 @@ from pyramid.renderers import JSON
 from .models.meta import configure as configure_db
 from .resources import RootResource
 from .sessions import WeasylSession
+from .views.legacy import configure_urls
 from .views.login import login_forms
 from . import authorization, cache, predicates
 
@@ -48,6 +49,8 @@ def make_app(global_config, **settings):
     config.add_request_method(path_for)
     config.add_request_method(format_datetime)
     config.add_request_method(login_forms, reify=True)
+
+    configure_urls(config)
 
     json_renderer = JSON()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
