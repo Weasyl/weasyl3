@@ -1,6 +1,7 @@
 import logging
 
 from pyramid.security import Allow, Deny, Everyone, Authenticated
+from pyramid import httpexceptions
 
 from .models.content import Submission
 from .models.users import Login
@@ -30,6 +31,8 @@ class SubmissionsResource:
     @make_location_aware
     def __getitem__(self, segment):
         submission = Submission.query.get_or_404(segment)
+        if isinstance(self.__parent__, UserResource) and self.__parent__.user != submission.owner:
+            raise httpexceptions.HTTPNotFound()
         return SubmissionResource(self.request, submission)
 
 
@@ -64,7 +67,19 @@ class UsersResource:
         return UserResource(self.request, user)
 
 
-class UserResource:
+class MethodDispatchResource:
+    def __init__(self, request):
+        self.request = request
+
+    @make_location_aware
+    def __getitem__(self, segment):
+        factory = getattr(self, 'segment_' + segment, None)
+        if factory is None:
+            raise KeyError(segment)
+        return factory(self.request)
+
+
+class UserResource(MethodDispatchResource):
     def __init__(self, request, user):
         self.request = request
         self.user = user
@@ -81,17 +96,7 @@ class UserResource:
                 (Allow, Everyone, 'view'),
             ]
 
-
-class MethodDispatchResource:
-    def __init__(self, request):
-        self.request = request
-
-    @make_location_aware
-    def __getitem__(self, segment):
-        factory = getattr(self, 'segment_' + segment, None)
-        if factory is None:
-            raise KeyError(segment)
-        return factory(self.request)
+    segment_submissions = SubmissionsResource
 
 
 class APIResource(MethodDispatchResource):
