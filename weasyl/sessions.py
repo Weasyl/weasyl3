@@ -5,9 +5,10 @@ import os
 import time
 
 from pyramid.interfaces import ISession, ISessionFactory
+from sqlalchemy.orm import contains_eager
 from zope.interface import implementer, provider
 
-from .models.users import Session
+from .models.users import Login, Session
 
 
 log = logging.getLogger(__name__)
@@ -32,7 +33,12 @@ class WeasylSession(collections.MutableMapping):
         cookie = self.request.cookies.get(self._cookie_name)
         self._session_obj = None
         if cookie is not None:
-            self._session_obj = Session.query.get(cookie)
+            self._session_obj = (
+                Session.query
+                .filter_by(sessionid=cookie)
+                .outerjoin(Login)
+                .options(contains_eager(Session.user))
+                .first())
         if self._session_obj is not None:
             self._dict.update(self._session_obj.additional_data)
             self._dict.update({k: getattr(self._session_obj, k) for k in self._static_fields})
