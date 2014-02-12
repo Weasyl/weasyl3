@@ -32,7 +32,7 @@ def view_submission(context, request):
     return {'submission': context.submission}
 
 
-@view_config(context=RootResource, renderer='index.jinja2', api='false')
+@view_config(context=RootResource, renderer='content/index.jinja2', api='false')
 def index(request):
     submissions = (
         Submission.query
