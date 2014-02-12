@@ -39,7 +39,7 @@ class MediaItem(Base):
 
     def to_json(self, request, recursive=1, link=None):
         ret = super(MediaItem, self).to_json(request)
-        if link.link_type == 'submission':
+        if False and link.link_type == 'submission':
             login_name = link.submission.owner.login_name
             ret['display_url'] = request.resource_path(
                 None, '~' + login_name, 'submissions', str(link.submitid),
@@ -56,6 +56,8 @@ class MediaItem(Base):
             ret['described'] = dict(buckets)
         else:
             ret['described'] = {}
+        if 'width' in self.attributes and 'height' in self.attributes:
+            ret['aspect_ratio'] = self.attributes['width'] / self.attributes['height']
         return ret
 
     def ensure_cover_image(self, source_image=None):

@@ -3,8 +3,12 @@ import logging
 from pyramid.security import has_permission
 from pyramid.view import view_config
 from pyramid import httpexceptions
+from sqlalchemy.orm import contains_eager
 
-from ..resources import SubmissionResource
+from ..media import populate_with_submission_media
+from ..models.content import Submission
+from ..models.users import Login
+from ..resources import RootResource, SubmissionResource
 
 
 log = logging.getLogger(__name__)
@@ -26,3 +30,17 @@ def view_submission(context, request):
         else:
             return httpexceptions.HTTPNotFound()
     return {'submission': context.submission}
+
+
+@view_config(context=RootResource, renderer='index.jinja2', api='false')
+def index(request):
+    submissions = (
+        Submission.query
+        .order_by(Submission.submitid.desc())
+        .filter_by(rating=10)
+        .join(Login)
+        .options(contains_eager(Submission.owner))
+        .limit(20)
+        .all())
+    populate_with_submission_media(submissions)
+    return {'submissions': submissions}
