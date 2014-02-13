@@ -90,19 +90,11 @@
 
 <div class="content home-update content-group">
   <div class="title-wrap">
-    <h3 class="title primary">This Is a Site Update Post</h3>
-    <h4 class="title-complement">Written 3 days ago by <a href="#" class="username">Term</a></h4>
+    <h3 class="title primary">{{ latest_update.title }}</h3>
+    <h4 class="title-complement">Written {{ latest_update.unixtime | relative_date }} by <a href="/~{{ latest_update.owner.login_name }}" class="username">{{ latest_update.owner.profile.username }}</a></h4>
   </div>
   <div class="formatted">
-    <p>Banh mi art party Williamsburg, stumptown fashion axe freegan Schlitz dreamcatcher Intelligentsia Tumblr biodiesel blog single-origin coffee. Try-hard twee brunch seitan leggings drinking vinegar. Bushwick raw denim Vice Truffaut. XOXO swag Neutra mustache, polaroid cornhole kitsch VHS Marfa mixtape raw denim Tonx ethical vinyl Schlitz. Single-origin coffee street art banh mi, fashion axe polaroid Bushwick drinking vinegar Pitchfork. Viral freegan Pitchfork cardigan ethnic twee YOLO hoodie, master cleanse fashion axe single-origin coffee food truck. Kogi shabby chic stumptown, direct trade hella Cosby sweater blog Bushwick kitsch McSweeney's trust fund.</p>
-    <p>Shoreditch Williamsburg Thundercats organic, vinyl VHS synth mumblecore drinking vinegar meggings jean shorts cornhole. Twee mlkshk aesthetic lomo. Organic selfies bicycle rights, American Apparel art party distillery Blue Bottle. McSweeney's chambray gastropub yr vegan American Apparel, pour-over wolf wayfarers artisan Tonx hashtag semiotics banjo pork belly. Paleo Truffaut master cleanse leggings tofu. Roof party paleo vegan iPhone. Plaid Williamsburg whatever Marfa American Apparel, actually ethical pop-up Tumblr slow-carb PBR&amp;B Bushwick cornhole messenger bag sriracha.</p>
-    <ul>
-      <li>Raw denim 8-bit locavore Thundercats</li>
-      <li>Hoodie hashtag next level small batch</li>
-      <li>Fingerstache squid locavore, Shoreditch sartorial Austin irony paleo</li>
-      <li>Next level distillery butcher gluten-free cardigan ethnic</li>
-    </ul>
-    <p>Meh Banksy +1 pork belly, Odd Future McSweeney's stumptown. Street art four loko Austin 90's, shabby chic meh cornhole master cleanse chillwave selfies Carles literally. Sustainable forage Vice Schlitz Bushwick bitters, Terry Richardson irony vinyl Carles. Tattooed cray pickled, iPhone High Life fashion axe next level pug synth swag sustainable. Hella kogi fashion axe, Banksy asymmetrical wolf shabby chic Intelligentsia PBR&amp;B pug before they sold out you probably haven't heard of them distillery disrupt. Twee PBR slow-carb Helvetica cornhole YOLO, umami church-key Truffaut ugh. Freegan jean shorts gastropub stumptown, banh mi typewriter direct trade trust fund lomo Pinterest hashtag Intelligentsia.</p>
+    {{ latest_update.content | markdown }}
   </div><!-- .formatted -->
   <div class="center-action"><a href="#" class="action disclose">Discuss this update</a></div>
 </div><!-- .home-update -->

@@ -8,6 +8,7 @@ from sqlalchemy.orm import contains_eager
 from ..media import populate_with_submission_media
 from ..models.content import Submission
 from ..models.users import Login
+from ..models.site import SiteUpdate
 from ..resources import RootResource, SubmissionResource
 
 
@@ -43,4 +44,10 @@ def index(request):
         .limit(20)
         .all())
     populate_with_submission_media(submissions)
-    return {'submissions': submissions}
+
+    latest_update = (
+        SiteUpdate.query
+        .order_by(SiteUpdate.updateid.desc())
+        .first())
+
+    return {'submissions': submissions, 'latest_update': latest_update}

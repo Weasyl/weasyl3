@@ -30,6 +30,7 @@ def make_app(global_config, **settings):
     settings['jinja2.filters'] = """
         static_path = pyramid_jinja2.filters:static_path_filter
         markdown = weasyl.text.markdown_filter
+        relative_date = weasyl.text.relative_date
     """
     settings['cache.wrap'] = [cache.ThreadCacheProxy, cache.JSONProxy]
 
