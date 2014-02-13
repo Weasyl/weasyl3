@@ -91,7 +91,9 @@
 <div class="content home-update content-group">
   <div class="title-wrap">
     <h3 class="title primary">{{ latest_update.title }}</h3>
-    <h4 class="title-complement">Written {{ latest_update.unixtime | relative_date }} by <a href="/~{{ latest_update.owner.login_name }}" class="username">{{ latest_update.owner.profile.username }}</a></h4>
+    <h4 class="title-complement">
+      Written {{ latest_update.unixtime | relative_date }} {{ f.by_user(latest_update.owner) }}
+    </h4>
   </div>
   <div class="formatted">
     {{ latest_update.content | markdown }}
