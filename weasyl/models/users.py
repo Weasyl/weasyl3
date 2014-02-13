@@ -7,7 +7,7 @@ from sqlalchemy import orm
 import sqlalchemy as sa
 
 from ..legacy import plaintext
-from .helpers import CharSettingsColumn, JSONValuesColumn, WeasylTimestampColumn
+from .helpers import CharSettingsColumn, JSONValuesColumn, WeasylTimestampColumn, ArrowColumn
 from .meta import Base
 
 
@@ -148,7 +148,7 @@ class Session(Base):
 
     sessionid = sa.Column(sa.String(64), primary_key=True)
     created_at = sa.Column(
-        TIMESTAMP, nullable=False, server_default='now()', index=True)
+        ArrowColumn, nullable=False, server_default='now()', index=True)
     userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'))
     csrf_token = sa.Column(sa.String(64))
     additional_data = sa.Column(JSONValuesColumn(), nullable=False, server_default='')

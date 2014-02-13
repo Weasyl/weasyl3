@@ -42,7 +42,7 @@ class WeasylSession(collections.MutableMapping):
         if self._session_obj is not None:
             self._dict.update(self._session_obj.additional_data)
             self._dict.update({k: getattr(self._session_obj, k) for k in self._static_fields})
-            self.created = int(self._session_obj.created_at.timestamp())
+            self.created = int(self._session_obj.created_at.timestamp)
         else:
             self.created = time.time()
         request.add_response_callback(self._serialize)
@@ -116,7 +116,7 @@ class WeasylSession(collections.MutableMapping):
         if self._session_obj is None:
             self._session_obj = Session(sessionid=make_session_id())
             request.db.add(self._session_obj)
-            response.set_cookie(self._cookie_name, value=self._session_obj.sessionid)
+            response.set_cookie(self._cookie_name, value=self._session_obj.sessionid, httponly=True)
         additional_data = self._dict.copy()
         for k in self._static_fields:
             setattr(self._session_obj, k, additional_data.pop(k, None))

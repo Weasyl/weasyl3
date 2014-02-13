@@ -3,8 +3,7 @@ import re
 
 from jinja2 import Markup
 import misaka
-
-from . import dates
+import arrow
 
 
 def slug_for(title):
@@ -12,35 +11,15 @@ def slug_for(title):
     return "-".join(m.group(0) for m in re.finditer(r"[a-z0-9]+", title.lower()))
 
 
-def relative_date(dt):
-    diff = dates.now() - dt
-
-    if diff.days:
-        if diff.days >= 365:
-            relative = (int(diff.days / 365.25), 'year')
-        elif diff.days >= 30:
-            relative = (diff.days // 30, 'month')
-        else:
-            relative = (diff.days, 'day')
-    elif diff.seconds:
-        if diff.seconds >= 3600:
-            relative = (diff.seconds // 3600, 'hour')
-        elif diff.seconds >= 60:
-            relative = (diff.seconds // 60, 'minute')
-        else:
-            relative = (diff.seconds, 'second')
-    else:
-        return 'just now'
-
-    (count, unit) = relative
-    return Markup(
-        '<time datetime="{iso}">{count} {unit}{s} {direction}</time>'.format(
-            iso=dt.isoformat(),
-            count=abs(count),
-            unit=unit,
-            s='' if count in (-1, 1) else 's',
-            direction='from now' if count < 0 else 'ago'
-        ))
+def relative_date(d):
+    # DON’T use kwargs here. MarkupSafe won’t escape them.
+    # What’s that, you say? There are no angle brackets in formatted dates?
+    return Markup('<time datetime="{}" title="{} at {} UTC">{}</time>').format(
+        d.isoformat(),
+        d.format('MMMM D, YYYY'),
+        d.format('h:mm:ss A'),
+        d.humanize()
+    )
 
 
 MISAKA_EXT = (
