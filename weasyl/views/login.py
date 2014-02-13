@@ -47,6 +47,26 @@ class SignoutView(FormView):
         return httpexceptions.HTTPSeeOther('/', headers=forget(self.request))
 
 
+class Register(CSRFSchema):
+    username = c.SchemaNode(c.String(), description='Desired username')
+    password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
+    password_confirm = c.SchemaNode(c.String(), description='Confirm password', widget=w.PasswordWidget())
+    email = c.SchemaNode(c.String(), description='E-mail address')
+    year_born = c.SchemaNode(c.Int(), description='Year born')
+    month_born = c.SchemaNode(c.Int(), description='Month')
+    day_born = c.SchemaNode(c.Int(), description='Day')
+
+
+@view_config(name='register', context=RootResource, renderer='login/register.jinja2', permission='signin')
+class RegisterView(FormView):
+    schema = Register()
+    buttons = 'register',
+
+    def register_success(self, appstruct):
+        return httpexceptions.HTTPSeeOther(
+            '/', headers=remember(self.request, appstruct['user'].userid))
+
+
 def login_forms(request):
     return {
         'signin': Form(Signin().bind(request=request)),
