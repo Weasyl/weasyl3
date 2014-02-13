@@ -49,10 +49,10 @@
       <div class="header-user group">
         {{ f.user_avatar(request.session.user) }}
         <p class="text-container align-vert">
-	  <span class="text">
-	    <span class="type-alt">Welcome back,</span> {{ f.user_link(request.session.user) }}
-	  </span>
-	</p>
+          <span class="text">
+            <span class="type-alt">Welcome back,</span> {{ f.user_link(request.session.user) }}
+          </span>
+        </p>
       </div><!-- .header-user -->
       {% else %}
       <div class="header-user group guest">
