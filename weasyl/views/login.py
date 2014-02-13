@@ -28,7 +28,7 @@ def login_form_validator(node, value):
         raise c.Invalid(node, e.args[0]) from e
 
 
-@view_config(name='signin', context=RootResource, renderer='signin.jinja2', permission='signin')
+@view_config(name='signin', context=RootResource, renderer='login/signin.jinja2', permission='signin')
 class SigninView(FormView):
     schema = Signin(validator=login_form_validator)
     buttons = 'signin',
@@ -38,7 +38,7 @@ class SigninView(FormView):
             '/', headers=remember(self.request, appstruct['user'].userid))
 
 
-@view_config(name='signout', context=RootResource, renderer='signout.jinja2', permission='signout')
+@view_config(name='signout', context=RootResource, renderer='login/signout.jinja2', permission='signout')
 class SignoutView(FormView):
     schema = CSRFSchema()
     buttons = 'signout',

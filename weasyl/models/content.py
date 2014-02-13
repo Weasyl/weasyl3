@@ -10,18 +10,18 @@ from .users import Login
 
 
 class Tag(Base):
-  __tablename__ = "searchtag"
+    __tablename__ = "searchtag"
 
-  tagid = sa.Column(sa.Integer, primary_key=True)
-  title = sa.Column(sa.Text, nullable=False, unique=True)
+    tagid = sa.Column(sa.Integer, primary_key=True)
+    title = sa.Column(sa.Text, nullable=False, unique=True)
 
 
 class SubmissionTag(Base):
-  __tablename__ = 'searchmapsubmit'
+    __tablename__ = 'searchmapsubmit'
 
-  tagid = sa.Column(sa.Integer, sa.ForeignKey('searchtag.tagid'), primary_key=True)
-  targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), primary_key=True)
-  settings = sa.Column(sa.String, nullable=False, server_default='')
+    tagid = sa.Column(sa.Integer, sa.ForeignKey('searchtag.tagid'), primary_key=True)
+    targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), primary_key=True)
+    settings = sa.Column(sa.String, nullable=False, server_default='')
 
 
 class Submission(Base):
@@ -122,20 +122,20 @@ class Submission(Base):
 
 
 class Comment(Base):
-  __tablename__ = 'submitcomment'
+    __tablename__ = 'submitcomment'
 
-  commentid = sa.Column(sa.Integer, nullable=False, primary_key=True)
-  userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'))
-  targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), index=True)
-  parentid = sa.Column(sa.Integer, nullable=False, server_default='0')
-  content = sa.Column(sa.Text, nullable=False)
-  unixtime = sa.Column(WeasylTimestampColumn, nullable=False)
-  indent = sa.Column(sa.Integer, nullable=False, server_default='0')
-  settings = sa.Column(CharSettingsColumn({
-      'h': 'hidden',
-  }), nullable=False, server_default='')
+    commentid = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'))
+    targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), index=True)
+    parentid = sa.Column(sa.Integer, nullable=False, server_default='0')
+    content = sa.Column(sa.Text, nullable=False)
+    unixtime = sa.Column(WeasylTimestampColumn, nullable=False)
+    indent = sa.Column(sa.Integer, nullable=False, server_default='0')
+    settings = sa.Column(CharSettingsColumn({
+        'h': 'hidden',
+    }), nullable=False, server_default='')
 
-  target = relationship(Submission, backref='comments')
-  poster = relationship(Login, backref='comments')
+    target = relationship(Submission, backref='comments')
+    poster = relationship(Login, backref='comments')
 
-  subcomments = ()
+    subcomments = ()

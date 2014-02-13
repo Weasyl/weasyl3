@@ -1,0 +1,108 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Index{% endblock %}
+{% block body %}
+<div class="home-views group">
+  <ul class="home-tabs action-set tabs">
+    <li><a href="#" class="action active disclose below">Everything</a></li>
+    <li><a href="#" class="action">Visual</a></li>
+    <li><a href="#" class="action">Literature</a></li>
+    <li><a href="#" class="action">Multimedia</a></li>
+    <li><a href="#" class="action">Random</a></li>
+    <li><a href="#relevantSettingsPage" class="icon icon-gear">Tabs settings</a></li>
+  </ul>
+  <form class="view-options" action="#" method="post">
+    <label class="view-options-label">
+      <input type="checkbox" name="critique" />
+      <span class="icon icon-view-crit">Show only submissions that have requested critique</span>
+    </label>
+    <label class="view-options-label">
+      <input type="checkbox" name="filter-bypass" />
+      <span class="icon icon-view-bypass">Temporarily bypass my tag filters</span>
+    </label>
+    <fieldset class="view-options-group">
+      <label class="view-options-label">
+        <input type="radio" name="view-mode" value="mosaic" checked="checked" />
+        <span class="icon icon-view-mosaic">Mosaic view</span>
+      </label>
+      <label class="view-options-label">
+        <input type="radio" name="view-mode" value="grid" />
+        <span class="icon icon-view-grid">Grid view</span>
+      </label>
+    </fieldset>
+    <input type="submit" value="Go" />
+  </form>
+</div><!-- .home-views -->
+
+<div class="mosaic">
+  {% for sub in submissions %}
+  <figure class="item" data-init-aspect="{{ sub.submission_media['aspect_ratio'] }}">
+    <a href="{{ request.path_for(sub) }}" class="thumb-container">
+      <img class="thumb" src="{{ sub.submission_media['display_url'] }}" alt="" />
+      <figcaption class="info">
+        <h4 class="title">{{ sub.title }}</h4>
+        <p class="byline"><span class="type-alt">by</span> {{ sub.owner.profile.username }}</p>
+      </figcaption>
+    </a>
+  </figure>
+  {% endfor %}
+</div><!-- .mosaic -->
+
+<div class="center-action"><a href="#" class="action disclose">More from Everything</a></div>
+
+<div class="content-2 home-streaming content-group">
+  <!-- aligns an inline block .title.primary for better webkit gradient coverage -->
+  <div class="title-wrap">
+    <h3 class="title primary">Streaming Now</h3>
+  </div>
+  <div class="grid">
+    <div class="grid-item grid-1-3-m">
+      <a href="#" class="avatar"><img src="http://lorempixel.com/200/200" alt="AbrahammerLIncolnlog's avatar" /></a>
+      <div class="info">
+        <a href="#" class="username">AbrahammerLincolnlog</a>
+        <a href="#" class="link">http://www.livestream.com/hooray</a>
+        <p class="type-alt type-secondary start-time">since 17:22 MST</p>
+        <p class="description formatted">Short description about stream. Quinoa wayfarers gluten-free, Bushwick Echo Park</p>
+      </div><!-- .info -->
+    </div><!-- .grid-item -->
+    <div class="grid-item grid-1-3-m">
+      <a href="#" class="avatar"><img src="http://lorempixel.com/199/199" alt="AbrahammerLIncolnlog's avatar" /></a>
+      <div class="info">
+        <a href="#" class="username">Cat</a>
+        <a href="#" class="link">http://www.livestream.com/hooray</a>
+        <p class="type-alt type-secondary start-time">since 15:20 MST</p>
+        <p class="description formatted">Messenger bag Austin hoodie, chambray kitsch quinoa Vice. Blog keffiyeh small batch</p>
+      </div><!-- .info -->
+    </div><!-- .grid-item -->
+    <div class="grid-item grid-1-3-m">
+      <a href="#" class="avatar"><img src="http://lorempixel.com/201/201" alt="AbrahammerLIncolnlog's avatar" /></a>
+      <div class="info">
+        <a href="#" class="username">Usernameguy</a>
+        <a href="#" class="link">http://www.livestream.com/hooray</a>
+        <p class="type-alt type-secondary start-time">since 12:45 MST</p>
+        <p class="description formatted">IPhone plaid ennui bespoke YOLO street art</p>
+      </div><!-- .info -->
+    </div><!-- .grid-item -->
+  </div><!-- .grid -->
+  <div class="center-action"><a href="streams.htm" class="action disclose">5 total</a></div>
+</div><!-- .home-streaming -->
+
+<div class="content home-update content-group">
+  <div class="title-wrap">
+    <h3 class="title primary">This Is a Site Update Post</h3>
+    <h4 class="title-complement">Written 3 days ago by <a href="#" class="username">Term</a></h4>
+  </div>
+  <div class="formatted">
+    <p>Banh mi art party Williamsburg, stumptown fashion axe freegan Schlitz dreamcatcher Intelligentsia Tumblr biodiesel blog single-origin coffee. Try-hard twee brunch seitan leggings drinking vinegar. Bushwick raw denim Vice Truffaut. XOXO swag Neutra mustache, polaroid cornhole kitsch VHS Marfa mixtape raw denim Tonx ethical vinyl Schlitz. Single-origin coffee street art banh mi, fashion axe polaroid Bushwick drinking vinegar Pitchfork. Viral freegan Pitchfork cardigan ethnic twee YOLO hoodie, master cleanse fashion axe single-origin coffee food truck. Kogi shabby chic stumptown, direct trade hella Cosby sweater blog Bushwick kitsch McSweeney's trust fund.</p>
+    <p>Shoreditch Williamsburg Thundercats organic, vinyl VHS synth mumblecore drinking vinegar meggings jean shorts cornhole. Twee mlkshk aesthetic lomo. Organic selfies bicycle rights, American Apparel art party distillery Blue Bottle. McSweeney's chambray gastropub yr vegan American Apparel, pour-over wolf wayfarers artisan Tonx hashtag semiotics banjo pork belly. Paleo Truffaut master cleanse leggings tofu. Roof party paleo vegan iPhone. Plaid Williamsburg whatever Marfa American Apparel, actually ethical pop-up Tumblr slow-carb PBR&amp;B Bushwick cornhole messenger bag sriracha.</p>
+    <ul>
+      <li>Raw denim 8-bit locavore Thundercats</li>
+      <li>Hoodie hashtag next level small batch</li>
+      <li>Fingerstache squid locavore, Shoreditch sartorial Austin irony paleo</li>
+      <li>Next level distillery butcher gluten-free cardigan ethnic</li>
+    </ul>
+    <p>Meh Banksy +1 pork belly, Odd Future McSweeney's stumptown. Street art four loko Austin 90's, shabby chic meh cornhole master cleanse chillwave selfies Carles literally. Sustainable forage Vice Schlitz Bushwick bitters, Terry Richardson irony vinyl Carles. Tattooed cray pickled, iPhone High Life fashion axe next level pug synth swag sustainable. Hella kogi fashion axe, Banksy asymmetrical wolf shabby chic Intelligentsia PBR&amp;B pug before they sold out you probably haven't heard of them distillery disrupt. Twee PBR slow-carb Helvetica cornhole YOLO, umami church-key Truffaut ugh. Freegan jean shorts gastropub stumptown, banh mi typewriter direct trade trust fund lomo Pinterest hashtag Intelligentsia.</p>
+  </div><!-- .formatted -->
+  <div class="center-action"><a href="#" class="action disclose">Discuss this update</a></div>
+</div><!-- .home-update -->
+{% endblock %}
