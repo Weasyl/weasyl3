@@ -12,23 +12,23 @@
     {{ form['username'].serialize() | safe }}
     <div class="grid compact">
       <div class="grid-item grid-1-2-s">
-	{{ form['password'].serialize() | safe }}
+        {{ form['password'].serialize() | safe }}
       </div>
       <div class="grid-item grid-1-2-s">
-	{{ form['password_confirm'].serialize() | safe }}
+        {{ form['password_confirm'].serialize() | safe }}
       </div>
     </div><!-- .grid -->
     <p class="form-helper-text type-alt type-secondary">We require a minimum of eight characters</p>
     {{ form['email'].serialize() | safe }}
     <div class="grid compact">
       <div class="grid-item grid-1-3">
-	{{ form['year_born'].serialize() | safe }}
+        {{ form['year_born'].serialize() | safe }}
       </div>
       <div class="grid-item grid-1-3">
-	{{ form['month_born'].serialize() | safe }}
+        {{ form['month_born'].serialize() | safe }}
       </div>
       <div class="grid-item grid-1-3">
-	{{ form['day_born'].serialize() | safe }}
+        {{ form['day_born'].serialize() | safe }}
       </div>
     </div>
     <p class="form-helper-text type-alt type-secondary">YYYY MM DD. <a href="#helpfile" target="_blank">Why do we need this?</a></p>
