@@ -39,6 +39,7 @@
   <figure class="item" data-init-aspect="{{ sub.submission_media['aspect_ratio'] }}">
     <a href="{{ request.path_for(sub) }}" class="thumb-container">
       <img class="thumb" src="{{ sub.submission_media['display_url'] }}" alt="" />
+      <div class="rating {{ sub.rating }}">Rated {{ sub.rating }}</div>
       <figcaption class="info">
         <h4 class="title">{{ sub.title }}</h4>
         <p class="byline"><span class="type-alt">by</span> {{ sub.owner.profile.username }}</p>
