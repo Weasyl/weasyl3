@@ -28,18 +28,18 @@
 
     <header class="page-header" role="banner">
 
-      <a href="index.htm" class="header-logo block" tabindex="0">
+      <a href="{{ request.resource_path(None) }}" class="header-logo block" tabindex="0">
         <img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_path }}" alt="Weasyl logomark" />
         <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_path }}" alt="Weasyl" />
       </a>
 
       <nav class="header-nav small-menu" role="navigation">
-        <a href="#" tabindex="0" class="color-comment bg-comment block">Explore</a>
+        <a href="{{ request.resource_path(None, 'explore') }}" tabindex="0" class="color-comment bg-comment block">Explore</a>
         <a href="https://forums.weasyl.com/" tabindex="0" class="color-stat bg-stat block">Forums</a>
-        <a href="#" tabindex="0" class="color-journal bg-journal block">Help</a>
-        <form action="#searchPage" method="get" class="header-search-form">
+        <a href="{{ request.resource_path(None, 'help') }}" tabindex="0" class="color-journal bg-journal block">Help</a>
+        <form action="{{ request.resource_path(None, 'search') }}" class="header-search-form">
           <label class="header-search-label bg-note">
-            <input type="text" name="s" class="header-search-input text-input" />
+            <input type="search" name="s" class="header-search-input text-input" />
             <span class="header-search-icon icon icon-search"></span>
           </label>
         </form>
@@ -96,15 +96,14 @@
       <nav class="footer-nav grid">
         <dl class="grid-item">
           <dt>
-            <a class="footer-logo" href="index.htm">
-              <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_path }}"
-             alt="Weasyl logomark" />
+            <a class="footer-logo" href="{{ request.resource_path(None) }}">
+              <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_path }}" alt="Weasyl logomark" />
             </a>
           </dt>
-          <dd><a href="#">Share</a></dd>
-          <dd><a href="#">Explore</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'share') }}">Share</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'explore') }}">Explore</a></dd>
           {% if request.session.user %}
-          <dd><a href="#">Settings</a></dd>
+          <dd><a href="{{ request.resource_path(None, '~', 'settings') }}">Settings</a></dd>
           <dd>
             <form action="{{ request.resource_path(None, 'signout') }}" method="post">
               <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
@@ -118,10 +117,10 @@
         </dl>
         <dl class="grid-item">
           <dt><h4 class="title secondary">About</h4></dt>
-          <dd><a href="#">About Weasyl</a></dd>
-          <dd><a href="#">FAQ</a></dd>
-          <dd><a href="#">Staff</a></dd>
-          <dd><a href="#">Awesome people</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'help', 'about') }}">About Weasyl</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'help', 'faq') }}">FAQ</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'staff') }}">Staff</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'thanks') }}">Awesome people</a></dd>
         </dl>
         <dl class="grid-item">
           <dt><h4 class="title secondary">Community</h4></dt>
@@ -132,16 +131,16 @@
         </dl>
         <dl class="grid-item">
           <dt><h4 class="title secondary">Policy</h4></dt>
-          <dd><a href="#">Community Guidelines</a></dd>
-          <dd><a href="#">Terms of Service</a></dd>
-          <dd><a href="#">Copyright Policy</a></dd>
-          <dd><a href="#">Staff Code of Conduct</a></dd>
-          <dd><a href="#">Privacy Policy</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy/community') }}">Community Guidelines</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy/tos') }}">Terms of Service</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy/copyright') }}">Copyright Policy</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy/scoc') }}">Staff Code of Conduct</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy/privacy') }}">Privacy Policy</a></dd>
         </dl>
         <dl class="grid-item">
           <dt><h4 class="title secondary">Support</h4></dt>
-          <dd><a href="#">Help topics</a></dd>
-          <dd><a href="#">Ratings guidelines</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'help') }}">Help topics</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'help', 'ratings') }}">Ratings guidelines</a></dd>
           <dd><a href="https://forums.weasyl.com/vbulletin/forumdisplay.php?15-Site-amp-Forum-Support">Support forum</a></dd>
           <dd><a href="mailto:support@weasyl.com">support@weasyl.com</a></dd>
           <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
