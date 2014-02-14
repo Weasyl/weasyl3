@@ -178,7 +178,7 @@ class WeasylTimestampColumn(types.TypeDecorator):
         return arrow.get(value - UNIXTIME_OFFSET)
 
     def process_bind_param(self, value, dialect):
-        return value.timestamp + UNIXTIME_OFFSET
+        return value.timestamp() + UNIXTIME_OFFSET
 
 
 class ArrowColumn(types.TypeDecorator):
