@@ -4,4 +4,5 @@
 	 id="{{ field.oid }}" class="text-input {{ field.widget.css_class or '' }}"
 	 tabindex="{{ field.schema.tabindex | default(1) }}"
 	 {%- if field.required %} required{% endif %} />
+  {{ extra_html }}
 </label>

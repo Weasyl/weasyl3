@@ -10,6 +10,7 @@ from pyramid import httpexceptions
 
 from ..login import LoginFailed, try_login
 from ..resources import RootResource
+from .. import dates
 from .forms import FormView, User
 
 
@@ -47,14 +48,24 @@ class SignoutView(FormView):
         return httpexceptions.HTTPSeeOther('/', headers=forget(self.request))
 
 
+@c.deferred
+def years_widget(node, kw):
+    year = dates.now().year
+    return w.SelectWidget(values=[(str(y), str(y)) for y in range(year - 13, year - 113, -1)])
+
+
+months_widget = w.SelectWidget(values=[(str(y), str(y)) for y in range(1, 13)])
+days_widget = w.SelectWidget(values=[(str(y), str(y)) for y in range(1, 32)])
+
+
 class Register(CSRFSchema):
     username = c.SchemaNode(c.String(), description='Desired username')
     password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
     password_confirm = c.SchemaNode(c.String(), description='Confirm password', widget=w.PasswordWidget())
     email = c.SchemaNode(c.String(), description='E-mail address')
-    year_born = c.SchemaNode(c.Int(), description='Year born')
-    month_born = c.SchemaNode(c.Int(), description='Month')
-    day_born = c.SchemaNode(c.Int(), description='Day')
+    year_born = c.SchemaNode(c.Int(), widget=years_widget)
+    month_born = c.SchemaNode(c.Int(), widget=months_widget)
+    day_born = c.SchemaNode(c.Int(), description='Date of birth', widget=days_widget)
 
 
 @view_config(name='register', context=RootResource, renderer='login/register.jinja2', permission='signin')

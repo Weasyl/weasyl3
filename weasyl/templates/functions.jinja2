@@ -16,6 +16,10 @@
 <time class="type-secondary type-alt" datetime="{{ dt.isoformat() }}">{{ request.format_datetime(dt) }}</time>
 {% endmacro %}
 
+{% macro render_field(field) -%}
+{{ field.serialize(extra_html=caller()) | safe }}
+{%- endmacro %}
+
 {% macro login_form(form) %}
 <form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
   {{ form['csrf_token'].serialize() | safe }}
