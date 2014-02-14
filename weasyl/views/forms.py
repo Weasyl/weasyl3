@@ -1,3 +1,5 @@
+import logging
+
 import colander as c
 from pyramid_deform import FormView as _FormView
 
@@ -5,8 +7,12 @@ from ..legacy import login_name
 from ..models.users import Login
 
 
+log = logging.getLogger(__name__)
+
+
 class FormView(_FormView):
     def failure(self, exc):
+        log.debug('form failed to validate: %r', list(exc.error.paths()))
         return {'form': exc.field}
 
     def show(self, form):
