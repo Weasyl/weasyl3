@@ -1,9 +1,12 @@
 import datetime
+import functools
 
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
+from pyramid.traversal import quote_path_segment
+from pyramid import url
 
 from .models.meta import configure as configure_db
 from .resources import RootResource
@@ -23,6 +26,14 @@ def path_for(request, obj, *a, **kw):
 
 def format_datetime(request, dt):
     return dt.strftime('%d %B %Y at %H:%M:%S')
+
+
+@functools.lru_cache(1000)
+def _join_elements(elements):
+    return '/'.join([quote_path_segment(s, safe=':@&+$,~') for s in elements])
+
+# ugly hack to make ~ not escaped in URLs
+url._join_elements = _join_elements
 
 
 def make_app(global_config, **settings):
