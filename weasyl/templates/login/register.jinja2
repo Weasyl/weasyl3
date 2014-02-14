@@ -28,13 +28,13 @@
     {% endcall %}
     <div class="grid compact">
       <div class="grid-item grid-1-3-s align-bottom">
-        {{ form['day_born'].serialize() | safe }}
+        {{ form['day_born'].serialize(descriptive_option='Day') | safe }}
       </div>
       <div class="grid-item grid-1-3-s align-bottom">
-        {{ form['month_born'].serialize() | safe }}
+        {{ form['month_born'].serialize(descriptive_option='Month') | safe }}
       </div>
       <div class="grid-item grid-1-3-s align-bottom">
-        {{ form['year_born'].serialize() | safe }}
+        {{ form['year_born'].serialize(descriptive_option='Year') | safe }}
       </div>
     </div>
     <p class="form-helper-text type-alt type-secondary">
