@@ -157,3 +157,13 @@ class Session(Base):
 
     def __repr__(self):
         return '<Session for %s: %r>' % (self.userid, self.additional_data)
+
+
+class UserStream(Base):
+    __tablename__ = 'user_streams'
+
+    userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'), primary_key=True)
+    start_time = sa.Column(WeasylTimestampColumn, nullable=False)
+    end_time = sa.Column(WeasylTimestampColumn, nullable=False)
+
+    owner = orm.relationship(Login, backref='user_streams')

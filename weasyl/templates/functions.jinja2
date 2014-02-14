@@ -4,7 +4,7 @@
 
 {% macro user_avatar(user, class_='') -%}
 <a href="{{ request.path_for(user) }}" class="avatar {{ class_ }}">
-  <img src="{{ user.avatar['display_url'] }}">
+  <img src="{{ user.avatar['display_url'] }}" alt="{{ user.profile.username }}’s avatar">
 </a>
 {%- endmacro %}
 

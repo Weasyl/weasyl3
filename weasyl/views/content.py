@@ -1,4 +1,5 @@
 import logging
+import sqlalchemy as sa
 
 from pyramid.security import has_permission
 from pyramid.view import view_config
@@ -7,7 +8,7 @@ from sqlalchemy.orm import contains_eager
 
 from ..media import populate_with_submission_media
 from ..models.content import Submission
-from ..models.users import Login
+from ..models.users import Login, UserStream
 from ..models.site import SiteUpdate
 from ..resources import RootResource, SubmissionResource
 
@@ -45,9 +46,19 @@ def index(request):
         .all())
     populate_with_submission_media(submissions)
 
+    streams = (
+        UserStream.query
+        .filter(sa.func.to_timestamp(UserStream.end_time) > sa.func.now())
+        .order_by(UserStream.start_time.desc())
+        .all())
+
     latest_update = (
         SiteUpdate.query
         .order_by(SiteUpdate.updateid.desc())
         .first())
 
-    return {'submissions': submissions, 'latest_update': latest_update}
+    return {
+        'submissions': submissions,
+        'streams': streams,
+        'latest_update': latest_update
+    }
