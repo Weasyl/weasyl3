@@ -34,7 +34,7 @@ def view_user(context, request):
     featured = random.choice(available_featured_submissions) if available_featured_submissions else None
 
     return {
-      'user': context.user,
-      'submissions': submissions,
-      'featured': featured
+        'user': context.user,
+        'submissions': submissions,
+        'featured': featured,
     }
