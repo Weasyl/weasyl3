@@ -15,7 +15,14 @@ log = logging.getLogger(__name__)
 @view_config(context=UserResource, renderer='users/profile.jinja2', api='false', permission='view')
 @view_config(context=UserResource, renderer='json', api='true', permission='view')
 def view_user(context, request):
-    media.populate_with_submission_media(context.user.submissions)
+    submissions = (
+        Submission.query
+        .filter(Submission.userid == context.user.userid)
+        .order_by(Submission.unixtime.desc())
+        .limit(10)
+        .all())
+
+    media.populate_with_submission_media(submissions)
 
     available_featured_submissions = (
         Submission.query
@@ -29,5 +36,6 @@ def view_user(context, request):
 
     return {
       'user': context.user,
+      'submissions': submissions,
       'featured': featured
     }

@@ -40,7 +40,7 @@
     <div class="user-latest">
       <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Latest</h3>
       <div class="grid thumbs-grid full toggle-target-max-m">
-        {% for submission in user.submissions %}
+        {% for submission in submissions %}
           <figure class="grid-item">
             <a href="{{ submission.canonical_path(request) }}">
               <div class="thumb-container">
