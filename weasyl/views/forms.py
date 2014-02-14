@@ -12,7 +12,8 @@ log = logging.getLogger(__name__)
 
 class FormView(_FormView):
     def failure(self, exc):
-        log.debug('form failed to validate: %r', list(exc.error.paths()))
+        log.debug('form failed to validate: %r',
+                  [(b.node, list(c.interpolate(b.messages()))) for a, b in exc.error.paths()])
         return {'form': exc.field}
 
     def show(self, form):
