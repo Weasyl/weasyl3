@@ -1,6 +1,5 @@
 import random
 import logging
-import sqlalchemy as sa
 
 from pyramid.view import view_config
 

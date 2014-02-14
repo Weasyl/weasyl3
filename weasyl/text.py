@@ -3,7 +3,6 @@ import re
 
 from jinja2 import Markup
 import misaka
-import arrow
 
 
 def slug_for(title):
@@ -18,7 +17,7 @@ def relative_date(d):
         d.isoformat(),
         d.format('MMMM D, YYYY'),
         d.format('h:mm:ss A'),
-        d.humanize()
+        d.humanize(),
     )
 
 
