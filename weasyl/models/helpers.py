@@ -224,3 +224,7 @@ class EnumColumn(types.TypeDecorator):
 
 
 RatingColumn = EnumColumn(constants.RATING_NAME)
+
+
+def clauses_for(table, column='settings'):
+    return table.c[column].type.clauses_for(column)

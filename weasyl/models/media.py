@@ -4,26 +4,18 @@ import os
 
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.orm import relationship, foreign, remote, joinedload
-import sqlalchemy as sa
 
 from ..text import slug_for
 from .. import images
 from .content import Submission
-from .helpers import JSONValuesColumn
 from .meta import Base, DBSession
 from .users import Profile
+from . import tables
 
 
 class MediaItem(Base):
-    __tablename__ = 'media'
-
-    mediaid = sa.Column(sa.Integer, primary_key=True)
-    media_type = sa.Column(sa.String(32), nullable=False)
-    file_type = sa.Column(sa.String(8), nullable=False)
-    attributes = sa.Column(JSONValuesColumn, nullable=False, server_default='')
-    sha256 = sa.Column(sa.String(64))
-
-    __mapper_args__ = dict(polymorphic_on=media_type)
+    __table__ = tables.media
+    __mapper_args__ = dict(polymorphic_on=__table__.c.media_type)
 
     @classmethod
     def fetch_or_create(cls, data, file_type):
@@ -80,12 +72,7 @@ class MediaItem(Base):
 
 
 class DiskMediaItem(MediaItem):
-    __tablename__ = 'disk_media'
-
-    mediaid = sa.Column(sa.Integer, sa.ForeignKey('media.mediaid'), primary_key=True)
-    file_path = sa.Column(sa.String(255), nullable=False)
-    file_url = sa.Column(sa.String(255), nullable=False)
-
+    __table__ = tables.disk_media
     __mapper_args__ = dict(polymorphic_identity='disk')
 
     def init_from_data(self, data):
@@ -177,13 +164,7 @@ class _LinkMixin(object):
 
 
 class SubmissionMediaLink(Base, _LinkMixin):
-    __tablename__ = 'submission_media_links'
-
-    linkid = sa.Column(sa.Integer, primary_key=True)
-    mediaid = sa.Column(sa.Integer, sa.ForeignKey('media.mediaid'), nullable=False)
-    submitid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), nullable=False, index=True)
-    link_type = sa.Column(sa.String(32), nullable=False)
-    attributes = sa.Column(JSONValuesColumn, nullable=False, server_default='')
+    __table__ = tables.submission_media_links
 
     _identity = 'submitid'
     _linkname = 'submission_links'
@@ -193,40 +174,27 @@ class SubmissionMediaLink(Base, _LinkMixin):
 
 
 class UserMediaLink(Base, _LinkMixin):
-    __tablename__ = 'user_media_links'
-
-    linkid = sa.Column(sa.Integer, primary_key=True)
-    mediaid = sa.Column(sa.Integer, sa.ForeignKey('media.mediaid'), nullable=False)
-    userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'), nullable=False, index=True)
-    link_type = sa.Column(sa.String(32), nullable=False)
-    attributes = sa.Column(JSONValuesColumn, nullable=False, server_default='')
+    __table__ = tables.user_media_links
 
     _identity = 'userid'
     _linkname = 'user_links'
 
     user = relationship(
         Profile, backref='media_links',
-        primaryjoin=foreign(userid) == remote(Profile.userid))
+        primaryjoin=foreign(__table__.c.userid) == remote(Profile.userid))
     media_item = relationship(MediaItem, backref='user_links')
 
 
 class MediaMediaLink(Base, _LinkMixin):
-    __tablename__ = 'media_media_links'
-
-    linkid = sa.Column(sa.Integer, primary_key=True)
-    described_with_id = sa.Column(sa.Integer, sa.ForeignKey('media.mediaid'), nullable=False)
-    describee_id = sa.Column(sa.Integer, sa.ForeignKey('media.mediaid'), nullable=False, index=True)
-    link_type = sa.Column(sa.String(32), nullable=False)
-    attributes = sa.Column(JSONValuesColumn, nullable=False, server_default='')
+    __table__ = tables.media_media_links
 
     _identity = 'describee_id'
     _linkname = 'describing'
-    _linkjoin = described_with_id == MediaItem.mediaid,
-    _type_attributes = JSONValuesColumn()
+    _linkjoin = __table__.c.described_with_id == MediaItem.mediaid,
 
     describee = relationship(
         MediaItem, backref='described',
-        primaryjoin=foreign(describee_id) == remote(MediaItem.mediaid))
+        primaryjoin=foreign(__table__.c.describee_id) == remote(MediaItem.mediaid))
     media_item = relationship(
         MediaItem, backref='describing',
-        primaryjoin=foreign(described_with_id) == remote(MediaItem.mediaid))
+        primaryjoin=foreign(__table__.c.described_with_id) == remote(MediaItem.mediaid))
