@@ -28,7 +28,7 @@ class Submission(Base):
     __tablename__ = 'submission'
 
     submitid = sa.Column(sa.Integer, primary_key=True)
-    folderid = sa.Column(sa.Integer, nullable=False, index=True)
+    folderid = sa.Column(sa.Integer, sa.ForeignKey('folder.folderid'), nullable=False)
     userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'), index=True)
     unixtime = sa.Column(WeasylTimestampColumn, nullable=False)
     title = sa.Column(sa.String(200), nullable=False)
@@ -124,7 +124,7 @@ class Submission(Base):
 class Comment(Base):
     __tablename__ = 'submitcomment'
 
-    commentid = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    commentid = sa.Column(sa.Integer, primary_key=True)
     userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'))
     targetid = sa.Column(sa.Integer, sa.ForeignKey('submission.submitid'), index=True)
     parentid = sa.Column(sa.Integer, nullable=False, server_default='0')
@@ -139,3 +139,25 @@ class Comment(Base):
     poster = relationship(Login, backref='comments')
 
     subcomments = ()
+
+
+class Folder(Base):
+    __tablename__ = 'folder'
+
+    folderid = sa.Column(sa.Integer, primary_key=True)
+    parentid = sa.Column(sa.Integer, sa.ForeignKey('folder.folderid'), nullable=False)
+    userid = sa.Column(sa.Integer, sa.ForeignKey('login.userid'))
+    title = sa.Column(sa.String(100), nullable=False)
+    settings = sa.Column(CharSettingsColumn({
+        'h': 'hidden',
+        'f': 'featured',
+        'u': 'non-profile',
+        'm': 'non-index',
+        'n': 'no-notifications'
+    }), nullable=False, server_default='')
+
+    owner = relationship(Login, backref='folders')
+    submissions = relationship(Submission)
+
+    with settings.type.clauses_for('settings') as c:
+        is_featured = c('featured')

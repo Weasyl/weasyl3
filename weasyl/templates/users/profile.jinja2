@@ -1,6 +1,6 @@
 {% extends "layout.jinja2" %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}{{ user.profile.username }}’s profile{% endblock %}
 {% block body %}
 
 {% if user.banner %}
@@ -13,22 +13,22 @@
     <h1 class="title user-username">{{ f.user_link(user) }}</h1>
     <p class="user-title type-alt">{{ user.profile.full_name }}</p>
     <ul class="action-set user-actions">
-      <li><a href="#" class="action active"><span class="icon icon-action-star"></span> Following</a></li>
-      <li><a href="#" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
-      <li><a href="#" class="action"><span class="icon icon-action-note"></span> Message</a></li>
-      <li><a href="#" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
+      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'follow') }}" class="action active"><span class="icon icon-action-star"></span> Following</a></li>
+      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'friend') }}" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
+      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'message') }}" class="action"><span class="icon icon-action-note"></span> Message</a></li>
+      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'ignore') }}" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
     </ul>
   </div><!-- .user-basic -->
   <nav class="col-side">
     <ul class="nav-list grid user-nav">
-      <li class="grid-item active"><a class="action" href="#">Profile</a></li>
-      <li class="grid-item"><a class="action" href="#">Works</a></li>
-      <li class="grid-item"><a class="action" href="#">Journal</a></li>
-      <li class="grid-item"><a class="action" href="#">Commissions <span class="dot bg-positive">(open)</span></a></li>
-      <li class="grid-item"><a class="action" href="#">Collections</a></li>
-      <li class="grid-item"><a class="action" href="#">Characters</a></li>
-      <li class="grid-item"><a class="action" href="#">Favorites</a></li>
-      <li class="grid-item"><a class="action" href="#">Shouts</a></li>
+      <li class="grid-item active"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name) }}">Profile</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'works') }}">Works</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'journal') }}">Journal</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'commissions') }}">Commissions <span class="dot bg-positive">(open)</span></a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'collections') }}">Collections</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'characters') }}">Characters</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'favorites') }}">Favorites</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'shouts') }}">Shouts</a></li>
     </ul>
   </nav><!-- .user-col-nav -->
 </header><!-- .user-header -->
@@ -40,65 +40,18 @@
     <div class="user-latest">
       <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Latest</h3>
       <div class="grid thumbs-grid full toggle-target-max-m">
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/200" alt="" />
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/120/300" alt="" />
-              <div class="rating moderate">Rated moderate</div>
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/150/227" alt="" />
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/300" alt="" />
-              <div class="type"><div class="ribbon"><span class="icon icon-type-lit">Literature</span></div></div>
-              <div class="rating mature">Rated mature</div>
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/221" alt="" />
-              <div class="rating explicit">Rated explicit</div>
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/276" alt="" />
-              <div class="rating explicit">Rated explicit</div>
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/259" alt="" />
-              <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/109" alt="" />
-              <div class="rating mature">Rated mature</div>
-              <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/226" alt="" />
-            </div>
-        </a></figure>
-        <figure class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/110" alt="" />
-            </div>
-        </a></figure>
-        <div><a href="#" class="action disclose">Full works</a></div>
+        {% for submission in user.submissions %}
+          <figure class="grid-item">
+            <a href="{{ submission.canonical_path(request) }}">
+              <div class="thumb-container">
+                <img class="thumb" src="{{ submission.submission_media['display_url'] }}" alt="{{ submission.title }}" />
+                <div class="rating {{ submission.rating }}">Rated {{ submission.rating }}</div>
+                <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+              </div>
+            </a>
+          </figure>
+        {% endfor %}
+        <div><a href="{{ request.resource_path(None, '~' + user.login_name, 'works') }}" class="action disclose">Full works</a></div>
       </div><!-- .thumbs-grid -->
     </div><!-- .user-latest -->
 
@@ -106,7 +59,7 @@
       <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Profile</h3>
       <div class="formatted toggle-target-max-m">
         <p>
-          <strong class="icon icon-location">Location:</strong> Cityname, ST, Countryname<br />
+          <strong class="icon icon-location">Location:</strong> {#{ user.profile.location }#}<br />
           <strong class="icon icon-stopwatch"></strong> Member for 1 year, 6 months
         </p>
         <p>
@@ -115,22 +68,21 @@
           <span class="dot bg-negative"></span> Requests: <strong class="color-negative">Closed</strong>
         </p>
 
-        <p>A short bio about this user, written by him/herself.</p>
-        <p>Godard readymade hella Echo Park Helvetica, craft beer meggings lo-fi yr Shoreditch hoodie ennui stumptown. Readymade chambray before they sold out letterpress dreamcatcher trust fund Schlitz, viral Vice Tumblr bitters synth next level salvia. Banksy cornhole retro, pork belly Truffaut fingerstache hella.</p>
-        <p>Art party Pinterest Wes Anderson, Vice post-ironic Brooklyn letterpress Austin tote bag. Forage Helvetica craft beer, cornhole Shoreditch XOXO master cleanse vegan bitters messenger bag selvage next level keffiyeh Godard. Cred ugh fashion axe, ethnic hashtag quinoa High Life vinyl banh mi viral church-key narwhal Shoreditch irony. Semiotics post-ironic Tonx Wes Anderson fashion axe viral, lomo YOLO raw denim asymmetrical vinyl gastropub beard retro.</p>
-        <p>Thundercats next level sustainable, gentrify Tonx Helvetica ethical +1 PBR swag polaroid.</p>
+        {{ user.profile.profile_text | markdown }}
       </div>
     </div><!-- .user-about -->
 
     <div class="user-highlight content-group">
-      <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Featured work</h3>
-      <div class="toggle-target-max-m">
-        <h3 class="title secondary"><a href="#">This Is the Title of the Thing</a></h3>
-        <h4 class="title-complement">Featured work, shared 2 weeks ago</h4>
-        <div class="user-featured">
-          <a href="submission.htm" class="thumb-container"><img class="thumb" src="http://lorempixel.com/800/600" alt="" /></a>
-        </div><!-- .user-featured -->
-      </div>
+      {% if featured %}
+        <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Featured work</h3>
+        <div class="toggle-target-max-m">
+          <h3 class="title secondary"><a href="{{ featured.canonical_path(request) }}">{{ featured.title }}</a></h3>
+          <h4 class="title-complement">Featured work, shared {{ featured.unixtime | relative_date }}</h4>
+          <div class="user-featured">
+            <a href="submission.htm" class="thumb-container"><img class="thumb" src="{{ featured.submission_media['display_url'] }}" alt="" /></a>
+          </div><!-- .user-featured -->
+        </div>
+      {% endif %}
 
       <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Latest Journal</h3>
       <div class="toggle-target-max-m">
@@ -164,7 +116,7 @@
         <li>
           <p><span class="icon icon-star">Favorite: </span> Favorited <a href="submission.htm">This Is a Kitty</a> by <a class="username" href="user.htm">TwinkleToes</a> <time datetime="[the time]">Yesterday</time></p>
           <a href="submission.htm" class="thumb-container">
-            <img class="thumb" src="http://lorempixel.com/248/232" alt="" />
+            <img class="thumb" src="//lorempixel.com/248/232" alt="" />
             <div class="rating moderate">Rated moderate</div>
           </a>
         </li>
@@ -177,7 +129,7 @@
         <li>
           <p><span class="icon icon-star">Favorite: </span> Favorited <a href="submission.htm">Wow</a> by <a class="username" href="user.htm">Wow</a> <time datetime="[the time]">A week ago</time></p>
           <a href="submission.htm" class="thumb-container">
-            <img class="thumb" src="http://lorempixel.com/300/150" alt="" />
+            <img class="thumb" src="//lorempixel.com/300/150" alt="" />
           </a>
         </li>
         <li>
@@ -193,27 +145,27 @@
       <div class="user-connections toggle-target-max-m">
         <h4><a href="#" class="action disclose">Following 76</a></h4>
         <ul class="grid compact">
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
         </ul>
         <h4><a href="#" class="action disclose">Followed by 140</a></h4>
         <ul class="grid compact">
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
         </ul>
         <h4><a href="#" class="action disclose">5 friends</a></h4>
         <ul class="grid compact">
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
+          <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
         </ul>
       </div>
     </div><!-- .user-activity -->
@@ -223,7 +175,7 @@
       <h4 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Shouts</h4>
       <div class="toggle-target-max-m">
         <form action="#" class="comment" method="post">
-          <a class="avatar" href="#"><img src="http://lorempixel.com/200/200" alt="Usernameguy's avatar" /></a>
+          <a class="avatar" href="#"><img src="//lorempixel.com/200/200" alt="Usernameguy's avatar" /></a>
           <div class="comment-box hypothetical">
             <div class="comment-info"><a href="#" class="username">AbrahammerLincolnlog</a></div>
             <textarea name="comment" id="comment-98avdja" class="comment-entry" placeholder="Share your thoughts &#8230;"></textarea>
@@ -236,7 +188,7 @@
 
         <ol class="comment-tree">
           <li class="comment">
-            <a class="avatar" href="#"><img src="http://lorempixel.com/201/201" alt="" /></a>
+            <a class="avatar" href="#"><img src="//lorempixel.com/201/201" alt="" /></a>
             <article class="comment-box">
               <header class="comment-info">
                 <a href="#" class="username">Shortname</a>
@@ -252,7 +204,7 @@
             </article>
             <ol>
               <li class="comment">
-                <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                <a class="avatar" href="#"><img src="//lorempixel.com/199/199" alt="" /></a>
                 <article class="comment-box owner">
                   <header class="comment-info">
                     <a href="#" class="username">Usernameguy</a>
@@ -269,7 +221,7 @@
                 </article>
                 <ol>
                   <li class="comment">
-                    <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                    <a class="avatar" href="#"><img src="//lorempixel.com/199/199" alt="" /></a>
                     <article class="comment-box">
                       <header class="comment-info">
                         <a href="#" class="username">Usernameguy</a>
@@ -287,7 +239,7 @@
                 </ol>
               </li><!-- .comment -->
               <li class="comment">
-                <a class="avatar" href="#"><img src="http://lorempixel.com/199/199" alt="" /></a>
+                <a class="avatar" href="#"><img src="//lorempixel.com/199/199" alt="" /></a>
                 <article class="comment-box">
                   <header class="comment-info">
                     <a href="#" class="username">Usernameguy</a>
@@ -305,7 +257,7 @@
             </ol>
           </li><!-- .comment -->
           <li class="comment">
-            <a class="avatar" href="#"><img src="http://lorempixel.com/198/198" alt="" /></a>
+            <a class="avatar" href="#"><img src="//lorempixel.com/198/198" alt="" /></a>
             <article class="comment-box">
               <header class="comment-info">
                 <a href="#" class="username">Longername McNamertonguydude</a>
@@ -325,7 +277,7 @@
             </article>
           </li><!-- .comment -->
           <li class="comment">
-            <a class="avatar" href="#"><img src="http://lorempixel.com/197/197" alt="" /></a>
+            <a class="avatar" href="#"><img src="//lorempixel.com/197/197" alt="" /></a>
             <article class="comment-box">
               <header class="comment-info">
                 <a href="#" class="username">Wow</a>
