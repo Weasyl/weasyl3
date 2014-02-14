@@ -13,22 +13,22 @@
     <h1 class="title user-username">{{ f.user_link(user) }}</h1>
     <p class="user-title type-alt">{{ user.profile.full_name }}</p>
     <ul class="action-set user-actions">
-      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'follow') }}" class="action active"><span class="icon icon-action-star"></span> Following</a></li>
-      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'friend') }}" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
-      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'message') }}" class="action"><span class="icon icon-action-note"></span> Message</a></li>
-      <li><a href="{{ request.resource_path(None, '~' + user.login_name, 'ignore') }}" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
+      <li><a href="{{ request.path_for(user, 'follow') }}" class="action active"><span class="icon icon-action-star"></span> Following</a></li>
+      <li><a href="{{ request.path_for(user, 'friend') }}" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
+      <li><a href="{{ request.path_for(user, 'message') }}" class="action"><span class="icon icon-action-note"></span> Message</a></li>
+      <li><a href="{{ request.path_for(user, 'ignore') }}" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
     </ul>
   </div><!-- .user-basic -->
   <nav class="col-side">
     <ul class="nav-list grid user-nav">
-      <li class="grid-item active"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name) }}">Profile</a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'works') }}">Works</a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'journal') }}">Journal</a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'commissions') }}">Commissions <span class="dot bg-positive">(open)</span></a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'collections') }}">Collections</a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'characters') }}">Characters</a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'favorites') }}">Favorites</a></li>
-      <li class="grid-item"><a class="action" href="{{ request.resource_path(None, '~' + user.login_name, 'shouts') }}">Shouts</a></li>
+      <li class="grid-item active"><a class="action" href="{{ request.path_for(user) }}">Profile</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'works') }}">Works</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'journal') }}">Journal</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'commissions') }}">Commissions <span class="dot bg-positive">(open)</span></a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'collections') }}">Collections</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'characters') }}">Characters</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'favorites') }}">Favorites</a></li>
+      <li class="grid-item"><a class="action" href="{{ request.path_for(user, 'shouts') }}">Shouts</a></li>
     </ul>
   </nav><!-- .user-col-nav -->
 </header><!-- .user-header -->
@@ -51,7 +51,7 @@
             </a>
           </figure>
         {% endfor %}
-        <div><a href="{{ request.resource_path(None, '~' + user.login_name, 'works') }}" class="action disclose">Full works</a></div>
+        <div><a href="{{ request.path_for(user, 'works') }}" class="action disclose">Full works</a></div>
       </div><!-- .thumbs-grid -->
     </div><!-- .user-latest -->
 
