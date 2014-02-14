@@ -42,7 +42,7 @@
       <div class="grid thumbs-grid full toggle-target-max-m">
         {% for submission in submissions %}
           <figure class="grid-item">
-            <a href="{{ submission.canonical_path(request) }}">
+            <a href="{{ request.path_for(submission) }}">
               <div class="thumb-container">
                 <img class="thumb" src="{{ submission.submission_media['display_url'] }}" alt="{{ submission.title }}" />
                 <div class="rating {{ submission.rating }}">Rated {{ submission.rating }}</div>
@@ -60,7 +60,7 @@
       <div class="formatted toggle-target-max-m">
         <p>
           <strong class="icon icon-location">Location:</strong> {#{ user.profile.location }#}<br />
-          <strong class="icon icon-stopwatch"></strong> Member for 1 year, 6 months
+          <strong class="icon icon-stopwatch"></strong> Member since {{ user.profile.unixtime | relative_date }}
         </p>
         <p>
           <span class="dot bg-positive"></span> Commissions: <strong class="color-positive">Open</strong><!-- , <a href="" class="action small disclose">$10&ndash;$400</a> --><br />
@@ -76,7 +76,7 @@
       {% if featured %}
         <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Featured work</h3>
         <div class="toggle-target-max-m">
-          <h3 class="title secondary"><a href="{{ featured.canonical_path(request) }}">{{ featured.title }}</a></h3>
+          <h3 class="title secondary"><a href="{{ request.path_for(featured) }}">{{ featured.title }}</a></h3>
           <h4 class="title-complement">Featured work, shared {{ featured.unixtime | relative_date }}</h4>
           <div class="user-featured">
             <a href="submission.htm" class="thumb-container"><img class="thumb" src="{{ featured.submission_media['display_url'] }}" alt="" /></a>
