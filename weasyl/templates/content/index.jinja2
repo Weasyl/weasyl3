@@ -35,18 +35,7 @@
 </div><!-- .home-views -->
 
 <div class="mosaic">
-  {% for sub in submissions %}
-  <figure class="item" data-init-aspect="{{ sub.submission_media['aspect_ratio'] }}">
-    <a href="{{ request.path_for(sub) }}" class="thumb-container">
-      <img class="thumb" src="{{ sub.submission_media['display_url'] }}" alt="" />
-      <div class="rating {{ sub.rating }}">Rated {{ sub.rating }}</div>
-      <figcaption class="info">
-        <h4 class="title">{{ sub.title }}</h4>
-        <p class="byline"><span class="type-alt">by</span> {{ sub.owner.profile.username }}</p>
-      </figcaption>
-    </a>
-  </figure>
-  {% endfor %}
+  {% for sub in submissions %}{{ f.submission_thumb(sub, 'item') }}{% endfor %}
 </div><!-- .mosaic -->
 
 <div class="center-action"><a href="#" class="action disclose">More from Everything</a></div>

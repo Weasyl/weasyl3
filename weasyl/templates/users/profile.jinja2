@@ -40,17 +40,7 @@
     <div class="user-latest">
       <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Latest</h3>
       <div class="grid thumbs-grid full toggle-target-max-m">
-        {% for submission in submissions %}
-          <figure class="grid-item">
-            <a href="{{ request.path_for(submission) }}">
-              <div class="thumb-container">
-                <img class="thumb" src="{{ submission.submission_media['display_url'] }}" alt="{{ submission.title }}" />
-                <div class="rating {{ submission.rating }}">Rated {{ submission.rating }}</div>
-                <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-              </div>
-            </a>
-          </figure>
-        {% endfor %}
+        {% for sub in submissions %}{{ f.submission_thumb(sub, with_caption=False) }}{% endfor %}
         <div><a href="{{ request.path_for(user, 'works') }}" class="action disclose">Full works</a></div>
       </div><!-- .thumbs-grid -->
     </div><!-- .user-latest -->
