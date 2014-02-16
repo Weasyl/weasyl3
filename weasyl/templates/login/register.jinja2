@@ -8,6 +8,7 @@
   </div>
 
   <form action="" method="post" class="standard-form medium-width">
+    {{ f.form_errors() }}
     {{ form['csrf_token'].serialize() | safe }}
     {{ form['username'].serialize() | safe }}
     <div class="grid compact">
