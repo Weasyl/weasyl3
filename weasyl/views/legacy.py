@@ -21,5 +21,6 @@ def configure_urls(config):
 
     redirect('view/{id}', 'submissions', '{id}', 'view')
     redirect('submission/{id}', 'submissions', '{id}', 'view')
+    redirect('submission/tag-history/{id}', 'submissions', '{id}', 'tag-history')
     redirect('character/{id}', 'characters', '{id}', 'view')
     redirect('journal/{id}', 'journals', '{id}', 'view')
