@@ -9,3 +9,7 @@ class SiteUpdate(Base):
     __table__ = tables.siteupdate
 
     owner = relationship(Login, backref='siteupdate')
+
+
+class Favorite(Base):
+    __table__ = tables.favorite

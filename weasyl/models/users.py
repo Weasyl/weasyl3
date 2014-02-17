@@ -5,6 +5,7 @@ from pyramid.decorator import reify
 from sqlalchemy import orm
 
 from ..legacy import plaintext
+from .. import staff
 from .meta import Base
 from . import tables
 
@@ -35,6 +36,10 @@ class Login(Base):
         if not self.media.get('banner'):
             return None
         return self.media['banner'][0]
+
+    @reify
+    def is_staff(self):
+        return self.userid in staff.MODS
 
     def __json__(self, request):
         return {

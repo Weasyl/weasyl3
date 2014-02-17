@@ -31,7 +31,12 @@ def view_submission(context, request):
             pass
         else:
             return httpexceptions.HTTPNotFound()
-    return {'submission': context.submission}
+    n_comments, comments = context.submission.comment_tree()
+    return {
+        'submission': context.submission,
+        'n_comments': n_comments,
+        'comments': comments,
+    }
 
 
 @view_config(context=RootResource, renderer='content/index.jinja2', api='false')
