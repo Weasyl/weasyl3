@@ -67,6 +67,7 @@
       <a href="#" class="tag">{{ tag }}</a>
       {%- endfor %}
       <a href="#" class="action disclose small">Modify</a>
+      <a href="{{ request.path_for(submission, 'tag-history') }}" class="action disclose small">History</a>
     </div><!-- .sub-tags -->
   </div><!-- .sub-basic -->
 
