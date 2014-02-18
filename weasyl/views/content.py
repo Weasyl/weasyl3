@@ -4,6 +4,7 @@ import sqlalchemy as sa
 import colander as c
 import deform.widget as w
 from pyramid_deform import CSRFSchema
+from pyramid.renderers import render_to_response
 from pyramid.security import has_permission
 from pyramid.view import view_config
 from pyramid import httpexceptions
@@ -27,8 +28,9 @@ class Comment(CSRFSchema):
 
 
 def comment_success(context, request, appstruct):
-    log.debug('comment success %r', appstruct)
-    return httpexceptions.HTTPNotFound()
+    if request.is_api_request:
+        return render_to_response('json', {'status': 'ok'}, request=request)
+    return httpexceptions.HTTPSeeOther('/')
 
 
 @view_config(name='view', context=SubmissionResource,
@@ -38,8 +40,7 @@ def comment_success(context, request, appstruct):
              api='true', permission='view')
 @form_renderer(Comment, 'comment', success=comment_success, button='save',
                name='comment', context=SubmissionResource,
-               renderer='content/submission.jinja2', api='false',
-               permission='comment')
+               renderer='content/submission.jinja2', permission='comment')
 def view_submission(context, request, forms):
     show_anyway = (
         (len(request.subpath) > 1 and request.subpath[-1] == 'anyway')

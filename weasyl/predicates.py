@@ -8,5 +8,4 @@ class APIPredicate:
     phash = text
 
     def __call__(self, context, request):
-        is_api_request = request.traversed and request.traversed[0] == 'api'
-        return bool(is_api_request) == self.must_be_api
+        return request.is_api_request == self.must_be_api

@@ -25,6 +25,10 @@ def path_for(request, obj, *a, **kw):
     return obj.canonical_path(request, *a, **kw)
 
 
+def is_api_request(request):
+    return bool(request.traversed and request.traversed[0] == 'api')
+
+
 def format_datetime(request, dt):
     return dt.strftime('%d %B %Y at %H:%M:%S')
 
@@ -61,6 +65,7 @@ def make_app(global_config, **settings):
     config.add_view_predicate('api', predicates.APIPredicate)
     config.add_request_method(path_for)
     config.add_request_method(format_datetime)
+    config.add_request_method(is_api_request, reify=True)
     config.add_request_method(login_forms, reify=True)
 
     configure_urls(config)
