@@ -1,3 +1,4 @@
 /ve
 /etc/*.ini
 /weasyl.egg-info
+__pycache__

@@ -5,7 +5,6 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
 
     <title>{% block title %}{% endblock %} | Weasyl</title>
 
@@ -13,7 +12,6 @@
     <link href="//fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ 'weasyl:static/style/public.css' | static_path }}" type="text/css" />
 
-    <script src="{{ 'weasyl:static/js/modernizr.development.js' | static_path }}"></script>
     <script>
       if ('webkitRequestAnimationFrame' in window) {
         document.documentElement.className += ' webkit-background-clip';
@@ -84,12 +82,9 @@
     </div><!-- #login-modal -->
 
 
-
-    <section role="main" id="main">
-
-    {% block body %}{% endblock %}
-
-    </section><!-- #main -->
+    <main role="main" id="main">
+      {% block body %}{% endblock %}
+    </main>
 
 
     <footer class="page-footer" role="contentinfo">
