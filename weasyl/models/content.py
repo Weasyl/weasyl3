@@ -30,10 +30,12 @@ class Submission(Base):
             'rating': self.rating,
         }
 
-    def canonical_path(self, request, operation='view', with_slug=None):
+    def canonical_path(self, request, operation='view', with_slug=None, mod=False):
         if with_slug is None:
             with_slug = operation == 'view'
         parts = ['submissions', str(self.submitid), operation]
+        if mod:
+            parts.insert(2, 'mod')
         if with_slug:
             parts.append(slug_for(self.title))
         return request.resource_path(None, *parts)
