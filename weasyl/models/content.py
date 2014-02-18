@@ -61,7 +61,7 @@ class Submission(Base):
 
         from ..media import populate_with_user_media
         populate_with_user_media(users)
-        return ret
+        return len(comment_map), ret
 
     @reify
     def media(self):

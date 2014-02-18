@@ -3,9 +3,16 @@
 {% macro show_comment(comment) %}
 <li class="comment">
   {{ f.user_avatar(comment.poster) }}
-  <article class="comment-box">
+  {% set user_class = 'owner' if comment.userid == submission.userid else 'staff' if comment.poster.is_staff else '' %}
+  <article class="comment-box {{ user_class }}">
     <header class="comment-info">
-      {{ f.user_link(comment.poster) }} {{ f.datetime(comment.unixtime) }}
+      {{ f.user_link(comment.poster) }}
+      {% if user_class == 'owner' %}
+      <span class="comment-attr owner">(page owner)</span>
+      {% elif user_class == 'staff' %}
+      <span class="comment-attr staff">(staff)</span>
+      {% endif %}
+      {{ comment.unixtime | relative_date }}
     </header>
     <section class="comment-content formatted">
       {{ comment.content | markdown }}
@@ -49,7 +56,7 @@
     <div class="sub-owner">
       {{ f.user_avatar(submission.owner) }}
       <div class="info">
-        {{ f.user_link(submission.owner) }} {{ f.datetime(submission.unixtime) }}
+        {{ f.user_link(submission.owner) }} {{ submission.unixtime | relative_date }}
       </div>
     </div><!-- .sub-owner -->
     <div class="formatted sub-description">
@@ -60,6 +67,7 @@
       <a href="#" class="tag">{{ tag }}</a>
       {%- endfor %}
       <a href="#" class="action disclose small">Modify</a>
+      <a href="{{ request.path_for(submission, 'tag-history') }}" class="action disclose small">History</a>
     </div><!-- .sub-tags -->
   </div><!-- .sub-basic -->
 
@@ -68,17 +76,9 @@
     <!-- would love to use a dl here, but order is wrong and multiple columns is a drag -->
     <ul class="stats-list grid toggle-target-max-m">
       <li class="grid-item"><strong class="stat">{{ submission.page_views }}</strong> Views</li>
-      <li class="grid-item"><strong class="stat">13</strong> Comments</li>
+      <li class="grid-item"><strong class="stat">{{ n_comments }}</strong> Comments</li>
       <li class="grid-item"><strong class="stat">25</strong> Favorites</li>
       <li class="grid-item"><strong class="stat">{{ submission.rating.title() }}</strong> Rating</li>
-      <li class="grid-item"><strong class="stat">712 KiB</strong> Size</li>
-      <li class="grid-item"><strong class="stat">Photography</strong> Category</li>
-      <!-- <li class="grid-item"><strong class="stat">SONY</strong> Manufacturer</li>
-           <li class="grid-item"><strong class="stat">NEX-6</strong> Model</li>
-      <li class="grid-item"><strong class="stat">JPEG</strong> Compression</li>
-      <li class="grid-item"><strong class="stat">1/100 sec</strong> Exposure time</li>
-      <li class="grid-item"><strong class="stat">f/2.8</strong> Aperture</li>
-      <li class="grid-item"><strong class="stat">35mm</strong> Focal length</li> -->
     </ul>
   </div><!-- .sub-stats -->
 
@@ -86,21 +86,23 @@
     <h4 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">13 comments</h4>
     <div class="toggle-target-max-m">
       {% if request.session.user %}
-      <form action="#" class="comment" method="post">
+      <form action="{{ request.path_for(submission, 'comment') }}" class="comment" method="post">
+        {{ f.form_errors(comment_errors) }}
+        {{ comment_form['csrf_token'].serialize() | safe }}
         {{ f.user_avatar(request.session.user) }}
         <div class="comment-box hypothetical">
           <div class="comment-info">{{ f.user_link(request.session.user) }}</div>
-          <textarea name="comment" id="comment-98avdja" class="comment-entry" placeholder="Share your thoughts &#8230;"></textarea>
+          {{ comment_form['comment'].serialize() | safe }}
           <ul class="comment-actions action-set">
             <li><a href="#" class="action small">Formatting help</a></li>
           </ul>
-          <button type="submit" class="comment-submit action disclose">Save</button>
+          <button type="submit" name="save" class="comment-submit action disclose">Save</button>
         </div><!-- .comment-box -->
       </form><!-- .comment -->
       {% endif %}
 
       <ol class="comment-tree">
-        {% for comment in submission.comment_tree() %}{{ show_comment(comment) }}{% endfor %}
+        {% for comment in comments %}{{ show_comment(comment) }}{% endfor %}
       </ol>
     </div><!-- .toggle-target-s -->
 

@@ -59,13 +59,19 @@ days_widget = w.SelectWidget(values=[(str(y), str(y)) for y in range(1, 32)])
 
 
 class Register(CSRFSchema):
-    username = c.SchemaNode(c.String(), description='Desired username')
-    password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
-    password_confirm = c.SchemaNode(c.String(), description='Confirm password', widget=w.PasswordWidget())
+    username = c.SchemaNode(
+        c.String(), description='Desired username', error_name='Username')
+    password = c.SchemaNode(
+        c.String(), description='Password', widget=w.PasswordWidget())
+    password_confirm = c.SchemaNode(
+        c.String(), description='Confirm password', error_name='Password confirmation',
+        widget=w.PasswordWidget())
     email = c.SchemaNode(c.String(), description='E-mail address')
-    year_born = c.SchemaNode(c.Int(), widget=years_widget)
-    month_born = c.SchemaNode(c.Int(), widget=months_widget)
-    day_born = c.SchemaNode(c.Int(), description='Date of birth', widget=days_widget)
+    year_born = c.SchemaNode(c.Int(), error_name='Year', widget=years_widget)
+    month_born = c.SchemaNode(c.Int(), error_name='Month', widget=months_widget)
+    day_born = c.SchemaNode(
+        c.Int(), description='Date of birth', error_name='Day',
+        widget=days_widget)
 
 
 @view_config(name='register', context=RootResource, renderer='login/register.jinja2', permission='signin')

@@ -20,8 +20,23 @@
 {{ field.serialize(extra_html=caller()) | safe }}
 {%- endmacro %}
 
+{% macro form_errors(errors) %}
+{% if errors %}
+<p>Some of the data you entered wasn't good:</p>
+<ul>
+  {%- for node, messages in errors -%}
+  {%- set name = node.error_name | default(node.description) -%}
+  {% if name %}<li>{{ name }} <ul>{% endif %}
+    {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+  {% if name %}</ul></li>{% endif %}
+  {%- endfor -%}
+</ul>
+{% endif %}
+{% endmacro %}
+
 {% macro login_form(form) %}
 <form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
+  {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
   {{ form['user'].serialize() | safe }}
   {{ form['password'].serialize() | safe }}
