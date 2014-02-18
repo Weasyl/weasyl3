@@ -1,6 +1,7 @@
 import datetime
 import functools
 
+import arrow
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -66,6 +67,7 @@ def make_app(global_config, **settings):
 
     json_renderer = JSON()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
+    json_renderer.add_adapter(arrow.Arrow, datetime_adapter)
     config.add_renderer('json', json_renderer)
 
     config.set_authentication_policy(
