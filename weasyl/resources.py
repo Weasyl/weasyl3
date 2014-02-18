@@ -10,6 +10,17 @@ from .models.users import Login
 log = logging.getLogger(__name__)
 
 
+class IntermediateResource:
+    @classmethod
+    def insert(cls, child, segment):
+        inst = cls()
+        inst.__name__ = child.__name__
+        inst.__parent__ = child.__parent__
+        child.__name__ = segment
+        child.__parent__ = inst
+        return child
+
+
 def make_location_aware(func):
     def __getitem__(self, segment):
         ret = func(self, segment)
@@ -25,8 +36,6 @@ class SubmissionsResource:
 
     @make_location_aware
     def __getitem__(self, segment):
-        if segment == 'anyway':
-            return self
         submission = Submission.query.get_or_404(segment)
         if isinstance(self.__parent__, UserResource) and self.__parent__.user != submission.owner:
             raise httpexceptions.HTTPNotFound()
@@ -40,7 +49,7 @@ class SubmissionResource:
 
     def __getitem__(self, segment):
         if segment == 'mod':
-            return self
+            return IntermediateResource.insert(self, segment)
         raise KeyError(segment)
 
     def permits_view(self, principals):
