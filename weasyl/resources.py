@@ -44,15 +44,12 @@ class SubmissionResource:
     @property
     def __acl__(self):
         if 'hidden' in self.submission.settings:
-            return [
-                (Deny, Everyone, 'view'),
-            ]
+            return []
         elif 'friends-only' in self.submission.settings:
-            return [
-                (Deny, Everyone, 'view'),
-            ]
+            return []
         else:
             return [
+                (Allow, Authenticated, 'comment'),
                 (Allow, Everyone, 'view'),
             ]
 

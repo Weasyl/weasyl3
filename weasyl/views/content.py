@@ -1,6 +1,9 @@
 import logging
 import sqlalchemy as sa
 
+import colander as c
+import deform.widget as w
+from pyramid_deform import CSRFSchema
 from pyramid.security import has_permission
 from pyramid.view import view_config
 from pyramid import httpexceptions
@@ -11,9 +14,21 @@ from ..models.content import Submission
 from ..models.users import Login, UserStream
 from ..models.site import SiteUpdate
 from ..resources import RootResource, SubmissionResource
+from .forms import form_renderer
 
 
 log = logging.getLogger(__name__)
+
+
+class Comment(CSRFSchema):
+    comment = c.SchemaNode(
+        c.String(), description="Share your thoughts \u2026",
+        widget=w.TextAreaWidget(css_class='comment-entry'))
+
+
+def comment_success(context, request, appstruct):
+    log.debug('comment success %r', appstruct)
+    return httpexceptions.HTTPNotFound()
 
 
 @view_config(name='view', context=SubmissionResource,
@@ -21,7 +36,11 @@ log = logging.getLogger(__name__)
              permission='view')
 @view_config(name='view', context=SubmissionResource, renderer='json',
              api='true', permission='view')
-def view_submission(context, request):
+@form_renderer(Comment, 'comment', success=comment_success, button='save',
+               name='comment', context=SubmissionResource,
+               renderer='content/submission.jinja2', api='false',
+               permission='comment')
+def view_submission(context, request, forms):
     show_anyway = (
         (len(request.subpath) > 1 and request.subpath[-1] == 'anyway')
         or request.GET.get('anyway') == 'true')
@@ -32,11 +51,13 @@ def view_submission(context, request):
         else:
             return httpexceptions.HTTPNotFound()
     n_comments, comments = context.submission.comment_tree()
-    return {
+    ret = forms.copy()
+    ret.update({
         'submission': context.submission,
         'n_comments': n_comments,
         'comments': comments,
-    }
+    })
+    return ret
 
 
 @view_config(context=RootResource, renderer='content/index.jinja2', api='false')
