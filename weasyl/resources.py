@@ -1,6 +1,6 @@
 import logging
 
-from pyramid.security import Allow, Deny, Everyone, Authenticated
+from pyramid.security import Authenticated
 from pyramid import httpexceptions
 
 from .models.content import Submission
@@ -20,16 +20,13 @@ def make_location_aware(func):
 
 
 class SubmissionsResource:
-    __acl__ = [
-        (Allow, 'g:mod', 'view'),
-        (Allow, 'g:mod', 'view-anything'),
-    ]
-
     def __init__(self, request):
         self.request = request
 
     @make_location_aware
     def __getitem__(self, segment):
+        if segment == 'anyway':
+            return self
         submission = Submission.query.get_or_404(segment)
         if isinstance(self.__parent__, UserResource) and self.__parent__.user != submission.owner:
             raise httpexceptions.HTTPNotFound()
@@ -41,17 +38,26 @@ class SubmissionResource:
         self.request = request
         self.submission = submission
 
-    @property
-    def __acl__(self):
+    def __getitem__(self, segment):
+        if segment == 'mod':
+            return self
+        raise KeyError(segment)
+
+    def permits_view(self, principals):
+        if 'g:mod' in principals and (
+                self.request.traversed[-1] == 'mod'
+                or self.request.GET.get('anyway') == 'true'):
+            return True
         if 'hidden' in self.submission.settings:
-            return []
-        elif 'friends-only' in self.submission.settings:
-            return []
-        else:
-            return [
-                (Allow, Authenticated, 'comment'),
-                (Allow, Everyone, 'view'),
-            ]
+            return False
+        if 'friends-only' in self.submission.settings:
+            return False
+        return True
+
+    def permits_comment(self, principals):
+        if not self.permits_view(principals):
+            return False
+        return Authenticated in principals
 
 
 class UsersResource:
@@ -81,17 +87,10 @@ class UserResource(MethodDispatchResource):
         self.request = request
         self.user = user
 
-    @property
-    def __acl__(self):
+    def permits_view(self, principals):
         if 'hide-profile-from-guests' in self.user.profile.settings:
-            return [
-                (Allow, Authenticated, 'view'),
-                (Deny, Everyone, 'view'),
-            ]
-        else:
-            return [
-                (Allow, Everyone, 'view'),
-            ]
+            return Authenticated in principals
+        return True
 
     segment_submissions = SubmissionsResource
 
@@ -105,13 +104,6 @@ class RootResource(MethodDispatchResource):
     __name__ = ''
     __parent__ = None
 
-    __acl__ = [
-        (Deny, Authenticated, 'signin'),
-        (Allow, Everyone, 'signin'),
-        (Allow, Authenticated, 'signout'),
-        (Deny, Everyone, 'signout'),
-    ]
-
     segment_submissions = SubmissionsResource
     segment_users = UsersResource
     segment_api = APIResource
@@ -120,3 +112,9 @@ class RootResource(MethodDispatchResource):
         if segment.startswith('~'):
             return UsersResource(self.request)[segment[1:]]
         return super().__getitem__(segment)
+
+    def permits_signin(self, principals):
+        return Authenticated not in principals
+
+    def permits_signout(Self, principals):
+        return Authenticated in principals

@@ -3,7 +3,6 @@ import functools
 
 import arrow
 from pyramid.authentication import SessionAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
 from pyramid.traversal import quote_path_segment
@@ -77,7 +76,7 @@ def make_app(global_config, **settings):
 
     config.set_authentication_policy(
         SessionAuthenticationPolicy(prefix='', callback=authorization.groupfinder))
-    config.set_authorization_policy(ACLAuthorizationPolicy())
+    config.set_authorization_policy(authorization.DelegatedAuthorizationPolicy())
 
     config.scan('weasyl.views')
     config.scan('weasyl.models')

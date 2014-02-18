@@ -42,15 +42,6 @@ def comment_success(context, request, appstruct):
                name='comment', context=SubmissionResource,
                renderer='content/submission.jinja2', permission='comment')
 def view_submission(context, request, forms):
-    show_anyway = (
-        (len(request.subpath) > 1 and request.subpath[-1] == 'anyway')
-        or request.GET.get('anyway') == 'true')
-    sub = context.submission
-    if 'hidden' in sub.settings:
-        if has_permission('view-anything', context, request) and show_anyway:
-            pass
-        else:
-            return httpexceptions.HTTPNotFound()
     n_comments, comments = context.submission.comment_tree()
     ret = forms.copy()
     ret.update({
