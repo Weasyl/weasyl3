@@ -3,6 +3,7 @@ import logging
 import bcrypt
 from pyramid.decorator import reify
 from sqlalchemy import orm
+import sqlalchemy as sa
 
 from ..legacy import plaintext
 from .. import staff
@@ -40,6 +41,28 @@ class Login(Base):
     @reify
     def is_staff(self):
         return self.userid in staff.MODS
+
+    def is_friends_with(self, other):
+        return bool(
+            Friendship.query
+            .filter(sa.or_(
+                (Friendship.userid == self.userid) & (Friendship.otherid == other),
+                (Friendship.otherid == self.userid) & (Friendship.userid == other)))
+            .count())
+
+    def is_ignoring(self, other):
+        return bool(
+            Ignorama.query
+            .filter(
+                (Ignorama.userid == self.userid) & (Ignorama.otherid == other))
+            .count())
+
+    def is_ignored_by(self, other):
+        return bool(
+            Ignorama.query
+            .filter(
+                (Ignorama.userid == other) & (Ignorama.otherid == self.userid))
+            .count())
 
     def __json__(self, request):
         return {
@@ -87,3 +110,11 @@ class UserStream(Base):
     __table__ = tables.user_streams
 
     owner = orm.relationship(Login, backref='user_streams')
+
+
+class Friendship(Base):
+    __table__ = tables.frienduser
+
+
+class Ignorama(Base):
+    __table__ = tables.ignoreuser

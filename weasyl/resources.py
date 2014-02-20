@@ -30,6 +30,10 @@ def make_location_aware(func):
     return __getitem__
 
 
+def userid_from_principals(principals):
+    return next((p for p in principals if isinstance(p, int)), None)
+
+
 class SubmissionsResource:
     def __init__(self, request):
         self.request = request
@@ -60,7 +64,8 @@ class SubmissionResource:
         if 'hidden' in self.submission.settings:
             return False
         if 'friends-only' in self.submission.settings:
-            return False
+            userid = userid_from_principals(principals)
+            return userid and self.submission.owner.is_friends_with(userid)
         return True
 
     def permits_comment(self, principals):
