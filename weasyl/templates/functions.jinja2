@@ -48,6 +48,13 @@
 </form>
 {% endmacro %}
 
+{% macro logout_form() %}
+<form action="{{ request.resource_path(None, 'signout') }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+  {{ caller() }}
+</form>
+{% endmacro %}
+
 {% macro submission_thumb(submission, klass='grid-item', with_caption=True) %}
 <figure class="{{ klass }}" data-init-aspect="{{ submission.submission_media['aspect_ratio'] }}">
   <a href="{{ request.path_for(submission) }}" class="thumb-container">

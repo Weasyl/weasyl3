@@ -31,7 +31,21 @@
         <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_path }}" alt="Weasyl" />
       </a>
 
+      {% if request.session.user %}
+      <div class="header-actions-container">
+        <span class="header-actions-toggle icon icon-nav-gears toggle" data-toggle-target="next" aria-hidden="true"></span>
+        <div class="header-actions small-menu">
+          <a href="#" class="action small">Inbox <span class="icon icon-nav-notes"></span></a>
+          <a href="#" class="action small">Settings <span class="icon icon-nav-gear"></span></a>
+          {% call f.logout_form() %}
+          <button type="submit" name="signout" class="action disclose">Sign out</button>
+          {% endcall %}
+        </div><!-- .header-actions -->
+      </div><!-- /header-actions-container -->
+      {% endif %}
+
       <nav class="header-nav small-menu" role="navigation">
+	<a href="{{ request.resource_path(None, 'share') }}" tabindex="0" class="color-art bg-art block">Share</a>
         <a href="{{ request.resource_path(None, 'explore') }}" tabindex="0" class="color-comment bg-comment block">Explore</a>
         <a href="https://forums.weasyl.com/" tabindex="0" class="color-stat bg-stat block">Forums</a>
         <a href="{{ request.resource_path(None, 'help') }}" tabindex="0" class="color-journal bg-journal block">Help</a>
@@ -100,10 +114,9 @@
           {% if request.session.user %}
           <dd><a href="{{ request.resource_path(None, '~', 'settings') }}">Settings</a></dd>
           <dd>
-            <form action="{{ request.resource_path(None, 'signout') }}" method="post">
-              <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
-              <button type="submit" name="signout" class="action disclose">Sign out</button>
-            </form>
+            {% call f.logout_form() %}
+            <button type="submit" name="signout" class="action disclose">Sign out</button>
+            {% endcall %}
           </dd>
           {% else %}
           <dd><a href="{{ request.resource_path(None, 'register') }}">New account</a></dd>
