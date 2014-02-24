@@ -55,7 +55,7 @@
 </form>
 {% endmacro %}
 
-{% macro submission_thumb(submission, klass='grid-item', with_caption=True) %}
+{% macro submission_thumb(submission, klass='grid-item', with_caption=True, with_user=True) %}
 <figure class="{{ klass }}" data-init-aspect="{{ submission.submission_media['aspect_ratio'] }}">
   <a href="{{ request.path_for(submission) }}" class="thumb-container">
     <img class="thumb" src="{{ submission.submission_media['display_url'] }}" alt="" />
@@ -63,7 +63,9 @@
     {% if with_caption -%}
     <figcaption class="info">
       <h4 class="title">{{ submission.title }}</h4>
+      {% if with_user -%}
       <p class="byline">{{ by_user(submission.owner) }}</p>
+      {%- endif %}
     </figcaption>
     {%- endif %}
   </a>

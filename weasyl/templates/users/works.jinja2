@@ -1,0 +1,77 @@
+{% extends "users/layout.jinja2" %}
+
+{% block user_page_title %}works{% endblock %}
+{% block user_title %}
+{{ f.user_link(user) }} <span>&gt;</span> Works
+{% endblock %}
+
+{% block user_sidebar %}
+<h3 class="title secondary">Folders</h3>
+<ul class="grid">
+  <li class="folder grid-item">
+    <a href="#">
+      <div class="folder-thumbs">
+	<img class="thumb" src="http://lorempixel.com/170/194/nature" alt="" />
+	<img class="thumb" src="http://lorempixel.com/203/214/nature" alt="" />
+	<img class="thumb" src="http://lorempixel.com/262/193/nature" alt="" />
+      </div>
+      <h4 class="title">Landscapes</h4>
+      <h5 class="type-secondary type-alt">10 works</h4>
+    </a>
+  </li>
+  <li class="folder grid-item">
+    <a href="#">
+      <div class="folder-thumbs">
+        <img class="thumb" src="http://lorempixel.com/242/159/cats" alt="" />
+        <img class="thumb" src="http://lorempixel.com/238/216/cats" alt="" />
+        <img class="thumb" src="http://lorempixel.com/175/108/cats" alt="" />
+      </div>
+      <h4 class="title">Kitties!</h4>
+      <h5 class="type-secondary type-alt">76 works</h4>
+    </a>
+  </li>
+  <li class="folder grid-item">
+    <a href="#">
+      <div class="folder-thumbs">
+        <img class="thumb" src="http://lorempixel.com/196/296/technics" alt="" />
+        <img class="thumb" src="http://lorempixel.com/114/233/technics" alt="" />
+        <img class="thumb" src="http://lorempixel.com/133/239/technics" alt="" />
+      </div>
+      <h4 class="title">Long Folder Title Lorem Ipsum Sit Dolor et Cetera</h4>
+      <h5 class="type-secondary type-alt">2 works</h4>
+    </a>
+  </li>
+</ul><!-- .grid -->
+{% endblock %}
+
+{% block user_body %}
+<form class="view-options works-view-options" action="#" method="post">
+  <label class="view-options-label">
+    <input type="checkbox" name="critique" />
+    <span class="icon icon-view-crit">Show only submissions that have requested critique</span>
+  </label>
+  <label class="view-options-label">
+    <input type="checkbox" name="filter-bypass" />
+    <span class="icon icon-view-bypass">Temporarily bypass my tag filters</span>
+  </label>
+  <fieldset class="view-options-group">
+    <label class="view-options-label">
+      <input type="radio" name="view-mode" value="mosaic" checked="checked" />
+      <span class="icon icon-view-mosaic">Mosaic view</span>
+    </label>
+    <label class="view-options-label">
+      <input type="radio" name="view-mode" value="grid" />
+      <span class="icon icon-view-grid">Grid view</span>
+    </label>
+  </fieldset>
+  <input type="submit" value="Go" />
+</form>
+
+<div class="mosaic">
+  {% for submission in submissions %}
+  {{ f.submission_thumb(submission, 'item', with_user=False) }}
+  {% endfor %}
+</div><!-- .mosaic -->
+
+<div class="center-action artview-more"><a href="#" class="action disclose below">Load more</a></div>
+{% endblock %}
