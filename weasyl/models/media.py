@@ -76,7 +76,7 @@ class DiskMediaItem(MediaItem):
     __mapper_args__ = dict(polymorphic_identity='disk')
 
     def init_from_data(self, data):
-        fanout = [self.sha256[x:x+2] for x in xrange(0, 6, 2)]
+        fanout = [self.sha256[x:x+2] for x in range(0, 6, 2)]
         path = ['static', 'media'] + fanout + ['%s.%s' % (self.sha256, self.file_type)]
         self.file_path = os.path.join(*path)
         self.file_url = '/' + self.file_path
