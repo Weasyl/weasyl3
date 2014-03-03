@@ -1,5 +1,6 @@
 from sqlalchemy import (
-    MetaData, Table, Column, ForeignKeyConstraint, Index, Integer, String, Text, SMALLINT, text)
+    MetaData, Table, Column, CheckConstraint, ForeignKeyConstraint, Index,
+    Integer, String, Text, SMALLINT, text)
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from weasyl.models.helpers import (
@@ -63,8 +64,10 @@ charcomment = Table(
     Column('unixtime', WeasylTimestampColumn(), nullable=False),
     Column('indent', Integer(), nullable=False, server_default='0'),
     Column('settings', String(length=20), nullable=False, server_default=''),
+    Column('hidden_by', Integer(), nullable=True),
     default_fkey(['targetid'], ['fursona.charid'], name='charcomment_targetid_fkey'),
     default_fkey(['userid'], ['login.userid'], name='charcomment_userid_fkey'),
+    default_fkey(['hidden_by'], ['login.userid'], name='charcomment_hidden_by_fkey'),
 )
 
 Index('ind_charcomment_targetid', charcomment.c.targetid)
@@ -81,6 +84,30 @@ collection = Table(
 )
 
 Index('ind_collection_userid', collection.c.userid)
+
+
+comments = Table(
+    'comments', metadata,
+    Column('commentid', Integer(), primary_key=True),
+    Column('userid', Integer(), nullable=False),
+    Column('target_user', Integer(), index=True),
+    Column('target_sub', Integer(), index=True),
+    Column('parentid', Integer(), nullable=True),
+    Column('content', Text(), nullable=False),
+    Column('unixtime', Integer(), nullable=False),
+    Column('indent', Integer(), nullable=False, server_default='0'),
+    Column('settings', CharSettingsColumn({
+        'h': 'hidden',
+        's': 'staff-note',
+    }, length=20), nullable=False, server_default=''),
+    Column('hidden_by', Integer(), nullable=True),
+    default_fkey(['userid'], ['login.userid'], name='comments_userid_fkey'),
+    default_fkey(['target_user'], ['login.userid'], name='comments_target_user_fkey'),
+    default_fkey(['target_sub'], ['submission.submitid'], name='comments_target_sub_fkey'),
+    default_fkey(['parentid'], ['comments.commentid'], name='comments_parentid_fkey'),
+    default_fkey(['hidden_by'], ['login.userid'], name='comments_hidden_by_fkey'),
+    CheckConstraint('(target_user IS NOT NULL) != (target_sub IS NOT NULL)', name='comments_target_check'),
+)
 
 
 commishclass = Table(
@@ -169,28 +196,9 @@ emailverify = Table(
 )
 
 
-event = Table(
-    'event', metadata,
-    Column('eventid', Integer(), primary_key=True, nullable=False),
-    Column('groupid', Integer()),
-    Column('userid', Integer()),
-    Column('title', String(length=200), nullable=False),
-    Column('location', String(length=500), nullable=False),
-    Column('content', String(length=8000), nullable=False),
-    Column('start_time', WeasylTimestampColumn(), nullable=False),
-    Column('end_time', WeasylTimestampColumn(), nullable=False),
-    Column('settings', String(length=20), nullable=False, server_default=''),
-    default_fkey(['userid'], ['login.userid'], name='event_userid_fkey'),
-    default_fkey(['groupid'], ['usergroup.groupid'], name='event_groupid_fkey'),
-)
-
-Index('ind_event_groupid', event.c.groupid)
-
-
 favorite = Table(
     'favorite', metadata,
     Column('userid', Integer(), primary_key=True, nullable=False),
-    Column('groupid', Integer(), primary_key=True, nullable=False),
     Column('targetid', Integer(), primary_key=True, nullable=False),
     Column('type', String(length=5), primary_key=True, nullable=False, server_default=''),
     Column('unixtime', WeasylTimestampColumn(), nullable=False),
@@ -198,8 +206,7 @@ favorite = Table(
     default_fkey(['userid'], ['login.userid'], name='favorite_userid_fkey'),
 )
 
-Index('ind_favorite_groupid', favorite.c.groupid)
-Index('ind_favorite_userid_groupid', favorite.c.userid, favorite.c.groupid)
+Index('ind_favorite_userid', favorite.c.userid)
 
 
 folder = Table(
@@ -277,39 +284,6 @@ google_doc_embeds = Table(
 )
 
 
-groupinvite = Table(
-    'groupinvite', metadata,
-    Column('groupid', Integer(), primary_key=True, nullable=False),
-    Column('userid', Integer(), primary_key=True, nullable=False),
-    Column('unixtime', WeasylTimestampColumn(), nullable=False),
-    default_fkey(['userid'], ['login.userid'], name='groupinvite_userid_fkey'),
-    default_fkey(['groupid'], ['usergroup.groupid'], name='groupinvite_groupid_fkey'),
-)
-
-
-grouprequest = Table(
-    'grouprequest', metadata,
-    Column('groupid', Integer(), primary_key=True, nullable=False),
-    Column('userid', Integer(), primary_key=True, nullable=False),
-    Column('unixtime', WeasylTimestampColumn(), nullable=False),
-    default_fkey(['userid'], ['login.userid'], name='grouprequest_userid_fkey'),
-    default_fkey(['groupid'], ['usergroup.groupid'], name='grouprequest_groupid_fkey'),
-)
-
-
-groupuser = Table(
-    'groupuser', metadata,
-    Column('groupid', Integer(), primary_key=True, nullable=False),
-    Column('userid', Integer(), primary_key=True, nullable=False),
-    Column('unixtime', WeasylTimestampColumn(), nullable=False),
-    Column('settings', String(length=20), nullable=False, server_default=''),
-    default_fkey(['userid'], ['login.userid'], name='groupuser_userid_fkey'),
-    default_fkey(['groupid'], ['usergroup.groupid'], name='groupuser_groupid_fkey'),
-)
-
-Index('ind_groupuser_groupid', groupuser.c.groupid)
-
-
 ignorecontent = Table(
     'ignorecontent', metadata,
     Column('userid', Integer(), primary_key=True, nullable=False),
@@ -336,18 +310,14 @@ journal = Table(
     'journal', metadata,
     Column('journalid', Integer(), primary_key=True, nullable=False),
     Column('userid', Integer()),
-    Column('groupid', Integer()),
     Column('title', String(length=200), nullable=False),
     Column('rating', RatingColumn, nullable=False),
     Column('unixtime', WeasylTimestampColumn(), nullable=False),
     Column('settings', String(length=20), nullable=False, server_default=''),
     Column('page_views', Integer(), nullable=False, server_default='0'),
     default_fkey(['userid'], ['login.userid'], name='journal_userid_fkey'),
-    default_fkey(['groupid'], ['usergroup.groupid'], name='journal_groupid_fkey'),
 )
 
-Index('ind_journal_userid_groupid', journal.c.userid, journal.c.groupid)
-Index('ind_journal_groupid', journal.c.groupid)
 Index('ind_journal_userid', journal.c.userid)
 
 
@@ -361,8 +331,10 @@ journalcomment = Table(
     Column('unixtime', WeasylTimestampColumn(), nullable=False),
     Column('indent', Integer(), nullable=False, server_default='0'),
     Column('settings', String(length=20), nullable=False, server_default=''),
+    Column('hidden_by', Integer(), nullable=True),
     default_fkey(['targetid'], ['journal.journalid'], name='journalcomment_targetid_fkey'),
     default_fkey(['userid'], ['login.userid'], name='journalcomment_userid_fkey'),
+    default_fkey(['hidden_by'], ['login.userid'], name='journalcomment_hidden_by_fkey'),
 )
 
 Index('ind_journalcomment_settings', journalcomment.c.settings)
@@ -560,10 +532,6 @@ profile = Table(
         'f': 'watch-user-characters',
         't': 'watch-user-stream-status',
         'j': 'watch-user-journals',
-
-        'o': 'watch-group-collections',
-        'n': 'watch-group-journals',
-        'e': 'watch-group-events',
     }, {
         'tagging-level': {
             'm': 'max-rating-moderate',
@@ -635,7 +603,9 @@ searchmapsubmit = Table(
     'searchmapsubmit', metadata,
     Column('tagid', Integer(), primary_key=True, nullable=False),
     Column('targetid', Integer(), primary_key=True, nullable=False),
-    Column('settings', String(), nullable=False, server_default=''),
+    Column('settings', CharSettingsColumn({
+        'a': 'artist-tag',
+    }), nullable=False, server_default=''),
     default_fkey(['targetid'], ['submission.submitid'], name='searchmapsubmit_targetid_fkey'),
     default_fkey(['tagid'], ['searchtag.tagid'], name='searchmapsubmit_tagid_fkey'),
 )
@@ -775,6 +745,19 @@ suspension = Table(
 )
 
 
+tag_updates = Table(
+    'tag_updates', metadata,
+    Column('updateid', Integer(), primary_key=True),
+    Column('submitid', Integer(), nullable=False),
+    Column('userid', Integer(), nullable=False),
+    Column('added', ARRAY(Text())),
+    Column('removed', ARRAY(Text())),
+    Column('updated_at', Integer(), nullable=False, server_default=text(u"(date_part('epoch'::text, now()) - (18000)::double precision)")),
+    default_fkey(['submitid'], ['submission.submitid'], name='tag_updates_submitid_fkey'),
+    default_fkey(['userid'], ['login.userid'], name='tag_updates_userid_fkey'),
+)
+
+
 user_media_links = Table(
     'user_media_links', metadata,
     Column('linkid', Integer(), primary_key=True, nullable=False),
@@ -816,23 +799,6 @@ useralias = Table(
     Column('alias_name', String(length=40), primary_key=True, nullable=False),
     Column('settings', String(), nullable=False, server_default=''),
     default_fkey(['userid'], ['login.userid'], name='useralias_userid_fkey'),
-)
-
-
-usergroup = Table(
-    'usergroup', metadata,
-    Column('groupid', Integer(), primary_key=True, nullable=False),
-    Column('groupname', String(), nullable=False, unique=True),
-    Column('sysname', String(), nullable=False),
-    Column('catchphrase', String(), nullable=False, server_default=''),
-    Column('profile_text', String(), nullable=False, server_default=''),
-    Column('page_views', Integer(), nullable=False, server_default='0'),
-    Column('num_members', Integer(), nullable=False, server_default=text('1')),
-    Column('num_faved', Integer(), nullable=False, server_default='0'),
-    Column('num_journals', Integer(), nullable=False, server_default='0'),
-    Column('num_collects', Integer(), nullable=False, server_default='0'),
-    Column('settings', String(), nullable=False, server_default=''),
-    Column('unixtime', WeasylTimestampColumn(), nullable=False),
 )
 
 
@@ -887,12 +853,20 @@ userstats = Table(
 )
 
 
+views = Table(
+    'views', metadata,
+    Column('viewer', String(length=127), primary_key=True, nullable=False),
+    Column('targetid', Integer(), primary_key=True, nullable=False),
+    Column('type', Integer(), primary_key=True, nullable=False),
+)
+
+
 watchuser = Table(
     'watchuser', metadata,
     Column('userid', Integer(), primary_key=True, nullable=False),
     Column('otherid', Integer(), primary_key=True, nullable=False),
     Column('settings', String(length=20), nullable=False),
-    Column('unixtime', WeasylTimestampColumn(), nullable=False, server_default=text(u"(date_part('epoch'::text, now()) - (18000)::double precision)")),
+    Column('unixtime', Integer(), nullable=False, server_default=text(u"(date_part('epoch'::text, now()) - (18000)::double precision)")),
     default_fkey(['otherid'], ['login.userid'], name='watchuser_otherid_fkey'),
     default_fkey(['userid'], ['login.userid'], name='watchuser_userid_fkey'),
 )
