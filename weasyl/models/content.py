@@ -24,6 +24,9 @@ class Submission(Base):
     tag_objects = relationship(Tag, secondary=SubmissionTag.__table__)
     tags = association_proxy('tag_objects', 'title')
 
+    def _comment_criteria(self):
+        return {'target_sub': self.submitid}
+
     def to_json(self):
         return {
             'title': self.title,
@@ -39,31 +42,6 @@ class Submission(Base):
         if with_slug:
             parts.append(slug_for(self.title))
         return request.resource_path(None, *parts)
-
-    def comment_tree(self):
-        comments = (
-            Comment.query
-            .filter_by(targetid=self.submitid)
-            .join(Login)
-            .options(contains_eager(Comment.poster))
-            .order_by(Comment.unixtime.asc())
-            .all())
-
-        comment_map = {}
-        ret = []
-        users = set()
-        for c in comments:
-            comment_map[c.commentid] = c
-            c.subcomments = []
-            if c.parentid:
-                comment_map[c.parentid].subcomments.append(c)
-            else:
-                ret.append(c)
-            users.add(c.poster)
-
-        from ..media import populate_with_user_media
-        populate_with_user_media(users)
-        return len(comment_map), ret
 
     @reify
     def media(self):
@@ -88,12 +66,49 @@ class Submission(Base):
 
 
 class Comment(Base):
-    __table__ = tables.submitcomment
+    __table__ = tables.comments
 
-    target = relationship(Submission, backref='comments')
-    poster = relationship(Login, backref='comments')
+    _target_user = relationship(Login, foreign_keys=[__table__.c.target_user], backref='shouts')
+    _target_sub = relationship(Submission, backref='comments')
+    poster = relationship(Login, foreign_keys=[__table__.c.userid])
+
+    @property
+    def target(self):
+        if self.target_user:
+            return self._target_user
+        elif self.target_sub:
+            return self._target_sub
+        else:
+            raise ValueError('no target user or submission')
 
     subcomments = ()
+
+    @classmethod
+    def comment_tree(cls, target):
+        comments = (
+            cls.query
+            .filter_by(**target._comment_criteria())
+            .join(Login, cls.userid == Login.userid)
+            .options(contains_eager(Comment.poster))
+            .order_by(Comment.unixtime.asc())
+            .all())
+
+        comment_map = {}
+        ret = []
+        users = set()
+        for c in comments:
+            comment_map[c.commentid] = c
+            c.subcomments = []
+            if c.parentid:
+                comment_map[c.parentid].subcomments.append(c)
+            else:
+                ret.append(c)
+            users.add(c.poster)
+
+        from ..media import populate_with_user_media
+        populate_with_user_media(users)
+        return len(comment_map), ret
+
 
 
 class Folder(Base):

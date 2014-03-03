@@ -1,33 +1,5 @@
 {% extends "layout.jinja2" %}
 
-{% macro show_comment(comment) %}
-<li class="comment">
-  {{ f.user_avatar(comment.poster) }}
-  {% set user_class = 'owner' if comment.userid == submission.userid else 'staff' if comment.poster.is_staff else '' %}
-  <article class="comment-box {{ user_class }}">
-    <header class="comment-info">
-      {{ f.user_link(comment.poster) }}
-      {% if user_class == 'owner' %}
-      <span class="comment-attr owner">(page owner)</span>
-      {% elif user_class == 'staff' %}
-      <span class="comment-attr staff">(staff)</span>
-      {% endif %}
-      {{ comment.unixtime | relative_date }}
-    </header>
-    <section class="comment-content formatted">
-      {{ comment.content | markdown }}
-    </section>
-    <ul class="comment-actions action-set">
-      <li><a href="#" class="action small">Reply</a></li>
-      <li><a href="#" class="icon icon-action-warning">Report</a></li>
-    </ul>
-  </article>
-  <ol>
-    {% for subc in comment.subcomments %}{{ show_comment(subc) }}{% endfor %}
-  </ol>
-</li><!-- .comment -->
-{% endmacro %}
-
 {% block title %}{{ submission.title }}{% endblock %}
 {% block body %}
 <div class="sub-container">
@@ -102,7 +74,7 @@
       {% endif %}
 
       <ol class="comment-tree">
-        {% for comment in comments %}{{ show_comment(comment) }}{% endfor %}
+        {% for comment in comments %}{{ f.show_comment(comment, submission.userid) }}{% endfor %}
       </ol>
     </div><!-- .toggle-target-s -->
 

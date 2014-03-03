@@ -106,6 +106,11 @@ class UserResource(MethodDispatchResource):
             return Authenticated in principals
         return True
 
+    def permits_shout(self, principals):
+        if not self.permits_view(principals):
+            return False
+        return Authenticated in principals
+
     segment_submissions = SubmissionsResource
 
 

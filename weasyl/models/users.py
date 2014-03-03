@@ -17,6 +17,9 @@ log = logging.getLogger(__name__)
 class Login(Base):
     __table__ = tables.login
 
+    def _comment_criteria(self):
+        return {'target_user': self.userid}
+
     def canonical_path(self, request, operation=None):
         parts = ['~' + self.login_name]
         if operation is not None:

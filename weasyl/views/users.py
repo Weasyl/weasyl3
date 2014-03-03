@@ -1,19 +1,29 @@
 import random
 import logging
 
+from pyramid.renderers import render_to_response
 from pyramid.view import view_config
+from pyramid import httpexceptions
 
 from ..resources import UserResource
 from .. import media
-from ..models.content import Submission, Folder
+from ..models.content import Comment, Submission, Folder
+from .forms import CommentForm, form_renderer
 
 
 log = logging.getLogger(__name__)
 
+def comment_success(context, request, appstruct):
+    if request.is_api_request:
+        return render_to_response('json', {'status': 'ok'}, request=request)
+    return httpexceptions.HTTPSeeOther('/')
+
 
 @view_config(context=UserResource, renderer='users/profile.jinja2', api='false', permission='view')
 @view_config(context=UserResource, renderer='json', api='true', permission='view')
-def view_user(context, request):
+@form_renderer(CommentForm, 'comment', success=comment_success, button='save',
+               name='shout', context=UserResource, renderer='users/profile.jinja2', permission='shout')
+def view_user(context, request, forms):
     submissions = (
         Submission.query
         .filter(Submission.userid == context.user.userid)
@@ -32,13 +42,18 @@ def view_user(context, request):
         .all())
 
     featured = random.choice(available_featured_submissions) if available_featured_submissions else None
+    n_shouts, shouts = Comment.comment_tree(context.user)
 
-    return {
+    ret = forms.copy()
+    ret.update({
         'user': context.user,
         'submissions': submissions,
         'featured': featured,
+        'n_shouts': n_shouts,
+        'shouts': shouts,
         'sidebar': None,
-    }
+    })
+    return ret
 
 
 @view_config(name='works', context=UserResource, renderer='users/works.jinja2', api='false', permission='view')

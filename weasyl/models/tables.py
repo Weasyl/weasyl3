@@ -94,7 +94,7 @@ comments = Table(
     Column('target_sub', Integer(), index=True),
     Column('parentid', Integer(), nullable=True),
     Column('content', Text(), nullable=False),
-    Column('unixtime', Integer(), nullable=False),
+    Column('unixtime', WeasylTimestampColumn(), nullable=False),
     Column('indent', Integer(), nullable=False, server_default='0'),
     Column('settings', CharSettingsColumn({
         'h': 'hidden',

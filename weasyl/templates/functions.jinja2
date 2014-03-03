@@ -71,3 +71,31 @@
   </a>
 </figure>
 {% endmacro %}
+
+{% macro show_comment(comment, ownerid) %}
+<li class="comment">
+  {{ user_avatar(comment.poster) }}
+  {% set user_class = 'owner' if comment.userid == ownerid else 'staff' if comment.poster.is_staff else '' %}
+  <article class="comment-box {{ user_class }}">
+    <header class="comment-info">
+      {{ user_link(comment.poster) }}
+      {% if user_class == 'owner' %}
+      <span class="comment-attr owner">(page owner)</span>
+      {% elif user_class == 'staff' %}
+      <span class="comment-attr staff">(staff)</span>
+      {% endif %}
+      {{ comment.unixtime | relative_date }}
+    </header>
+    <section class="comment-content formatted">
+      {{ comment.content | markdown }}
+    </section>
+    <ul class="comment-actions action-set">
+      <li><a href="#" class="action small">Reply</a></li>
+      <li><a href="#" class="icon icon-action-warning">Report</a></li>
+    </ul>
+  </article>
+  <ol>
+    {% for subc in comment.subcomments %}{{ show_comment(subc, ownerid) }}{% endfor %}
+  </ol>
+</li><!-- .comment -->
+{% endmacro %}

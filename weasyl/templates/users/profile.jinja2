@@ -140,124 +140,24 @@
 <div class="user-comments">
   <h4 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Shouts</h4>
   <div class="toggle-target-max-m">
-    <form action="#" class="comment" method="post">
-      <a class="avatar" href="#"><img src="//lorempixel.com/200/200" alt="Usernameguy's avatar" /></a>
+    {% if request.session.user %}
+    <form action="{{ request.path_for(user, 'shout') }}" class="comment" method="post">
+      {{ f.form_errors(comment_errors) }}
+      {{ comment_form['csrf_token'].serialize() | safe }}
+      {{ f.user_avatar(request.session.user) }}
       <div class="comment-box hypothetical">
-        <div class="comment-info"><a href="#" class="username">AbrahammerLincolnlog</a></div>
-        <textarea name="comment" id="comment-98avdja" class="comment-entry" placeholder="Share your thoughts &#8230;"></textarea>
+        <div class="comment-info">{{ f.user_link(request.session.user) }}</div>
+        {{ comment_form['comment'].serialize() | safe }}
         <ul class="comment-actions action-set">
           <li><a href="#" class="action small">Formatting help</a></li>
         </ul>
-        <button type="submit" class="comment-submit action disclose">Save</button>
+        <button type="submit" name="save" class="comment-submit action disclose">Save</button>
       </div><!-- .comment-box -->
     </form><!-- .comment -->
+    {% endif %}
 
     <ol class="comment-tree">
-      <li class="comment">
-        <a class="avatar" href="#"><img src="//lorempixel.com/201/201" alt="" /></a>
-        <article class="comment-box">
-          <header class="comment-info">
-            <a href="#" class="username">Shortname</a>
-            <time class="type-secondary type-alt" datetime="2013-12-04 14:33">4 December 2013 at 14:33</time>
-          </header>
-          <section class="comment-content formatted">
-            <p>Single-line comment yay</p>
-          </section>
-          <ul class="comment-actions action-set">
-            <li><a href="#" class="action small">Reply</a></li>
-            <li><a href="#" class="icon icon-action-warning">Report</a></li>
-          </ul>
-        </article>
-        <ol>
-          <li class="comment">
-            <a class="avatar" href="#"><img src="//lorempixel.com/199/199" alt="" /></a>
-            <article class="comment-box owner">
-              <header class="comment-info">
-                <a href="#" class="username">Usernameguy</a>
-                <span class="comment-attr owner">(page owner)</span>
-                <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-              </header>
-              <section class="comment-content formatted">
-                <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-              </section>
-              <ul class="comment-actions action-set">
-                <li><a href="#" class="action small">Reply</a></li>
-                <li><a href="#" class="icon icon-action-warning">Report</a></li>
-              </ul>
-            </article>
-            <ol>
-              <li class="comment">
-                <a class="avatar" href="#"><img src="//lorempixel.com/199/199" alt="" /></a>
-                <article class="comment-box">
-                  <header class="comment-info">
-                    <a href="#" class="username">Usernameguy</a>
-                    <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-                  </header>
-                  <section class="comment-content formatted">
-                    <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally. Portland post-ironic American Apparel, Williamsburg before they sold out sriracha readymade iPhone brunch organic Carles tousled. Occupy Pinterest deep v kitsch chia cornhole. Bitters Bushwick put a bird on it, Neutra church-key trust fund umami art party Wes Anderson Vice yr American Apparel butcher.</p>
-                  </section>
-                  <ul class="comment-actions action-set">
-                    <li><a href="#" class="action small">Reply</a></li>
-                    <li><a href="#" class="icon icon-action-warning">Report</a></li>
-                  </ul>
-                </article>
-              </li><!-- .comment -->
-            </ol>
-          </li><!-- .comment -->
-          <li class="comment">
-            <a class="avatar" href="#"><img src="//lorempixel.com/199/199" alt="" /></a>
-            <article class="comment-box">
-              <header class="comment-info">
-                <a href="#" class="username">Usernameguy</a>
-                <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-              </header>
-              <section class="comment-content formatted">
-                <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-              </section>
-              <ul class="comment-actions action-set">
-                <li><a href="#" class="action small">Reply</a></li>
-                <li><a href="#" class="icon icon-action-warning">Report</a></li>
-              </ul>
-            </article>
-          </li><!-- .comment -->
-        </ol>
-      </li><!-- .comment -->
-      <li class="comment">
-        <a class="avatar" href="#"><img src="//lorempixel.com/198/198" alt="" /></a>
-        <article class="comment-box">
-          <header class="comment-info">
-            <a href="#" class="username">Longername McNamertonguydude</a>
-            <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-          </header>
-          <section class="comment-content formatted">
-            <blockquote>
-              <p>Vinyl pug direct trade, squid roof party jean shorts photo booth kogi. Small batch iPhone fashion axe deep v literally.</p>
-              <p>Beard selvage keffiyeh</p>
-            </blockquote>
-            <p>8-bit polaroid Intelligentsia cray 90's bicycle rights butcher kale chips cliche. Hashtag direct trade whatever, swag lo-fi Pinterest readymade freegan tattooed single-origin coffee. Drinking vinegar messenger bag twee 3 wolf moon Portland. Actually ethnic shabby chic squid swag, narwhal gluten-free stumptown distillery polaroid leggings vinyl bitters YOLO.</p>
-          </section>
-          <ul class="comment-actions action-set">
-            <li><a href="#" class="action small">Reply</a></li>
-            <li><a href="#" class="icon icon-action-warning">Report</a></li>
-          </ul>
-        </article>
-      </li><!-- .comment -->
-      <li class="comment">
-        <a class="avatar" href="#"><img src="//lorempixel.com/197/197" alt="" /></a>
-        <article class="comment-box">
-          <header class="comment-info">
-            <a href="#" class="username">Wow</a>
-            <time class="type-secondary type-alt" datetime="2013-12-04 15:30">4 December 2013 at 15:30</time>
-          </header>
-          <section class="comment-content formatted">
-            <p>Vinyl Banksy Portland bespoke. Plaid ethical VHS, mumblecore kitsch freegan Intelligentsia next level skateboard gentrify. Four loko wolf wayfarers Godard stumptown, direct trade Banksy authentic trust fund whatever literally. Ethical scenester art party, bicycle rights iPhone fanny pack distillery XOXO cliche. Dreamcatcher sriracha occupy mustache, next level VHS fixie church-key.</p>
-          </section>
-          <ul class="comment-actions action-set">
-            <li><a href="#" class="action small">Reply</a></li>
-            <li><a href="#" class="icon icon-action-warning">Report</a></li>
-          </ul>
-        </article>
-      </li><!-- .comment -->
+      {% for shout in shouts %}{{ f.show_comment(shout, user.userid) }}{% endfor %}
     </ol>
     <div class="user-more"><a href="#" class="action disclose">See all 102 shouts</a></div>
   </div>

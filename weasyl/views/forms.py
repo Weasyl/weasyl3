@@ -2,9 +2,10 @@ import functools
 import logging
 
 import colander as c
+import deform.widget as w
 from deform.exception import ValidationFailure
 from deform.form import Form
-from pyramid_deform import FormView as _FormView
+from pyramid_deform import FormView as _FormView, CSRFSchema
 from pyramid.view import view_config
 from translationstring import TranslationStringFactory
 
@@ -78,3 +79,9 @@ def form_renderer(schema, key, *, success, button, **kwargs):
             return func(context, request, forms=forms)
         return wrapper
     return deco
+
+
+class CommentForm(CSRFSchema):
+    comment = c.SchemaNode(
+        c.String(), description="Share your thoughts \u2026",
+        widget=w.TextAreaWidget(css_class='comment-entry'))
