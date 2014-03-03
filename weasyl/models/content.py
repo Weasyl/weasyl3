@@ -85,6 +85,7 @@ class Comment(Base):
 
     @classmethod
     def comment_tree(cls, target):
+        # XXX: needs to filter more stuff out
         comments = (
             cls.query
             .filter_by(**target._comment_criteria())

@@ -44,6 +44,7 @@ def view_submission(context, request, forms):
 
 @view_config(context=RootResource, renderer='content/index.jinja2', api='false')
 def index(request):
+    # XXX: tag filtering, etc.
     submissions = (
         Submission.query
         .order_by(Submission.submitid.desc())

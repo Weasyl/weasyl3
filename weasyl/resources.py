@@ -57,6 +57,7 @@ class SubmissionResource:
         raise KeyError(segment)
 
     def permits_view(self, principals):
+        # XXX: this probably needs more checks
         if 'g:mod' in principals and (
                 self.request.traversed[-1] == 'mod'
                 or self.request.GET.get('anyway') == 'true'):
@@ -69,6 +70,7 @@ class SubmissionResource:
         return True
 
     def permits_comment(self, principals):
+        # XXX: this needs more checks
         if not self.permits_view(principals):
             return False
         return Authenticated in principals
@@ -102,11 +104,13 @@ class UserResource(MethodDispatchResource):
         self.user = user
 
     def permits_view(self, principals):
+        # XXX: this probably needs more checks
         if 'hide-profile-from-guests' in self.user.profile.settings:
             return Authenticated in principals
         return True
 
     def permits_shout(self, principals):
+        # XXX: this needs more checks
         if not self.permits_view(principals):
             return False
         return Authenticated in principals

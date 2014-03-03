@@ -24,6 +24,7 @@ def comment_success(context, request, appstruct):
 @form_renderer(CommentForm, 'comment', success=comment_success, button='save',
                name='shout', context=UserResource, renderer='users/profile.jinja2', permission='shout')
 def view_user(context, request, forms):
+    # XXX: tag filtering, etc.
     submissions = (
         Submission.query
         .filter(Submission.userid == context.user.userid)
@@ -33,6 +34,7 @@ def view_user(context, request, forms):
 
     media.populate_with_submission_media(submissions)
 
+    # XXX: tag filtering here too
     available_featured_submissions = (
         Submission.query
         .join(Folder)
@@ -59,6 +61,7 @@ def view_user(context, request, forms):
 @view_config(name='works', context=UserResource, renderer='users/works.jinja2', api='false', permission='view')
 @view_config(name='works', context=UserResource, renderer='json', api='true', permission='view')
 def view_user_works(context, request):
+    # XXX: also tag filtering
     submissions = (
         Submission.query
         .filter(Submission.userid == context.user.userid)
