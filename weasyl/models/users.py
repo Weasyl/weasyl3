@@ -21,12 +21,10 @@ class Login(Base):
         return {'target_user': self.userid}
 
     def canonical_path(self, request, operation=None):
-        from ..resources import RootResource
-
         parts = ['~' + self.login_name]
         if operation is not None:
             parts.append(operation)
-        return request.resource_path(RootResource(request), *parts)
+        return request.resource_path(None, *parts)
 
     @reify
     def media(self):

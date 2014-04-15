@@ -34,8 +34,6 @@ class Submission(Base):
         }
 
     def canonical_path(self, request, operation='view', with_slug=None, mod=False):
-        from ..resources import RootResource
-
         if with_slug is None:
             with_slug = operation == 'view'
         parts = ['submissions', str(self.submitid), operation]
@@ -43,7 +41,7 @@ class Submission(Base):
             parts.insert(2, 'mod')
         if with_slug:
             parts.append(slug_for(self.title))
-        return request.resource_path(RootResource(request), *parts)
+        return request.resource_path(None, *parts)
 
     @reify
     def media(self):
