@@ -518,6 +518,7 @@ profile = Table(
         'g': 'tagging-disabled',
         'd': 'premium',
 
+        'v': 'hide-favorites',
         'w': 'staff-shouts-only',
         'x': 'friend-shouts-only',
         'y': 'staff-notes-only',
