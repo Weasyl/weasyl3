@@ -1,11 +1,13 @@
 from pyramid import httpexceptions
 
+from ..resources import RootResource
+
 
 def configure_urls(config):
     def redirect(route, *transformed):
         def forward(request):
             new_segments = [x.format(**request.matchdict) for x in transformed]
-            url = request.resource_url(None, *new_segments)
+            url = request.resource_url(RootResource(request), *new_segments)
             return httpexceptions.HTTPMovedPermanently(url)
 
         config.add_route(route, route)

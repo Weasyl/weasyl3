@@ -35,7 +35,7 @@
 {% endmacro %}
 
 {% macro login_form(form) %}
-<form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
+<form action="{{ request.resource_path(context, 'signin') }}" method="post" class="login-form standard-form small-width">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
   {{ form['user'].serialize() | safe }}
@@ -49,7 +49,7 @@
 {% endmacro %}
 
 {% macro logout_form() %}
-<form action="{{ request.resource_path(None, 'signout') }}" method="post">
+<form action="{{ request.resource_path(context, 'signout') }}" method="post">
   <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
   {{ caller() }}
 </form>
