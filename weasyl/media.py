@@ -2,6 +2,7 @@ from pyramid.threadlocal import get_current_request
 
 from .cache import region
 from .models.media import SubmissionMediaLink, UserMediaLink
+from .constants import DEFAULT_AVATAR
 
 
 @SubmissionMediaLink.register_cache
@@ -15,7 +16,12 @@ def get_multi_submission_media(*submitids):
 @region.cache_multi_on_arguments()
 def get_multi_user_media(*userids):
     request = get_current_request()
-    return UserMediaLink.bucket_links(request, userids)
+    users_media = UserMediaLink.bucket_links(request, userids)
+
+    for user_media in users_media:
+        user_media.setdefault('avatar', DEFAULT_AVATAR)
+
+    return users_media
 
 
 def get_submission_media(submitid):

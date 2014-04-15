@@ -37,3 +37,14 @@ SUBCATEGORIES = {
     3500: 'embedded video',
     3999: 'other multimedia',
 }
+
+
+BLANK_AVATAR = '/static/images/avatar_default.jpg'
+
+
+DEFAULT_AVATAR = [
+    {
+        'display_url': BLANK_AVATAR,
+        'file_url': BLANK_AVATAR
+    }
+]
