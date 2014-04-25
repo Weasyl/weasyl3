@@ -9,6 +9,9 @@ PYVENV ?= pyvenv
 # URL of package index
 PYPI := https://pypi.weasyl.com/
 
+# Whether to use wheels
+USE_WHEEL := --no-use-wheel
+
 #
 # Rules
 #
@@ -19,7 +22,7 @@ all: ve
 # Creates python environment
 ve: etc/requirements.txt
 	test -e $@ || { $(PYVENV) $@; $@/bin/pip install -U pip setuptools; }
-	$@/bin/pip install -i $(PYPI) -r etc/requirements.txt
+	$@/bin/pip install -i $(PYPI) -r etc/requirements.txt $(USE_WHEEL)
 	touch $@
 
 # Installs weasyl package in develop mode
