@@ -1,3 +1,20 @@
--r pypi-reqs.txt
-git+https://github.com/tkojima/deform_jinja2@fix/python3
-git+https://github.com/Weasyl/misaka
+deform_jinja==0.5.dev1
+pyramid==1.5
+pyramid-deform==0.2
+pyramid-jinja2==1.10
+pyramid-debugtoolbar==2.0.2
+raven==4.2.0
+waitress==0.8.8
+
+anyjson==0.3.3
+decorator==3.4.0
+dogpile.cache==0.5.3
+misaka==1.1.0
+psycopg2==2.5.2
+py-bcrypt==0.4
+python3-memcached==1.51
+pytz==2014.2
+sanpera==0.1.1.dev4
+simplejson==3.4.0
+SQLAlchemy==0.9.4
+arrow==0.4.2
