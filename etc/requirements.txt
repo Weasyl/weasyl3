@@ -1,4 +1,4 @@
-deform_jinja==0.5.dev1
+deform_jinja2==0.5.dev1
 pyramid==1.5
 pyramid-deform==0.2
 pyramid-jinja2==1.10
