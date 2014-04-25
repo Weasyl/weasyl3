@@ -9,7 +9,7 @@ from pyramid_deform import FormView as _FormView, CSRFSchema
 from pyramid.view import view_config
 from translationstring import TranslationStringFactory
 
-from ..legacy import login_name
+from libweasyl.legacy import login_name
 from ..models.users import Login
 
 

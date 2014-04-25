@@ -2,11 +2,11 @@ from pyramid.decorator import reify
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import contains_eager, relationship
 
-from ..text import slug_for
-from .helpers import clauses_for
+from libweasyl.models.helpers import clauses_for
+from libweasyl.models import tables
+from libweasyl.text import slug_for
 from .meta import Base
 from .users import Login
-from . import tables
 
 
 class Tag(Base):

@@ -95,8 +95,8 @@ def make_app(global_config, **settings):
     settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
     settings['jinja2.filters'] = """
         static_path = pyramid_jinja2.filters:static_path_filter
-        markdown = weasyl.text.markdown_filter
-        relative_date = weasyl.text.relative_date
+        markdown = weasyl.filters.markdown_filter
+        relative_date = weasyl.filters.relative_date
     """
     settings['cache.wrap'] = [cache.ThreadCacheProxy, cache.JSONProxy]
 

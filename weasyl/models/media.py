@@ -5,12 +5,12 @@ import os
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.orm import relationship, foreign, remote, joinedload
 
-from ..text import slug_for
+from libweasyl.models import tables
+from libweasyl.text import slug_for
 from .. import images
 from .content import Submission
 from .meta import Base, DBSession
 from .users import Profile
-from . import tables
 
 
 class MediaItem(Base):
