@@ -45,7 +45,6 @@ class WeasylSession(collections.MutableMapping):
             self.created = int(self._session_obj.created_at.timestamp)
         else:
             self.created = time.time()
-        request.add_response_callback(self._serialize)
 
     def __repr__(self):
         return '<WeasylSession %r>' % (self._dict,)
@@ -115,10 +114,19 @@ class WeasylSession(collections.MutableMapping):
             return
         if self._session_obj is None:
             self._session_obj = Session(sessionid=make_session_id())
-            request.db.add(self._session_obj)
             response.set_cookie(self._cookie_name, value=self._session_obj.sessionid, httponly=True)
         additional_data = self._dict.copy()
         for k in self._static_fields:
             setattr(self._session_obj, k, additional_data.pop(k, None))
         self._session_obj.additional_data = additional_data
+        request.db.add(self._session_obj)
         request.db.flush()
+
+
+def session_tween_factory(handler, registry):
+    def session_tween(request):
+        response = handler(request)
+        request.session._serialize(request, response)
+        return response
+
+    return session_tween

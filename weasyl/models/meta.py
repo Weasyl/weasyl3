@@ -2,6 +2,7 @@ from pyramid import httpexceptions
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session, sessionmaker, object_mapper
 from sqlalchemy import engine_from_config
+from zope.sqlalchemy import ZopeTransactionExtension
 
 
 class BaseQuery(Query):
@@ -27,7 +28,8 @@ class _BaseObject:
 
 
 Base = declarative_base(cls=_BaseObject)
-DBSession = Base.DBSession = scoped_session(sessionmaker())
+DBSession = Base.DBSession = scoped_session(sessionmaker(
+    extension=ZopeTransactionExtension()))
 Base.query = DBSession.query_property(BaseQuery)
 
 
@@ -38,14 +40,4 @@ def configure(config, settings):
 
 
 def db(request):
-    session = DBSession()
-
-    def cleanup(request):
-        if request.exception:
-            session.rollback()
-        else:
-            session.commit()
-        session.close()
-    request.add_finished_callback(cleanup)
-
-    return session
+    return DBSession()

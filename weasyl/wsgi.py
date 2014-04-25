@@ -107,6 +107,7 @@ def make_app(global_config, **settings):
     )
 
     configure_db(config, settings)
+    config.include('pyramid_tm')
     config.include('pyramid_jinja2')
     config.include('pyramid_deform')
     config.include('deform_jinja2')
@@ -117,6 +118,9 @@ def make_app(global_config, **settings):
     config.add_request_method(format_datetime)
     config.add_request_method(is_api_request, reify=True)
     config.add_request_method(login_forms, reify=True)
+    config.add_tween(
+        'weasyl.sessions.session_tween_factory',
+        under='pyramid_tm.tm_tween_factory')
 
     configure_urls(config)
 

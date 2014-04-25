@@ -1,8 +1,9 @@
 deform_jinja2==0.5.dev1
 pyramid==1.5
 pyramid-deform==0.2
-pyramid-jinja2==1.10
 pyramid-debugtoolbar==2.0.2
+pyramid-jinja2==1.10
+pyramid-tm==0.7
 raven==4.2.0
 waitress==0.8.8
 
@@ -18,5 +19,6 @@ pytz==2014.2
 sanpera==0.1.1.dev4
 simplejson==3.4.0
 SQLAlchemy==0.9.4
+zope.sqlalchemy==0.7.4
 
 libweasyl==0.1.8
