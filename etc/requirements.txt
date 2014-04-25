@@ -21,4 +21,4 @@ simplejson==3.4.0
 SQLAlchemy==0.9.4
 zope.sqlalchemy==0.7.4
 
-libweasyl==0.1.8
+libweasyl==0.1.10

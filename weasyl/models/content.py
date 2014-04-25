@@ -119,4 +119,4 @@ class Folder(Base):
     submissions = relationship(Submission)
 
     with clauses_for(__table__) as c:
-        is_featured = c('featured')
+        is_featured = c('featured-filter')
