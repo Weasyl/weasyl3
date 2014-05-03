@@ -8,11 +8,9 @@ def markdown_filter(target):
 
 
 def relative_date(d):
-    # DON’T use kwargs here. MarkupSafe won’t escape them.
-    # What’s that, you say? There are no angle brackets in formatted dates?
-    return Markup('<time datetime="{}" title="{} at {} UTC">{}</time>').format(
-        d.isoformat(),
-        d.format('MMMM D, YYYY'),
-        d.format('h:mm:ss A'),
-        d.humanize(),
+    return Markup('<time datetime="{iso}" title="{date} at {time} UTC">{relative}</time>').format(
+        iso=d.isoformat(),
+        date=d.format('MMMM D, YYYY'),
+        time=d.format('h:mm:ss A'),
+        relative=d.humanize(),
     )
