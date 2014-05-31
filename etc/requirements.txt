@@ -7,18 +7,14 @@ pyramid-tm==0.7
 raven==4.2.0
 waitress==0.8.8
 
-anyjson==0.3.3
-arrow==0.4.2
 decorator==3.4.0
 dogpile.cache==0.5.3
-misaka==1.1.0
 psycopg2==2.5.2
 py-bcrypt==0.4
 python3-memcached==1.51
 pytz==2014.2
-sanpera==0.1.1.dev4
+sanpera==0.1.1-5
 simplejson==3.4.0
-SQLAlchemy==0.9.4
 zope.sqlalchemy==0.7.4
 
-libweasyl==0.1.10
+libweasyl==0.4.0
