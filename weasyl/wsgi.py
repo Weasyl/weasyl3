@@ -98,7 +98,6 @@ def make_app(global_config, **settings):
         markdown = weasyl.filters.markdown_filter
         relative_date = weasyl.filters.relative_date
     """
-    settings['cache.wrap'] = [cache.ThreadCacheProxy, cache.JSONProxy]
 
     config = Configurator(
         settings=settings,
@@ -137,5 +136,7 @@ def make_app(global_config, **settings):
     config.scan('weasyl.models')
 
     cache.region.configure_from_config(settings, 'cache.')
+    for wrapper in [cache.JSONProxy, cache.ThreadCacheProxy]:
+        cache.region.wrap(wrapper)
 
     return config.make_wsgi_app()
