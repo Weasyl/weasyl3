@@ -30,7 +30,7 @@ class Submission(Base):
     def to_json(self):
         return {
             'title': self.title,
-            'rating': self.rating,
+            'rating': self.rating.name,
         }
 
     def canonical_path(self, request, operation='view', with_slug=None, mod=False):
