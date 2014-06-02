@@ -1,7 +1,6 @@
 import logging
 
 import colander as c
-from deform.form import Form
 import deform.widget as w
 from pyramid_deform import CSRFSchema
 from pyramid.security import remember, forget
@@ -11,7 +10,7 @@ from pyramid import httpexceptions
 from ..login import LoginFailed, try_login
 from ..resources import RootResource
 from .. import dates
-from .forms import FormView, User
+from .forms import Form, FormView, User
 
 
 log = logging.getLogger(__name__)

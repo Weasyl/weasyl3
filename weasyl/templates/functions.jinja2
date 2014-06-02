@@ -40,7 +40,9 @@
   {{ form['csrf_token'].serialize() | safe }}
   {{ form['user'].serialize() | safe }}
   {{ form['password'].serialize() | safe }}
-  <button type="submit" name="signin" class="action disclose" tabindex="1">Sign in</button>
+  <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
+    Sign in
+  </button>
   <ul class="actions">
     <li><a href="#">Create a new account</a></li>
     <li><a href="#">Forgot your info?</a></li>
@@ -98,4 +100,8 @@
     {% for subc in comment.subcomments %}{{ show_comment(subc, ownerid) }}{% endfor %}
   </ol>
 </li><!-- .comment -->
+{% endmacro %}
+
+{% macro autofocus_submit(form) %}
+{%- if form.focus_on_submit %} autofocus {% endif -%}
 {% endmacro %}

@@ -4,7 +4,7 @@ import logging
 import colander as c
 import deform.widget as w
 from deform.exception import ValidationFailure
-from deform.form import Form
+from deform.form import Form as _Form
 from pyramid_deform import FormView as _FormView, CSRFSchema
 from pyramid.view import view_config
 from translationstring import TranslationStringFactory
@@ -21,7 +21,20 @@ def determine_errors(exc):
     return [(t[-1].node, list(c.interpolate(t[-1].messages()))) for t in exc.error.paths()]
 
 
+class Form(_Form):
+    def determine_autofocus(self):
+        for field in self:
+            if not field.error or isinstance(field.widget, w.HiddenWidget):
+                continue
+            field.autofocus = True
+            log.debug('%r autofocused %r', self, field)
+            return
+        log.debug("%r couldn't autofocus anything", self)
+        self.focus_on_submit = True
+
+
 class FormView(_FormView):
+    form_class = Form
     form_key = 'form'
     errors_key = 'errors'
 
@@ -33,6 +46,7 @@ class FormView(_FormView):
         log.debug('form failed to validate: %r', errors)
         ret = {self.form_key: exc.field, self.errors_key: errors}
         ret.update(self.extra_fields())
+        exc.field.determine_autofocus()
         return ret
 
     def show(self, form):
@@ -73,6 +87,7 @@ def form_renderer(schema, key, *, success, button, **kwargs):
                     validated = form.validate(controls)
                 except ValidationFailure as exc:
                     forms[errors_key] = determine_errors(exc)
+                    form.determine_autofocus()
                 else:
                     return success(context, request, validated)
 
