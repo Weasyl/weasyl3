@@ -1,6 +1,6 @@
 libweasyl==0.4.4
 
-deform_jinja2==0.5.dev1
+deform_jinja2==0.5-2
 Jinja2==2.7.2
 Mako==0.9.1
 MarkupSafe==0.18
