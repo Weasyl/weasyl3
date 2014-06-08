@@ -53,7 +53,7 @@ def view_user(context, request, forms):
         'featured': featured,
         'n_shouts': n_shouts,
         'shouts': shouts,
-        'sidebar': None,
+        '_sidebar': None,
     })
     return ret
 
@@ -74,5 +74,5 @@ def view_user_works(context, request):
     return {
         'user': context.user,
         'submissions': submissions,
-        'sidebar': 'works',
+        '_sidebar': 'works',
     }

@@ -69,5 +69,5 @@ def index(request):
     return {
         'submissions': submissions,
         'streams': streams,
-        'latest_update': latest_update
+        'latest_update': latest_update,
     }

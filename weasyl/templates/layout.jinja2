@@ -89,7 +89,7 @@
     <div id="login-modal" class="modal toggle-target">
       <div class="content">
         <h3 class="title secondary">Sign in</h3>
-        {{ f.login_form(request.login_forms['signin']) }}
+        {{ f.login_form(request.login_forms['signin'], None) }}
         <a href="#" class="action small close toggle" data-toggle-target="#login-modal">Close</a>
       </div>
       <a href="#" class="screen toggle" data-toggle-target="#login-modal"><!-- click anywhere to close --></a>

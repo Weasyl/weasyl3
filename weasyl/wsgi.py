@@ -91,6 +91,20 @@ def _lineage(resource):
 traversal.lineage = _lineage
 
 
+class NoLeadingUnderscoresJSON(JSON):
+    def __call__(self, info):
+        super_render = super().__call__(info)
+
+        def _render(value, system):
+            if isinstance(value, dict):
+                for key in list(value.keys()):
+                    if key.startswith('_'):
+                        del value[key]
+            return super_render(value, system)
+
+        return _render
+
+
 def make_app(global_config, **settings):
     settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
     settings['jinja2.filters'] = """
@@ -123,7 +137,7 @@ def make_app(global_config, **settings):
 
     configure_urls(config)
 
-    json_renderer = JSON()
+    json_renderer = NoLeadingUnderscoresJSON()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
     json_renderer.add_adapter(arrow.Arrow, datetime_adapter)
     config.add_renderer('json', json_renderer)

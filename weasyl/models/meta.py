@@ -24,7 +24,8 @@ class _BaseObject:
         return {col.name: getattr(self, col.name)
                 for col in object_mapper(self).mapped_table.c}
 
-    __json__ = to_json
+    def __json__(self, request):
+        return self.to_json(request)
 
 
 Base = declarative_base(cls=_BaseObject)

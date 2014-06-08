@@ -27,7 +27,7 @@ class Submission(Base):
     def _comment_criteria(self):
         return {'target_sub': self.submitid}
 
-    def to_json(self):
+    def to_json(self, request):
         return {
             'title': self.title,
             'rating': self.rating.name,

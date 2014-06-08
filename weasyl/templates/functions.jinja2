@@ -34,7 +34,7 @@
 {% endif %}
 {% endmacro %}
 
-{% macro login_form(form) %}
+{% macro login_form(form, errors) %}
 <form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}

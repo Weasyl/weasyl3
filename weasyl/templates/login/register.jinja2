@@ -8,34 +8,34 @@
   </div>
 
   <form action="" method="post" class="standard-form medium-width">
-    {{ f.form_errors() }}
-    {{ form['csrf_token'].serialize() | safe }}
-    {{ form['username'].serialize() | safe }}
+    {{ f.form_errors(_errors) }}
+    {{ _form['csrf_token'].serialize() | safe }}
+    {{ _form['username'].serialize() | safe }}
     <div class="grid compact">
       <div class="grid-item grid-1-2-s">
-        {{ form['password'].serialize() | safe }}
+        {{ _form['password'].serialize() | safe }}
       </div>
       <div class="grid-item grid-1-2-s">
-        {{ form['password_confirm'].serialize() | safe }}
+        {{ _form['password_confirm'].serialize() | safe }}
       </div>
     </div><!-- .grid -->
     <p class="form-helper-text type-alt type-secondary">
       Minimum of eight characters
     </p>
-    {% call f.render_field(form['email']) %}
+    {% call f.render_field(_form['email']) %}
     <p class="form-helper-text type-alt type-secondary">
       We won't spam you or share your email. <a href="#privacypolicy" target="_blank">Privacy Policy</a>
     </p>
     {% endcall %}
     <div class="grid compact">
       <div class="grid-item grid-1-3-s align-bottom">
-        {{ form['day_born'].serialize(descriptive_option='Day') | safe }}
+        {{ _form['day_born'].serialize(descriptive_option='Day') | safe }}
       </div>
       <div class="grid-item grid-1-3-s align-bottom">
-        {{ form['month_born'].serialize(descriptive_option='Month') | safe }}
+        {{ _form['month_born'].serialize(descriptive_option='Month') | safe }}
       </div>
       <div class="grid-item grid-1-3-s align-bottom">
-        {{ form['year_born'].serialize(descriptive_option='Year') | safe }}
+        {{ _form['year_born'].serialize(descriptive_option='Year') | safe }}
       </div>
     </div>
     <p class="form-helper-text type-alt type-secondary">

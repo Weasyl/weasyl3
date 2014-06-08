@@ -35,8 +35,8 @@ class Form(_Form):
 
 class FormView(_FormView):
     form_class = Form
-    form_key = 'form'
-    errors_key = 'errors'
+    form_key = '_form'
+    errors_key = '_errors'
 
     def extra_fields(self):
         return {}
@@ -71,8 +71,8 @@ class User(c.SchemaType):
 
 
 def form_renderer(schema, key, *, success, button, **kwargs):
-    form_key = key + '_form'
-    errors_key = key + '_errors'
+    form_key = '_%s_form' % (key,)
+    errors_key = '_%s_errors' % (key,)
     def deco(func):
         @view_config(_depth=1, request_method='POST', **kwargs)
         @functools.wraps(func)

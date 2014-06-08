@@ -142,12 +142,12 @@
   <div class="toggle-target-max-m">
     {% if request.session.user %}
     <form action="{{ request.path_for(user, 'shout') }}" class="comment" method="post">
-      {{ f.form_errors(comment_errors) }}
-      {{ comment_form['csrf_token'].serialize() | safe }}
+      {{ f.form_errors(_comment_errors) }}
+      {{ _comment_form['csrf_token'].serialize() | safe }}
       {{ f.user_avatar(request.session.user) }}
       <div class="comment-box hypothetical">
         <div class="comment-info">{{ f.user_link(request.session.user) }}</div>
-        {{ comment_form['comment'].serialize() | safe }}
+        {{ _comment_form['comment'].serialize() | safe }}
         <ul class="comment-actions action-set">
           <li><a href="#" class="action small">Formatting help</a></li>
         </ul>
