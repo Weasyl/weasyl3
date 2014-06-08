@@ -81,6 +81,12 @@ class Comment(Base):
         else:
             raise ValueError('no target user or submission')
 
+    def to_json(self, request):
+        return {
+            'poster': self.poster,
+            'children': self.subcomments,
+        }
+
     subcomments = ()
 
     @classmethod
