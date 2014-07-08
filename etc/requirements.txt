@@ -8,7 +8,7 @@ PasteDeploy==1.5.2
 pyramid==1.5
 pyramid-deform==0.2
 pyramid-debugtoolbar==2.0.2
-pyramid-jinja2==1.10
+pyramid-jinja2==2.3.3
 pyramid-mako==0.3.1
 pyramid-tm==0.7
 raven==4.2.0
