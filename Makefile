@@ -12,6 +12,9 @@ PYPI := https://pypi.weasyl.com/
 # Whether to use wheels
 USE_WHEEL := --no-use-wheel
 
+# Whether to install weasyl editable
+EDITABLE := -e
+
 #
 # Rules
 #
@@ -27,7 +30,7 @@ ve: etc/requirements.txt
 
 # Installs weasyl package in develop mode
 weasyl.egg-info: setup.py ve
-	ve/bin/python setup.py develop
+	ve/bin/pip install $(EDITABLE) .
 	touch $@
 
 # Run local server

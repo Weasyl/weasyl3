@@ -1,7 +1,15 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
 
 setup(
     name='weasyl',
+    packages=find_packages(),
+    package_data={
+        'weasyl': [
+            'static/*/*', 'templates/*.jinja2', 'templates/*/*.jinja2',
+            'widgets/*.jinja2',
+        ],
+    },
     setup_requires=['vcversioner'],
     vcversioner={
         'version_module_paths': ['weasyl/_version.py'],
