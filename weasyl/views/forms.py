@@ -98,5 +98,5 @@ def form_renderer(schema, key, *, success, button, **kwargs):
 
 class CommentForm(CSRFSchema):
     comment = c.SchemaNode(
-        c.String(), description="Share your thoughts \u2026",
-        widget=w.TextAreaWidget(css_class='comment-entry'))
+        c.String(), description="Comment", widget=w.TextAreaWidget(
+            css_class='comment-entry', placeholder="Share your thoughts\u2026"))
