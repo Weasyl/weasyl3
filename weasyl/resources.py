@@ -118,9 +118,13 @@ class UserResource(MethodDispatchResource):
     segment_submissions = SubmissionsResource
 
 
-class APIResource(MethodDispatchResource):
+class APIv2Resource(MethodDispatchResource):
     segment_submissions = SubmissionsResource
     segment_users = UsersResource
+
+
+class APIResource(MethodDispatchResource):
+    segment_v2 = APIv2Resource
 
 
 class RootResource(MethodDispatchResource):
