@@ -1,16 +1,14 @@
 import logging
 
-from pyramid.view import view_config
-
 from ..exceptions import WeasylError
 from ..sessions import make_session_id
+from .decorators import also_api_view
 
 
 log = logging.getLogger(__name__)
 
 
-@view_config(context=Exception, renderer='errors/generic.jinja2', api='false')
-@view_config(context=Exception, renderer='json', api='true')
+@also_api_view(context=Exception, template='errors/generic.jinja2')
 def exception_catchall(exc, request):
     if not isinstance(exc, WeasylError) and 'sentry.log_error' in request.environ:
         request_id = make_session_id(8)

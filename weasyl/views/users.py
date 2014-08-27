@@ -2,12 +2,12 @@ import random
 import logging
 
 from pyramid.renderers import render_to_response
-from pyramid.view import view_config
 from pyramid import httpexceptions
 
 from ..resources import UserResource
 from .. import media
 from ..models.content import Comment, Submission, Folder
+from .decorators import also_api_view
 from .forms import CommentForm, form_renderer
 
 
@@ -20,8 +20,7 @@ def comment_success(context, request, appstruct):
     return httpexceptions.HTTPSeeOther('/')
 
 
-@view_config(context=UserResource, renderer='users/profile.jinja2', api='false', permission='view')
-@view_config(context=UserResource, renderer='json', api='true', permission='view')
+@also_api_view(context=UserResource, template='users/profile.jinja2', permission='view')
 @form_renderer(CommentForm, 'comment', success=comment_success, button='save',
                name='shout', context=UserResource, renderer='users/profile.jinja2', permission='shout')
 def view_user(context, request, forms):
@@ -59,8 +58,7 @@ def view_user(context, request, forms):
     return ret
 
 
-@view_config(name='works', context=UserResource, renderer='users/works.jinja2', api='false', permission='view')
-@view_config(name='works', context=UserResource, renderer='json', api='true', permission='view')
+@also_api_view(name='works', context=UserResource, template='users/works.jinja2', permission='view')
 def view_user_works(context, request):
     # XXX: also tag filtering
     submissions = (

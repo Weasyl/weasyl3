@@ -11,6 +11,7 @@ from ..models.content import Comment, Submission
 from ..models.users import Login, UserStream
 from ..models.site import SiteUpdate
 from ..resources import RootResource, SubmissionResource
+from .decorators import also_api_view
 from .forms import CommentForm, form_renderer
 
 
@@ -23,11 +24,8 @@ def comment_success(context, request, appstruct):
     return httpexceptions.HTTPSeeOther('/')
 
 
-@view_config(name='view', context=SubmissionResource,
-             renderer='content/submission.jinja2', api='false',
-             permission='view')
-@view_config(name='view', context=SubmissionResource, renderer='json',
-             api='true', permission='view')
+@also_api_view(name='view', context=SubmissionResource,
+               template='content/submission.jinja2', permission='view')
 @form_renderer(CommentForm, 'comment', success=comment_success, button='save',
                name='comment', context=SubmissionResource,
                renderer='content/submission.jinja2', permission='comment')
