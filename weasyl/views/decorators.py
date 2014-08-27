@@ -9,12 +9,10 @@ from venusian import Categories
 def wraps_respecting_view_config(wrapped):
     def deco(wrapper):
         functools.update_wrapper(wrapper, wrapped)
+        new_callbacks = Categories(wrapper)
         callbacks = getattr(wrapper, '__venusian_callbacks__', None)
         if callbacks is not None:
-            new_callbacks = Categories(wrapper)
             new_callbacks.update(callbacks)
-        else:
-            new_callbacks = None
         wrapper.__venusian_callbacks__ = new_callbacks
         return wrapper
     return deco
