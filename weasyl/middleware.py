@@ -36,8 +36,8 @@ class SentryMiddleware:
         if 'level' in extra:
             data['level'] = extra.pop('level')
         request = get_current_request()
-        extra['request'] = vars(request)
         if request is not None:
+            extra['request'] = vars(request)
             extra['session'] = request.session
         return dict(data=data, extra=extra)
 
