@@ -1,4 +1,3 @@
-import functools
 import logging
 
 import colander as c
@@ -11,6 +10,7 @@ from translationstring import TranslationStringFactory
 
 from libweasyl.legacy import login_name
 from ..models.users import Login
+from .decorators import wraps_respecting_view_config
 
 
 _ = TranslationStringFactory(__name__)
@@ -75,7 +75,7 @@ def form_renderer(schema, key, *, success, button, **kwargs):
     errors_key = '_%s_errors' % (key,)
     def deco(func):
         @view_config(_depth=1, request_method='POST', **kwargs)
-        @functools.wraps(func)
+        @wraps_respecting_view_config(func)
         def wrapper(context, request, forms=()):
             forms = dict(forms)
             form = forms[form_key] = Form(schema().bind(request=request))
