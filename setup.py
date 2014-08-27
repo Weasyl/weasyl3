@@ -1,4 +1,8 @@
 from setuptools import setup, find_packages
+from pip.req import parse_requirements
+
+
+reqs = [str(ir.req) for ir in parse_requirements('etc/requirements.txt')]
 
 
 setup(
@@ -14,6 +18,7 @@ setup(
     vcversioner={
         'version_module_paths': ['weasyl/_version.py'],
     },
+    install_requires=reqs,
     entry_points={
         'paste.app_factory': [
             'main=weasyl.wsgi:make_app',
