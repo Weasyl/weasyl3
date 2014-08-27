@@ -10,7 +10,7 @@ from ..media import populate_with_submission_media
 from ..models.content import Comment, Submission
 from ..models.users import Login, UserStream
 from ..models.site import SiteUpdate
-from ..resources import RootResource, SubmissionResource
+from ..resources import RootResource, SubmissionResource, SubmissionsResource
 from .decorators import also_api_view
 from .forms import CommentForm, form_renderer
 
@@ -40,8 +40,8 @@ def view_submission(context, request, forms):
     return ret
 
 
-@view_config(context=RootResource, renderer='content/index.jinja2', api='false')
-def index(request):
+@view_config(name='frontpage', context=SubmissionsResource, renderer='json', api='true')
+def frontpage_submissions(request):
     # XXX: tag filtering, etc.
     submissions = (
         Submission.query
@@ -53,6 +53,11 @@ def index(request):
         .all())
     populate_with_submission_media(submissions)
 
+    return {'submissions': submissions}
+
+
+@view_config(context=RootResource, renderer='content/index.jinja2', api='false')
+def index(request):
     streams = (
         UserStream.query
         .filter(sa.func.to_timestamp(UserStream.end_time) > sa.func.now())
@@ -64,8 +69,9 @@ def index(request):
         .order_by(SiteUpdate.updateid.desc())
         .first())
 
-    return {
-        'submissions': submissions,
+    ret = frontpage_submissions(request)
+    ret.update({
         'streams': streams,
         'latest_update': latest_update,
-    }
+    })
+    return ret

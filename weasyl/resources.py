@@ -40,6 +40,8 @@ class SubmissionsResource:
 
     @make_location_aware
     def __getitem__(self, segment):
+        if not segment.isdigit():
+            raise KeyError(segment)
         submission = Submission.query.get_or_404(segment)
         if isinstance(self.__parent__, UserResource) and self.__parent__.user != submission.owner:
             raise httpexceptions.HTTPNotFound()
