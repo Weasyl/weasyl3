@@ -1,13 +1,11 @@
 from sanpera.image import Image
 from sanpera import geometry
 
+from .exceptions import ThumbnailingFuckedUp
+
 
 read = Image.read
 from_buffer = Image.from_buffer
-
-
-class ThumbnailingFuckedUp(Exception):
-    pass
 
 
 def unanimate(im):

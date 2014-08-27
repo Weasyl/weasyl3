@@ -7,7 +7,8 @@ from pyramid.security import remember, forget
 from pyramid.view import view_config
 from pyramid import httpexceptions
 
-from ..login import LoginFailed, try_login
+from ..exceptions import LoginFailed
+from ..login import try_login
 from ..resources import RootResource
 from .. import dates
 from .forms import Form, FormView, User

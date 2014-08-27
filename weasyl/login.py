@@ -1,12 +1,6 @@
 import arrow
 
-
-class LoginFailed(Exception):
-    pass
-
-
-class UserNeedsNewPassword(Exception):
-    pass
+from .exceptions import LoginFailed
 
 
 def try_login(user, password, csrf_token=None):
