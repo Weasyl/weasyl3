@@ -4,7 +4,7 @@ from sqlalchemy.orm import contains_eager, relationship
 
 from libweasyl.models.helpers import clauses_for
 from libweasyl.models import tables
-from libweasyl.text import slug_for
+from libweasyl.text import markdown, slug_for
 from .meta import Base
 from .users import Login
 
@@ -81,10 +81,13 @@ class Comment(Base):
         else:
             raise ValueError('no target user or submission')
 
-    def to_json(self, request):
+    def __json__(self, request):
         return {
+            'id': self.commentid,
             'poster': self.poster,
             'children': self.subcomments,
+            'content': markdown(self.content),
+            'posted_at': self.unixtime,
         }
 
     subcomments = ()
