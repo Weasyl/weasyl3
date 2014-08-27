@@ -1,4 +1,7 @@
 /ve
 /etc/*.ini
 /weasyl.egg-info
+*.egg
 __pycache__
+/version.txt
+/weasyl/_version.py
