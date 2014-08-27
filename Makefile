@@ -43,3 +43,18 @@ clean:
 distclean: clean
 	rm -rf ve
 	rm -rf weasyl.egg-info
+
+# Phony target to run flake8 pre-commit
+.PHONY: check
+check:
+	git diff HEAD | ve/bin/flake8 --config setup.cfg --statistics --diff
+
+# Phony target to run flake8 on everything
+.PHONY: check-all
+check-all:
+	ve/bin/flake8 --config setup.cfg --statistics
+
+# Phony target to run flake8 on the last commit
+.PHONY: check-commit
+check-commit:
+	git show | ve/bin/flake8 --config setup.cfg --statistics --diff
