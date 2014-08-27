@@ -68,11 +68,14 @@ class Login(Base):
             .count())
 
     def __json__(self, request):
-        return {
+        ret = {
             'login': self.login_name,
             'username': self.profile.username,
             'full_name': self.profile.full_name,
         }
+        if hasattr(self, 'media'):
+            ret['media'] = self.media
+        return ret
 
 
 class AuthBCrypt(Base):
