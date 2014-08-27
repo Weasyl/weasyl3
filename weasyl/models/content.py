@@ -96,8 +96,8 @@ class Comment(Base):
             cls.query
             .filter_by(**target._comment_criteria())
             .join(Login, cls.userid == Login.userid)
-            .options(contains_eager(Comment.poster))
-            .order_by(Comment.unixtime.asc())
+            .options(contains_eager(cls.poster))
+            .order_by(cls.unixtime.asc())
             .all())
 
         comment_map = {}
