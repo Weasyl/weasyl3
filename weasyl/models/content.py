@@ -5,6 +5,7 @@ from sqlalchemy.orm import contains_eager, relationship
 from libweasyl.models.helpers import clauses_for
 from libweasyl.models import tables
 from libweasyl.text import markdown, slug_for
+from ..common import minimize_media
 from .meta import Base
 from .users import Login
 
@@ -27,10 +28,11 @@ class Submission(Base):
     def _comment_criteria(self):
         return {'target_sub': self.submitid}
 
-    def to_json(self, request):
+    def __json__(self, request):
         return {
             'title': self.title,
             'rating': self.rating.name,
+            'media': minimize_media(request, getattr(self, 'media', None)),
         }
 
     def canonical_path(self, request, operation='view', with_slug=None, mod=False):

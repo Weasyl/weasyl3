@@ -7,6 +7,7 @@ import sqlalchemy as sa
 
 from libweasyl.legacy import plaintext
 from libweasyl.models import tables
+from ..common import minimize_media
 from .. import staff
 from .meta import Base
 
@@ -68,14 +69,12 @@ class Login(Base):
             .count())
 
     def __json__(self, request):
-        ret = {
+        return {
             'login': self.login_name,
             'username': self.profile.username,
             'full_name': self.profile.full_name,
+            'media': minimize_media(request, getattr(self, 'media', None)),
         }
-        if hasattr(self, 'media'):
-            ret['media'] = self.media
-        return ret
 
 
 class AuthBCrypt(Base):

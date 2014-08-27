@@ -29,9 +29,9 @@ class MediaItem(Base):
             DBSession.add(obj)
         return obj
 
-    def to_json(self, request, recursive=1, link=None):
-        ret = super(MediaItem, self).to_json(request)
-        if False and link.link_type == 'submission':
+    def serialize(self, request, recursive=1, link=None):
+        ret = self.to_dict()
+        if link.link_type == 'submission':
             login_name = link.submission.owner.login_name
             ret['display_url'] = request.resource_path(
                 None, '~' + login_name, 'submissions', str(link.submitid),
@@ -42,9 +42,10 @@ class MediaItem(Base):
             ret['display_url'] = self.display_url
         if recursive > 0:
             buckets = collections.defaultdict(list)
-            for link in self.described:
-                buckets[link.link_type].append(
-                    link.media_item.to_json(request, recursive=recursive - 1, link=link))
+            for described_link in self.described:
+                buckets[described_link.link_type].append(
+                    described_link.media_item.serialize(
+                        request, recursive=recursive - 1, link=described_link))
             ret['described'] = dict(buckets)
         else:
             ret['described'] = {}
@@ -94,8 +95,8 @@ class DiskMediaItem(MediaItem):
         registry = get_current_registry()
         return os.path.join(registry.settings['weasyl.static_root'], self.file_path)
 
-    def to_json(self, request, recursive=1, link=None):
-        ret = super(DiskMediaItem, self).to_json(request, recursive=recursive, link=link)
+    def serialize(self, request, recursive=1, link=None):
+        ret = super(DiskMediaItem, self).serialize(request, recursive=recursive, link=link)
         ret['full_file_path'] = self.full_file_path
         return ret
 
@@ -152,7 +153,7 @@ class _LinkMixin(object):
             .all())
         buckets = collections.defaultdict(lambda: collections.defaultdict(list))
         for media_item, link in pairs:
-            media_data = media_item.to_json(request, link=link)
+            media_data = media_item.serialize(request, link=link)
             media_data['link_attributes'] = link.attributes
             buckets[getattr(link, cls._identity)][link.link_type].append(media_data)
         return [dict(buckets[identity]) for identity in identities]

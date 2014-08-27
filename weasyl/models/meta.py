@@ -20,12 +20,12 @@ class BaseQuery(Query):
 
 
 class _BaseObject:
-    def to_json(self, request):
+    def to_dict(self):
         return {col.name: getattr(self, col.name)
                 for col in object_mapper(self).mapped_table.c}
 
     def __json__(self, request):
-        return self.to_json(request)
+        return self.to_dict()
 
 
 Base = declarative_base(cls=_BaseObject)
