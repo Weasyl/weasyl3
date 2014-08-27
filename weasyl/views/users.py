@@ -13,6 +13,7 @@ from .forms import CommentForm, form_renderer
 
 log = logging.getLogger(__name__)
 
+
 def comment_success(context, request, appstruct):
     if request.is_api_request:
         return render_to_response('json', {'status': 'ok'}, request=request)
