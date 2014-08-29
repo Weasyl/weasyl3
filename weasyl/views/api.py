@@ -1,9 +1,11 @@
 import logging
 
+import pkg_resources
 from pyramid.view import view_config
 
+import libweasyl
+import weasyl
 from ..resources import APIv2Resource
-from .. import _version
 
 
 log = logging.getLogger(__name__)
@@ -23,15 +25,29 @@ def whoami(request):
         }
 
 
+extra_info = {
+    'weasyl': weasyl,
+    'libweasyl': libweasyl,
+}
+
+
 @view_config(name='version', context=APIv2Resource, renderer='json', api='true')
 @view_config(name='version.json', context=APIv2Resource, renderer='json', api='true')
 def json_version(request):
-    return {
-        'short_sha': _version.__revision__.lstrip('g'),
-        'version': _version.__version__,
-    }
+    ret = {}
+    for dist in pkg_resources.working_set:
+        ret[dist.key] = info = {'version': dist.version}
+        if dist.key in extra_info:
+            info['short_hash'] = extra_info[dist.key].__sha__.lstrip('g')
+    return ret
 
 
 @view_config(name='version.txt', context=APIv2Resource, renderer='string', api='true')
 def text_version(request):
-    return '{0.__version__}-{0.__revision__}'.format(_version)
+    ret = []
+    for name, info in json_version(request).items():
+        if 'short_hash' in info:
+            ret.append('%s: %s (%s)' % (name, info['version'], info['short_hash']))
+        else:
+            ret.append('%s: %s' % (name, info['version']))
+    return '\n'.join(sorted(ret))
