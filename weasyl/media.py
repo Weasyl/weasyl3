@@ -34,8 +34,11 @@ def get_user_media(userid):
 
 def build_populator(identity, multi_get):
     def populator(objects):
-        keys_to_fetch = [getattr(o, identity) for o in objects]
-        for o, value in zip(objects, multi_get(*keys_to_fetch)):
+        needy_objects = list({o for o in objects if not hasattr(o, 'media')})
+        if not needy_objects:
+            return objects
+        keys_to_fetch = [getattr(o, identity) for o in needy_objects]
+        for o, value in zip(needy_objects, multi_get(*keys_to_fetch)):
             o.media = value
         return objects
     return populator
