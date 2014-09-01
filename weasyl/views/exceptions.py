@@ -11,7 +11,8 @@ log = logging.getLogger(__name__)
 @also_api_view(context=Exception, template='errors/generic.jinja2')
 def exception_catchall(exc, request):
     expected = isinstance(exc, ExpectedWeasylError)
-    request.response.status = type(exc).code if expected else 500
+    exc_type = type(exc)
+    request.response.status = exc_type.code if expected else 500
     if not expected and 'sentry.log_error' in request.environ:
         request_id = make_session_id(8)
         event_id, = request.environ['sentry.log_error'](request.exc_info, request_id=request_id)
@@ -29,7 +30,7 @@ def exception_catchall(exc, request):
     if expected:
         ret.update({
             'message': str(exc),
-            'code': type(exc).__name__,
-            'description': type(exc).__doc__,
+            'code': exc_type.__name__,
+            'description': exc_type.__doc__,
         })
     return ret
