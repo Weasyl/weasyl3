@@ -38,6 +38,10 @@ weasyl.egg-info: setup.py ve
 run: ve weasyl.egg-info
 	$</bin/pserve --app-name main --server-name main etc/development.ini
 
+.PHONY: shell
+shell: ve weasyl.egg-info
+	$</bin/pshell etc/development.ini
+
 .PHONY: clean
 clean:
 	find weasyl -type f -name '*.py[co]' -delete
