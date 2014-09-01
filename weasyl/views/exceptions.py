@@ -12,11 +12,15 @@ log = logging.getLogger(__name__)
 def exception_catchall(exc, request):
     expected = isinstance(exc, ExpectedWeasylError)
     request.response.status = 200 if expected else 500
+    exc_info = type(exc), exc, exc.__traceback__
     if not expected and 'sentry.log_error' in request.environ:
         request_id = make_session_id(8)
-        exc_info = type(exc), exc, exc.__traceback__
         event_id, = request.environ['sentry.log_error'](exc_info, request_id=request_id)
     else:
+        if not expected:
+            log.exception(
+                'an error occurred, but sentry was not configured to capture it',
+                exc_info=exc_info)
         request_id = event_id = None
     return {
         'error': True,
