@@ -156,5 +156,5 @@ class RootResource(MethodDispatchResource):
     def permits_signin(self, principals):
         return Authenticated not in principals
 
-    def permits_signout(Self, principals):
+    def permits_signout(self, principals):
         return Authenticated in principals
