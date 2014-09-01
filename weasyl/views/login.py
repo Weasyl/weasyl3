@@ -7,7 +7,7 @@ from pyramid.security import remember, forget
 from pyramid.view import view_config
 from pyramid import httpexceptions
 
-from ..exceptions import LoginFailed
+from libweasyl.exceptions import LoginFailed
 from ..login import try_login
 from ..resources import RootResource
 from .. import dates

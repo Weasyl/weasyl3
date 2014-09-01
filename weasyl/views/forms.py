@@ -9,7 +9,7 @@ from pyramid.view import view_config
 from translationstring import TranslationStringFactory
 
 from libweasyl.legacy import login_name
-from ..models.users import Login
+from libweasyl.models.users import Login
 from .decorators import wraps_respecting_view_config
 
 

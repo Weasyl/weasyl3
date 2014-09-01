@@ -8,7 +8,7 @@ from pyramid.interfaces import ISession, ISessionFactory
 from sqlalchemy.orm import contains_eager
 from zope.interface import implementer, provider
 
-from .models.users import Login, Session
+from libweasyl.models.users import Login, Session
 
 
 log = logging.getLogger(__name__)

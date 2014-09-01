@@ -1,6 +1,6 @@
 import arrow
 
-from .exceptions import LoginFailed
+from libweasyl.exceptions import LoginFailed
 
 
 def try_login(user, password, csrf_token=None):

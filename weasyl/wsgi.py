@@ -6,15 +6,21 @@ from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
 from pyramid.traversal import quote_path_segment
-from pyramid import url
-from pyramid import traversal
+from pyramid import httpexceptions, traversal, url
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import engine_from_config
+from zope.sqlalchemy import ZopeTransactionExtension
 
-from .models.meta import configure as configure_db
+from libweasyl.configuration import configure_libweasyl
+from .media import populate_with_submission_media, populate_with_user_media, format_media_link
 from .resources import RootResource
 from .sessions import WeasylSession
 from .views.legacy import configure_urls
 from .views.login import login_forms
 from . import authorization, cache, predicates
+
+
+DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 
 
 def datetime_adapter(obj, request):
@@ -31,6 +37,16 @@ def is_api_request(request):
 
 def format_datetime(request, dt):
     return dt.strftime('%d %B %Y at %H:%M:%S')
+
+
+def configure_db(config, settings):
+    engine = engine_from_config(settings, prefix='sqlalchemy.')
+    DBSession.configure(bind=engine)
+    config.add_request_method(db, reify=True)
+
+
+def db(request):
+    return DBSession()
 
 
 @functools.lru_cache(1000)
@@ -120,6 +136,15 @@ def make_app(global_config, **settings):
     )
 
     configure_db(config, settings)
+    configure_libweasyl(
+        dbsession=DBSession,
+        not_found_exception=httpexceptions.HTTPNotFound,
+        base_file_path=settings['weasyl.static_root'],
+        populate_with_submission_media=populate_with_submission_media,
+        populate_with_user_media=populate_with_user_media,
+        media_link_formatter_callback=format_media_link,
+    )
+
     config.include('pyramid_tm')
     config.include('pyramid_jinja2')
     config.include('pyramid_deform')
@@ -147,7 +172,6 @@ def make_app(global_config, **settings):
     config.set_authorization_policy(authorization.DelegatedAuthorizationPolicy())
 
     config.scan('weasyl.views')
-    config.scan('weasyl.models')
 
     cache.region.configure_from_config(settings, 'cache.')
     for wrapper in [cache.JSONProxy, cache.ThreadCacheProxy]:

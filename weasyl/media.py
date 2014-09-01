@@ -1,22 +1,28 @@
+import logging
+
 from pyramid.threadlocal import get_current_request
 
+from libweasyl.models.media import SubmissionMediaLink, UserMediaLink
+from libweasyl.text import slug_for
 from .cache import region
-from .models.media import SubmissionMediaLink, UserMediaLink
 from .constants import DEFAULT_AVATAR
+
+
+log = logging.getLogger(__name__)
 
 
 @SubmissionMediaLink.register_cache
 @region.cache_multi_on_arguments()
 def get_multi_submission_media(*submitids):
     request = get_current_request()
-    return SubmissionMediaLink.bucket_links(request, submitids)
+    return SubmissionMediaLink.bucket_links(request.db, submitids)
 
 
 @UserMediaLink.register_cache
 @region.cache_multi_on_arguments()
 def get_multi_user_media(*userids):
     request = get_current_request()
-    users_media = UserMediaLink.bucket_links(request, userids)
+    users_media = UserMediaLink.bucket_links(request.db, userids)
 
     for user_media in users_media:
         user_media.setdefault('avatar', DEFAULT_AVATAR)
@@ -46,3 +52,16 @@ def build_populator(identity, multi_get):
 
 populate_with_submission_media = build_populator('submitid', get_multi_submission_media)
 populate_with_user_media = build_populator('userid', get_multi_user_media)
+
+
+def format_media_link(media, link):
+    request = get_current_request()
+    if link.link_type == 'submission':
+        login_name = link.submission.owner.login_name
+        return request.resource_path(
+            None, '~' + login_name, 'submissions', str(link.submitid),
+            '%s-%s-%s.%s' % (
+                login_name, slug_for(link.submission.title), media.mediaid,
+                media.file_type))
+    else:
+        return None

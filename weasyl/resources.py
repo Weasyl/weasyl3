@@ -3,8 +3,8 @@ import logging
 from pyramid.security import Authenticated
 from pyramid import httpexceptions
 
-from .models.content import Submission
-from .models.users import Login
+from libweasyl.models.content import Submission
+from libweasyl.models.users import Login
 
 
 log = logging.getLogger(__name__)

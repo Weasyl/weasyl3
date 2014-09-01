@@ -4,9 +4,9 @@ import logging
 from pyramid.renderers import render_to_response
 from pyramid import httpexceptions
 
+from libweasyl.models.content import Comment, Submission, Folder
 from ..resources import UserResource
 from .. import media
-from ..models.content import Comment, Submission, Folder
 from .decorators import also_api_view
 from .forms import CommentForm, form_renderer
 
