@@ -26,4 +26,6 @@ def exception_catchall(exc, request):
         'event_id': event_id,
         'request_id': request_id,
         'message': str(exc),
+        'code': type(exc).__name__,
+        'description': type(exc).__doc__,
     }
