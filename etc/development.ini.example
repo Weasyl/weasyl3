@@ -9,9 +9,12 @@ pyramid.debug_routematch = false
 pyramid.default_locale_name = en
 pyramid.includes =
     pyramid_debugtoolbar
+    libweasyl.cache
+    weasyl.panels.dogpile
 
 debugtoolbar.intercept_exc = debug
 debugtoolbar.intercept_redirect = true
+debugtoolbar.dogpile.region_key = weasyl.cache_region
 
 sqlalchemy.url = postgresql:///weasyl
 
@@ -50,7 +53,7 @@ handlers =
 qualname = weasyl
 
 [logger_sqlalchemy]
-level = INFO
+level = WARN
 handlers =
 qualname = sqlalchemy
 
