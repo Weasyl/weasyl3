@@ -12,7 +12,6 @@ from sqlalchemy import engine_from_config
 from zope.sqlalchemy import ZopeTransactionExtension
 
 from libweasyl.configuration import configure_libweasyl
-from libweasyl import cache
 from .media import format_media_link
 from .resources import RootResource
 from .sessions import WeasylSession
@@ -176,9 +175,5 @@ def make_app(global_config, **settings):
     config.set_authorization_policy(authorization.DelegatedAuthorizationPolicy())
 
     config.scan('weasyl.views')
-
-    cache.region.configure_from_config(settings, 'cache.')
-    for wrapper in [cache.JSONProxy, cache.ThreadCacheProxy]:
-        cache.region.wrap(wrapper)
 
     return config.make_wsgi_app()
