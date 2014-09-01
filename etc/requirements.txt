@@ -19,15 +19,12 @@ Chameleon==2.14
 colander==1.0b1
 decorator==3.4.0
 deform==2.0a2
-dogpile.cache==0.5.3
-dogpile.core==0.4.1
 peppercorn==0.4
 psycopg2==2.5.2
 py-bcrypt==0.4
 python3-memcached==1.51
 pytz==2014.2
 repoze.lru==0.6
-sanpera==0.1.1-5
 simplejson==3.4.0
 transaction==1.4.3
 venusian==1.0a8
