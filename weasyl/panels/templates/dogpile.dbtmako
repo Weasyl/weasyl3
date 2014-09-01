@@ -1,0 +1,19 @@
+<%! import pprint %>
+<table class="pDebugSortable table table-striped">
+  <thead>
+    <tr>
+      <th>Time&nbsp;(ms)</th>
+      <th>Operation</th>
+      <th>Arguments</th>
+    </tr>
+  </thead>
+  <tbody>
+  % for e, query in enumerate(queries):
+    <tr class="${'pDebugOdd' if e % 2 else 'pDebugEven'}">
+      <td>${'%0.2f' % query['duration']}</td>
+      <td><tt>${query['method']}</tt></td>
+      <td><pre>${pprint.pformat(query['arguments'])}</pre></td>
+    </tr>
+  % endfor
+  </tbody>
+</table>
