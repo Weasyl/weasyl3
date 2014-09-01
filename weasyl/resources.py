@@ -124,6 +124,11 @@ class APIv2Resource(MethodDispatchResource):
     segment_submissions = SubmissionsResource
     segment_users = UsersResource
 
+    def __getitem__(self, segment):
+        if segment == '_debug' and self.request.is_debug_on:
+            return DebugResource(self.request)
+        return super().__getitem__(segment)
+
 
 class APIResource(MethodDispatchResource):
     segment_v2 = APIv2Resource
