@@ -1,7 +1,5 @@
 import functools
 
-from decorator import decorator
-from pyramid.renderers import render_to_response
 from pyramid.view import view_config
 from venusian import Categories
 
