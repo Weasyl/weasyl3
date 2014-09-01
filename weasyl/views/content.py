@@ -28,6 +28,7 @@ def comment_success(context, request, appstruct):
 
 @also_api_view(name='view', context=SubmissionResource,
                template='content/submission.jinja2', permission='view')
+@view_config(context=SubmissionResource, renderer='content/submission.jinja2', permission='view')
 @form_renderer(CommentForm, 'comment', success=comment_success, button='save',
                name='comment', context=SubmissionResource,
                renderer='content/submission.jinja2', permission='comment')
