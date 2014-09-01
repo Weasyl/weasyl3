@@ -5,11 +5,11 @@ from pyramid.decorator import reify
 from sqlalchemy import orm
 import sqlalchemy as sa
 
+from libweasyl.models.meta import Base
 from libweasyl.legacy import plaintext
 from libweasyl.models import tables
 from ..common import minimize_media
 from .. import staff
-from .meta import Base
 
 
 log = logging.getLogger(__name__)

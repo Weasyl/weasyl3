@@ -1,37 +1,12 @@
 from pyramid import httpexceptions
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Query, scoped_session, sessionmaker, object_mapper
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import engine_from_config
 from zope.sqlalchemy import ZopeTransactionExtension
 
-
-class BaseQuery(Query):
-    def get_or_404(self, ident):
-        ret = self.get(ident)
-        if ret is None:
-            raise httpexceptions.HTTPNotFound()
-        return ret
-
-    def first_or_404(self):
-        ret = self.first()
-        if ret is None:
-            raise httpexceptions.HTTPNotFound()
-        return ret
+from libweasyl.models.meta import BaseQuery
 
 
-class _BaseObject:
-    def to_dict(self):
-        return {col.name: getattr(self, col.name)
-                for col in object_mapper(self).mapped_table.c}
-
-    def __json__(self, request):
-        return self.to_dict()
-
-
-Base = declarative_base(cls=_BaseObject)
-DBSession = Base.DBSession = scoped_session(sessionmaker(
-    extension=ZopeTransactionExtension()))
-Base.query = DBSession.query_property(BaseQuery)
+DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 
 
 def configure(config, settings):

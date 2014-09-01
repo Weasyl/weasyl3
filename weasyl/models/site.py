@@ -1,7 +1,7 @@
 from sqlalchemy.orm import relationship
 
+from libweasyl.models.meta import Base
 from libweasyl.models import tables
-from .meta import Base
 from .users import Login
 
 

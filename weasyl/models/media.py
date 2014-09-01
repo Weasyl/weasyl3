@@ -5,11 +5,12 @@ import os
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.orm import relationship, foreign, remote, joinedload
 
+from libweasyl.models.meta import Base
 from libweasyl.models import tables
 from libweasyl.text import slug_for
 from .. import images
 from .content import Submission
-from .meta import Base, DBSession
+from .meta import DBSession
 from .users import Profile
 
 

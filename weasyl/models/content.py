@@ -3,10 +3,10 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import contains_eager, relationship
 
 from libweasyl.models.helpers import clauses_for
+from libweasyl.models.meta import Base
 from libweasyl.models import tables
 from libweasyl.text import markdown, slug_for
 from ..common import minimize_media
-from .meta import Base
 from .users import Login
 
 
