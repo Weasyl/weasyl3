@@ -6,10 +6,10 @@ from pyramid.view import view_config
 from pyramid import httpexceptions
 from sqlalchemy.orm import contains_eager
 
+from libweasyl.media import populate_with_submission_media
 from libweasyl.models.content import Comment, Submission
 from libweasyl.models.users import Login, UserStream
 from libweasyl.models.site import SiteUpdate
-from ..media import populate_with_submission_media
 from ..resources import RootResource, SubmissionResource, SubmissionsResource
 from .decorators import also_api_view
 from .forms import CommentForm, form_renderer

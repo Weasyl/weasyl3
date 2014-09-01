@@ -5,8 +5,8 @@ from pyramid.renderers import render_to_response
 from pyramid import httpexceptions
 
 from libweasyl.models.content import Comment, Submission, Folder
+from libweasyl.media import populate_with_submission_media
 from ..resources import UserResource
-from .. import media
 from .decorators import also_api_view
 from .forms import CommentForm, form_renderer
 
@@ -32,7 +32,7 @@ def view_user(context, request, forms):
         .limit(10)
         .all())
 
-    media.populate_with_submission_media(submissions)
+    populate_with_submission_media(submissions)
 
     # XXX: tag filtering here too
     available_featured_submissions = (
@@ -68,7 +68,7 @@ def view_user_works(context, request):
         .limit(30)
         .all())
 
-    media.populate_with_submission_media(submissions)
+    populate_with_submission_media(submissions)
 
     return {
         'user': context.user,

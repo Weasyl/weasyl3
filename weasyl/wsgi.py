@@ -12,12 +12,13 @@ from sqlalchemy import engine_from_config
 from zope.sqlalchemy import ZopeTransactionExtension
 
 from libweasyl.configuration import configure_libweasyl
+from libweasyl import cache
 from .media import format_media_link
 from .resources import RootResource
 from .sessions import WeasylSession
 from .views.legacy import configure_urls
 from .views.login import login_forms
-from . import authorization, cache, predicates
+from . import authorization, predicates
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
