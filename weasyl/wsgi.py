@@ -12,7 +12,7 @@ from sqlalchemy import engine_from_config
 from zope.sqlalchemy import ZopeTransactionExtension
 
 from libweasyl.configuration import configure_libweasyl
-from .media import populate_with_submission_media, populate_with_user_media, format_media_link
+from .media import format_media_link
 from .resources import RootResource
 from .sessions import WeasylSession
 from .views.legacy import configure_urls
@@ -144,8 +144,6 @@ def make_app(global_config, **settings):
         dbsession=DBSession,
         not_found_exception=httpexceptions.HTTPNotFound,
         base_file_path=settings['weasyl.static_root'],
-        populate_with_submission_media=populate_with_submission_media,
-        populate_with_user_media=populate_with_user_media,
         media_link_formatter_callback=format_media_link,
     )
 
