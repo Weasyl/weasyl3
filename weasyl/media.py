@@ -40,7 +40,10 @@ def get_user_media(userid):
 
 def build_populator(identity, multi_get):
     def populator(objects):
-        needy_objects = list({o for o in objects if not hasattr(o, 'media')})
+        # using vars like this is nasty, but is required in this case
+        # because hasattr will try to actually fetch the attribute,
+        # and fetching the attribute will fetch the media.
+        needy_objects = list({o for o in objects if 'media' not in vars(o)})
         if not needy_objects:
             return objects
         keys_to_fetch = [getattr(o, identity) for o in needy_objects]
