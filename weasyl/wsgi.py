@@ -35,6 +35,10 @@ def is_api_request(request):
     return bool(request.traversed and request.traversed[0] == 'api')
 
 
+def is_debug_on(request):
+    return bool(request.registry.settings.get('weasyl.debug') == 'true')
+
+
 def format_datetime(request, dt):
     return dt.strftime('%d %B %Y at %H:%M:%S')
 
@@ -155,6 +159,7 @@ def make_app(global_config, **settings):
     config.add_request_method(path_for)
     config.add_request_method(format_datetime)
     config.add_request_method(is_api_request, reify=True)
+    config.add_request_method(is_debug_on, reify=True)
     config.add_request_method(login_forms, reify=True)
     config.add_tween(
         'weasyl.sessions.session_tween_factory',

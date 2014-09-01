@@ -129,6 +129,10 @@ class APIResource(MethodDispatchResource):
     segment_v2 = APIv2Resource
 
 
+class DebugResource(MethodDispatchResource):
+    pass
+
+
 class RootResource(MethodDispatchResource):
     __name__ = ''
     __parent__ = None
@@ -140,6 +144,8 @@ class RootResource(MethodDispatchResource):
     def __getitem__(self, segment):
         if segment.startswith('~'):
             return UsersResource(self.request)[segment[1:]]
+        elif segment == '_debug' and self.request.is_debug_on:
+            return DebugResource(self.request)
         return super().__getitem__(segment)
 
     def permits_signin(self, principals):
