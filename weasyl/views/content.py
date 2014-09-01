@@ -1,7 +1,9 @@
 import logging
+import os
 import sqlalchemy as sa
 
 from pyramid.renderers import render_to_response
+from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid import httpexceptions
 from sqlalchemy.orm import contains_eager
@@ -38,6 +40,28 @@ def view_submission(context, request, forms):
         'comments': comments,
     })
     return ret
+
+
+@view_config(name='media', context=SubmissionResource, api='false')
+def view_submission_media(context, request):
+    if len(request.subpath) != 2:
+        return httpexceptions.HTTPNotFound()
+    link_type, filename = request.subpath
+    base, ext = os.path.splitext(filename)
+    _, _, mediaid = base.rpartition('-')
+    if not mediaid.isdigit():
+        return httpexceptions.HTTPNotFound()
+    mediaid = int(mediaid)
+    media = context.submission.media
+    if link_type not in media:
+        return httpexceptions.HTTPNotFound()
+    media_item = next((m for m in media[link_type] if m['mediaid'] == mediaid), None)
+    if media_item is None:
+        return httpexceptions.HTTPNotFound()
+    return Response(status=204, headers={
+        'X-Accel-Redirect': media_item['file_url'],
+        'Cache-Control': 'max-age=0',
+    })
 
 
 @view_config(name='frontpage', context=SubmissionsResource, renderer='json', api='true')

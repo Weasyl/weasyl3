@@ -13,7 +13,7 @@ def format_media_link(media, link):
     if link.link_type == 'submission':
         login_name = link.submission.owner.login_name
         return request.resource_path(
-            None, '~' + login_name, 'submissions', str(link.submitid),
+            None, '~' + login_name, 'submissions', str(link.submitid), 'media', 'submission',
             '%s-%s-%s.%s' % (
                 login_name, slug_for(link.submission.title), media.mediaid,
                 media.file_type))
