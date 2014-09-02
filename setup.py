@@ -11,7 +11,7 @@ setup(
     package_data={
         'weasyl': [
             'static/*/*', 'templates/*.jinja2', 'templates/*/*.jinja2',
-            'widgets/*.jinja2',
+            'widgets/*.jinja2', 'assets.json',
         ],
     },
     setup_requires=['vcversioner'],
