@@ -57,13 +57,13 @@
   <section class="sub-comments">
     <h4 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">13 comments</h4>
     <div class="toggle-target-max-m">
-      {% if request.session.user %}
+      {% if request.current_user %}
       <form action="{{ request.path_for(submission, 'comment') }}" class="comment" method="post">
         {{ f.form_errors(_comment_errors) }}
         {{ _comment_form['csrf_token'].serialize() | safe }}
-        {{ f.user_avatar(request.session.user) }}
+        {{ f.user_avatar(request.current_user) }}
         <div class="comment-box hypothetical">
-          <div class="comment-info">{{ f.user_link(request.session.user) }}</div>
+          <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
           {{ _comment_form['comment'].serialize() | safe }}
           <ul class="comment-actions action-set">
             <li><a href="#" class="action small">Formatting help</a></li>

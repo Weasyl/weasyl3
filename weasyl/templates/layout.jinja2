@@ -31,7 +31,7 @@
         <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_path }}" alt="Weasyl" />
       </a>
 
-      {% if request.session.user %}
+      {% if request.current_user %}
       <div class="header-actions-container">
         <span class="header-actions-toggle icon icon-nav-gears toggle" data-toggle-target="next" aria-hidden="true"></span>
         <div class="header-actions small-menu">
@@ -57,12 +57,12 @@
         </form>
       </nav><!-- .header-nav -->
 
-      {% if request.session.user %}
+      {% if request.current_user %}
       <div class="header-user group">
-        {{ f.user_avatar(request.session.user) }}
+        {{ f.user_avatar(request.current_user) }}
         <p class="text-container align-vert">
           <span class="text">
-            <span class="type-alt">Welcome back,</span> {{ f.user_link(request.session.user) }}
+            <span class="type-alt">Welcome back,</span> {{ f.user_link(request.current_user) }}
           </span>
         </p>
       </div><!-- .header-user -->
@@ -111,7 +111,7 @@
           </dt>
           <dd><a href="{{ request.resource_path(None, 'share') }}">Share</a></dd>
           <dd><a href="{{ request.resource_path(None, 'explore') }}">Explore</a></dd>
-          {% if request.session.user %}
+          {% if request.current_user %}
           <dd><a href="{{ request.resource_path(None, '~', 'settings') }}">Settings</a></dd>
           <dd>
             {% call f.logout_form() %}
