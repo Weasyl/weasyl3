@@ -13,10 +13,10 @@ log = logging.getLogger(__name__)
 
 @view_config(name='whoami', context=APIv2Resource, renderer='json', api='true')
 def whoami(request):
-    if request.session.user:
+    if request.current_user:
         return {
-            'login': request.session.user.login_name,
-            'userid': request.session.user.userid,
+            'login': request.current_user.login_name,
+            'userid': request.current_user.userid,
         }
     else:
         return {
