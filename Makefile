@@ -15,12 +15,15 @@ USE_WHEEL := --no-use-wheel
 # Whether to install weasyl editable
 EDITABLE := -e
 
+# All of the asset files
+ASSETS := $(shell find assets -type f)
+
 #
 # Rules
 #
 
 # Catch-all
-all: ve
+all: ve assets
 
 # Creates python environment
 ve: etc/requirements.txt
@@ -33,9 +36,20 @@ weasyl.egg-info: setup.py ve
 	ve/bin/pip install $(EDITABLE) .
 	touch $@
 
+node_modules: package.json
+	npm install
+	touch node_modules
+
+weasyl/static: node_modules $(ASSETS)
+	node_modules/.bin/grunt
+	touch weasyl/static
+
+.PHONY: assets
+assets: weasyl/static
+
 # Run local server
 .PHONY: run
-run: ve weasyl.egg-info
+run: ve weasyl.egg-info assets
 	$</bin/pserve --app-name main --server-name main etc/development.ini
 
 .PHONY: shell
