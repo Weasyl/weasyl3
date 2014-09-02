@@ -40,7 +40,7 @@ node_modules: package.json
 	npm install
 	touch node_modules
 
-weasyl/static: node_modules $(ASSETS)
+weasyl/static: node_modules $(ASSETS) Gruntfile.js
 	$</.bin/grunt
 	touch weasyl/static
 
