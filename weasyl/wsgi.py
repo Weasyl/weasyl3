@@ -32,7 +32,12 @@ def path_for(request, obj, *a, **kw):
 
 
 def is_api_request(request):
-    return bool(request.traversed and request.traversed[0] == 'api')
+    # this used to use request.traversed, but request.traversed isn't
+    # always available. specifically, in the case of an HTTPException
+    # raised fairly early in the request's life, a new request is
+    # spawned which won't do any traversal. request.environ is pretty
+    # much the only thing guaranteed to exist, so examine that.
+    return bool(request.environ['PATH_INFO'].startswith('/api/'))
 
 
 def is_debug_on(request):
