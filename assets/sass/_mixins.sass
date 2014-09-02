@@ -1,0 +1,107 @@
+// prefixers
+
+=prefix($prop, $params)
+    -webkit-#{$prop}: $params
+    -moz-#{$prop}: $params
+    -ms-#{$prop}: $params
+    -o-#{$prop}: $params
+    #{$prop}: $params
+
+=prefix-w($prop, $params)
+    -webkit-#{$prop}: $params
+    #{$prop}: $params
+
+=prefix-wm($prop, $params)
+    -webkit-#{$prop}: $params
+    -moz-#{$prop}: $params
+    #{$prop}: $params
+        
+=prefix-wms($prop, $params)
+    -webkit-#{$prop}: $params
+    -ms-#{$prop}: $params
+    #{$prop}: $params
+
+=prefix-wmo($prop, $params)
+    -webkit-#{$prop}: $params
+    -moz-#{$prop}: $params
+    -o-#{$prop}: $params
+    #{$prop}: $params
+
+=transition($prop: all, $duration: 0.2s, $easing: ease-in-out)
+    -webkit-transition: $prop $duration $easing
+    transition: $prop $duration $easing
+
+=linear-gradient($params...)
+    background-image: -webkit-linear-gradient($params)
+    background-image: -moz-linear-gradient($params)
+    background-image: linear-gradient($params)
+
+// box-sizing: border-box
+
+=box-sizing
+    -webkit-box-sizing: border-box
+    -moz-box-sizing: border-box
+    box-sizing: border-box
+
+
+// inline-block and fallbacks
+
+=inline-block
+    display: -moz-inline-box
+    display: inline-block
+    *display: inline
+    zoom: 1
+
+
+// expanded clearfix
+
+=clear
+    &:after
+        content: "."
+        display: block
+        height: 0
+        clear: both
+        visibility: hidden
+    // .ie6 &
+    //     height: 1%
+    // .ie7 &
+    //     min-height: 1px
+
+
+// automate pixel fallback for rems
+
+$unit-default-px: 10px
+
+=rems($prop, $val...)
+    $n: length($val)
+    $i: 1
+ 
+    $px-list: ()
+    $rem-list: ()
+ 
+    @while $i <= $n
+        $px-list: append($px-list, to-px(nth($val, $i)))
+        $rem-list: append($rem-list, to-rems(nth($val, $i)))
+        $i: $i + 1
+ 
+    #{$prop}: $px-list
+    #{$prop}: $rem-list
+
+@function to-px($val)
+    @if unitless($val)
+        @if $val == 0
+            @return $val
+        @else
+            @return $val * $unit-default-px
+    @else
+        @return $val
+ 
+@function to-rems($val)
+    @if unitless($val)
+        @if $val == 0
+            @return $val
+        @else
+            @return $val+rem
+    @else
+        @return $val
+ 

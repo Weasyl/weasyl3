@@ -5,4 +5,6 @@
 __pycache__
 /version.txt
 /weasyl/_version.py
+/weasyl/assets.json
 /node_modules
+/.sass-cache

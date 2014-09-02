@@ -1,0 +1,234 @@
+.text-input, .select-wrapper
+    border: 1px solid transparentize($white, 0.9)
+    .content &
+        border-color: transparentize($black, 0.8)
+.text-input
+    display: block
+    width: 100%
+    padding: $line/4 $line/2
+    border-bottom: 2px solid transparentize($white, 0.65)
+    color: $copy
+    background: $black-transparent
+    +prefix-w(box-shadow, inset 0 5px 8px rgba(0,0,0,0.6))
+    +transition
+    .has-contents &
+        padding-left: 0
+        background: transparent
+        border-color: transparent transparent transparentize($color-secondary, 0.7) transparent
+        +prefix-w(box-shadow, none)
+    &:focus
+        border-bottom-color: $action
+        +prefix-w(box-shadow, none)
+    .content &
+        border-bottom-color: transparentize($black, 0.6)
+        color: $copy-alt
+        background: lighten($white, 3%)
+        +prefix-w(box-shadow, inset 0 3px 6px transparentize($black, 0.95))
+    .content .has-contents &
+        border-color: transparent transparent transparentize($color-secondary, 0.8) transparent
+        background: transparent
+        +prefix-w(box-shadow, none)
+    .content &:focus
+        padding-left: $line/2
+        border-bottom-color: $action-alt
+        background: lighten($white, 8%)
+        +prefix-w(box-shadow, none)
+    &.valid
+        border-bottom-color: transparentize($color-positive, 0.4) !important
+    &.invalid
+        border-bottom-color: transparentize($color-negative, 0.55) !important
+
+.select-wrapper
+    max-width: 100%
+    overflow: hidden
+    position: relative
+    .csstransforms &
+        &:after
+            content: '< >'
+            width: $line
+            height: $line
+            line-height: $line
+            font-size: $milli
+            font-weight: 700
+            text-align: center
+            white-space: nowrap
+            position: absolute
+            right: 0
+            top: 50%
+            margin-top: -$line/2
+            +prefix-wms(transform, scale(1, 0.6) rotate(90deg))
+            +prefix-wm(pointer-events, none)
+    &.valid
+        border-color: $color-positive
+    &.invalid
+        border-color: $color-negative
+
+.select-input
+    display: block
+    max-width: 100%
+.select-wrapper .select-input
+    max-width: none
+    width: 120%
+    padding: $line/4 0 $line/4 $line/2
+    border: none
+    color: $copy
+    background: $black-transparent
+    .content &
+        color: $copy-alt
+        background: lighten($white, 3%)
+        &:focus
+            background: lighten($white, 20%)
+
+.active-label span, .passive-label
+    color: transparentize($white, 0.35)
+    .content &
+        color: transparentize(mix($action-alt, $copy-alt, 30%), 0.2)
+.checkbox-label
+    &.checked
+        background: transparentize($white, 0.9)
+    span
+        line-height: $line*1.5
+
+.form-fieldset
+    padding: $line/2 $line/2 $line
+    border: 1px solid transparentize($white, 0.8)
+.form-legend
+    @extend .type-alt
+    padding: 0 $line/4
+    line-height: $line
+
+.active-label
+    position: relative
+    span
+        display: block
+        +transition
+        white-space: nowrap
+    &.enabled span
+        position: absolute
+        padding: 0 $line/2
+        left: 0
+        top: 0
+        line-height: $line*1.5 + 3px  // input height + border
+    &.has-contents span
+        top: -$line/4
+        padding-left: 0
+        font-size: $milli
+        line-height: $line/2
+        opacity: 0.65
+    &.active span
+        top: -$line
+        padding-left: $line/2
+        font-size: $milli
+        line-height: $line
+        color: $copy
+        background: $action-alt
+        opacity: 1
+
+.form-help
+    font-size: $milli
+    margin-top: $line/2
+    a
+        display: inline-block
+        border-bottom: 1px solid $action-alt
+    .help
+        @extend .type-alt
+        font-size: $micro
+        opacity: 0.85
+    .if-valid, .if-invalid
+        display: none
+    .if-valid
+        color: $color-positive
+    .if-invalid
+        color: $color-negative
+    &.valid
+        .help
+            display: none
+        .if-valid
+            display: block
+    &.invalid
+        .help
+            display: none
+        .if-invalid
+            display: block
+
+
+.form-date
+    .select-wrapper
+        width: 30%
+        float: left
+        + .select-wrapper
+            margin-left: 5%
+
+.show-password-container
+    position: relative
+.show-password
+    display: block
+    position: absolute
+    right: $line/2
+    top: 50%
+    margin-top: -$line/2
+    font-size: $milli
+    cursor: pointer
+    z-index: 2
+    &:before
+        content: '[show]'
+    &.active:before
+        content: '[hide]'
+    + label .text-input
+        padding-right: 4em
+
+@media all and (min-width: $break-m2)
+    .csstransforms .active-label.side  // use transforms so we can use transition
+        span
+            +prefix-wms(transform, translateX(-100%))
+            left: -$line/2
+            &:after
+                content: ''
+                width: 0
+                height: 0
+                position: absolute
+                top: 50%
+                left: 100%
+                margin-top: -$line/4
+                border: $line/4 solid transparent
+                border-right-width: 0
+                +transition
+        &.has-contents span
+            top: $line/2 + 1px
+            left: -$line/2
+            +prefix-wms(transform, translateX(-100%))
+        &.active span
+            top: $line/4 + 1px
+            left: -$line
+            +prefix-wms(transform, translateX(-100%))
+            &:after
+                margin-top: -$line/2
+                border-width: $line/2 0 $line/2 $line/2
+                border-left-color: $action-alt
+    .passive-label.side
+        width: $modal-width
+        float: left
+        margin-left: -($modal-width + $line)
+        margin-bottom: -($line*9/8)
+        position: relative
+        top: $line/4
+        text-align: right
+        + div, + label, + p, + input, + button
+            clear: left
+
+
+@media all and (min-width: $modal-width * 3 + $line*2)
+    .form-help.side
+        width: $modal-width
+        float: right
+        margin-right: -($modal-width + $line)
+        margin-top: -($line*9/8)
+        position: relative
+        top: -$line/4
+        // .form-date + &, .select-wrapper + &
+        //     top: 0
+        + div, + label, + p, + input, + button
+            clear: right
+        // &.content-block
+        //     + label, + input, + div, + button
+        //         margin-top: $line

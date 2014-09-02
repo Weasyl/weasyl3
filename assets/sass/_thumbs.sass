@@ -1,0 +1,344 @@
+.thumb
+    display: block
+    max-width: 100%
+    border: 5px solid $black
+    +transition
+    .content &
+        border-color: $bg-alt-lighter
+    &:hover, a:hover &
+        border-color: $white
+        .content &
+            border-color: lighten($white, 12%)
+.thumb-container
+    display: inline-block
+    position: relative
+    max-width: 100%
+    max-height: 100%
+    .type
+        width: $line*3
+        height: $line*3
+        position: absolute
+        right: 0
+        bottom: 0
+        overflow: hidden
+        z-index: 2
+    .ribbon
+        position: absolute
+        right: 0
+        bottom: 0
+        background: transparentize($black, 0.35)
+        z-index: 5
+        .csstransforms &
+            width: $line*5
+            right: -$line*1.75
+            bottom: $line/4
+            border: solid transparentize($copy, 0.75)
+            border-width: 1px 0
+            +prefix-wms(transform, rotate(-45deg))
+        .icon
+            display: block
+            font-size: $line
+            margin: 0 auto
+            opacity: 0.85
+.rating
+    width: $line*2
+    height: $line*2
+    color: transparent
+    overflow: hidden
+    text-indent: 200%
+    white-space: nowrap
+    font-size: 0
+    border-style: solid
+    border-width: 0 3px 3px 0
+    position: absolute
+    right: 1px
+    bottom: 1px
+    z-index: 6
+.moderate
+    color: $color-moderate
+    border-color: $color-moderate
+.mature
+    color: $color-mature
+    border-color: $color-mature
+.explicit
+    color: $color-explicit
+    border-color: $color-explicit
+
+.thumbs-grid
+    margin-right: -$line
+    .item-container
+        @extend .align-vert
+        +prefix-wm(box-sizing, content-box)
+        display: block
+        position: relative
+    .grid-item
+        padding: 0 $line $line 0
+        text-align: center
+    &.info .item-container
+        padding-bottom: $line*1.5
+    &.info-2 .item-container
+        padding-bottom: $line*2.5
+    &.info-3 .item-container
+        padding-bottom: $line*3.5
+    .thumb-container
+        max-width: 100%
+        max-height: 100%
+        vertical-align: middle
+    .info
+        width: 100%
+        position: absolute
+        left: 0
+        bottom: 0
+        text-align: left
+    .title, .byline
+        width: 100%
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
+    .title
+        font-weight: 400
+    .byline
+        font-size: $milli
+        line-height: $text
+        opacity: 0.8
+    .thumb
+        display: block
+        max-width: 100%
+    &.full, &.col
+        .grid-item
+            width: 50%
+        .item-container
+            height: $line*5
+            height: 45vw
+        .thumb
+            max-height: $line*5
+            max-height: 45vw
+
+.mosaic
+    @extend .group
+    clear: both
+    position: relative
+    text-align: center
+    .item
+        display: inline-block
+        vertical-align: top
+    &.enabled
+        height: 200px
+        .item
+            display: block
+            padding: 5px
+            position: absolute
+            left: 0
+            top: 0
+            border: 1px solid transparent
+            background-color: $black
+            +prefix-w(background-clip, padding-box)
+            +transition
+            .no-touch &:hover
+                background-color: $white
+                opacity: 1
+            .content &
+                background-color: $bg-alt-lighter
+                .no-touch &:hover
+                    background-color: lighten($bg-alt-lighter, 8%)
+        .thumb-container
+            display: block
+            width: 100%
+            height: 100%
+            text-align: center
+            background-repeat: no-repeat
+            background-position: 50% 50%
+            border: none
+            +prefix-w(background-size, cover)
+        .thumb
+            width: 100%
+            height: 100%
+            margin: auto
+            opacity: 0
+            position: relative
+            z-index: 5 // preserve right-click > save ability
+        .rating
+            right: -4px
+            bottom: -4px
+        .type
+            right: -5px
+            bottom: -5px
+        .info
+            position: absolute
+            bottom: 100%
+            left: 50%
+            padding: $line/4 $line
+            margin: 0
+            // border: 1px solid transparentize(mix($white, $black, 70%), 0.35)
+            border: 1px solid desaturate(mix($action, $black, 50%), 60%)
+            border-bottom: 3px solid mix($white, $black, 70%)
+            border-radius: 3px
+            color: $copy
+            background: $black
+            z-index: 50
+            visibility: hidden
+            opacity: 0
+            pointer-events: none
+            +prefix-wmo(transition, (opacity 0.14s ease, margin 0.14s ease, visibility 0s linear 0.14s, z-index 0s linear 0.14s))
+            .content &
+                background: $bg-alt
+            &:before, &:after
+                content: ""
+                display: block
+                width: 0
+                height: 0
+                position: absolute
+                left: 50%
+                top: 100%
+                border: solid transparent
+                +prefix-wms(transform, scaleX(1.6))
+            &:before
+                margin-left: -8px
+                border-width: 8px 8px 0
+                border-top-color: mix($white, $black, 70%)
+            &:after
+                margin-left: -4px
+                border-width: 4px 4px 0
+                border-top-color: $black
+                .content &
+                    border-top-color: $bg-alt
+            &.edge-left
+                left: -6px
+                &:before, &:after
+                    left: 16.7%
+            &.edge-right
+                left: auto
+                right: -6px
+                &:before, &:after
+                    left: 83.3%
+        .moderate ~ .info
+            border-bottom-color: $color-moderate
+            &:before
+                border-top-color: $color-moderate
+        .mature ~ .info
+            border-bottom-color: $color-mature
+            &:before
+                border-top-color: $color-mature
+        .explicit ~ .info
+            border-bottom-color: $color-explicit
+            &:before
+                border-top-color: $color-explicit
+        .no-touch &.hovered .item:hover .info
+            opacity: 1
+            visibility: visible
+            margin-bottom: $line*3/4
+            +prefix-wmo(transition, (opacity 0.14s ease, margin 0.14s ease))
+        .title
+            @extend .ellipsis
+            font-size: $kilo
+            font-weight: 400
+        .byline
+            @extend .ellipsis
+            font-size: $milli
+            .content &
+                color: $color-secondary-alt
+
+.expanded-previews
+    max-width: $expanded-width + $line*4
+    margin-left: auto
+    margin-right: auto
+    text-align: center
+    > li
+        padding-bottom: $line*2
+        + li
+            padding-top: $line*2
+            border-top: 1px solid transparentize($white, 0.83)
+        &:last-child
+            padding-bottom: 0
+
+
+@media all and (min-width: $break-s)
+    .thumbs-grid
+        &.full, &.col
+            .grid-item
+                width: 33.3%
+            .item-container
+                height: $line*7
+                height: 28vw
+            .thumb
+                max-height: $line*7
+                max-height: 28vw
+
+
+@media all and (max-width: $break-m - 1px)
+    .expanded-previews
+        .action-list
+            text-align: left
+
+
+@media all and (min-width: $break-m)
+    .thumbs-grid
+        .grid-item
+            padding-bottom: $line*1.5
+        .title
+            font-size: $kilo
+    // .expanded-previews
+    //     > li
+    //         padding-bottom: $line*3
+    //         + li
+    //             padding-top: $line*3
+
+
+@media all and (min-width: $break-m2)
+    .thumbs-grid
+        &.full
+            .grid-item
+                width: 25%
+            .item-container
+                height: $line*9
+                height: 21vw
+            .thumb
+                max-height: $line*9
+                max-height: 21vw
+        &.col
+            .item-container
+                height: $line*8
+                height: 18vw
+            .thumb
+                max-height: $line*8
+                max-height: 18vw
+
+
+@media all and (min-width: $break-m3)
+    .thumbs-grid
+        &.full
+            .grid-item
+                width: 20%
+            .item-container
+                height: $line*11
+                height: 17vw
+            .thumb
+                max-height: $line*11
+                max-height: 17vw
+        &.col
+            .grid-item
+                width: 25%
+            .item-container
+                height: $line*9
+                height: 17vw
+            .thumb
+                max-height: $line*9
+                max-height: 17vw
+        
+        
+@media all and (min-width: $break-w)
+    .thumbs-grid
+        &.full
+            .grid-item
+                width: 16.66%
+            .item-container
+                height: 16vw
+            .thumb
+                max-height: 16vw
+        &.col
+            .grid-item
+                width: 20%
+            .item-container
+                height: 14vw
+            .thumb
+                max-height: 14vw

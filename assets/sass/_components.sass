@@ -1,0 +1,624 @@
+.no-js .if-js
+    display: none !important
+.js
+    .if-no-js
+        display: none !important
+    .toggle
+        cursor: pointer
+    .toggle-target
+        display: none
+        &.active
+            display: block
+
+.hide
+    display: none !important
+
+.block, .avatar, .avatar > img
+    display: block
+    max-width: 100%
+    margin-left: auto
+    margin-right: auto
+.avatar
+    max-width: 200px
+    position: relative
+.inline-block
+    display: inline-block
+    vertical-align: middle
+
+// layout-block will add margin at a higher breakpoint, layout-block-small will not
+.layout-block, .layout-block-small
+    margin-bottom: $line*2
+.layout-block-top, .layout-block-small-top
+    margin-top: $line*2
+.content-block
+    margin-bottom: $line
+.content-block-top
+    margin-top: $line
+.padding
+    padding: $line*2 $line
+.padding-sides
+    @extend .padding
+    padding-top: 0
+    padding-bottom: 0
+.primary-title-wrap
+    margin-top: $line
+    margin-bottom: $line
+    text-align: center
+
+.reading-width, .modal-width
+    margin-left: auto
+    margin-right: auto
+.reading-width
+    max-width: $reading-width
+.modal-width
+    max-width: $modal-width
+
+.text-align-center
+    text-align: center
+.text-align-right
+    text-align: right
+.text-align-left
+    text-align: left
+.align-vert
+    white-space: nowrap
+    &:before
+        content: ""
+        display: inline-block
+        vertical-align: middle
+        width: 0
+        height: 100%
+        margin-left: -2px
+        margin-right: -0.3em
+.color-positive
+    color: $color-positive
+.color-neutral
+    color: $color-neutral
+.color-negative
+    color: $color-negative
+.color-art
+    color: $color-notif-1
+.color-comment
+    color: $color-notif-2
+.color-user
+    color: $color-notif-3
+.color-fave
+    color: $color-notif-4
+.color-journal
+    color: $color-notif-5
+.color-stream
+    color: $color-notif-6
+.color-note
+    color: $color-notif-7
+.bg-positive
+    background-color: $color-positive
+.bg-neutral
+    background-color: $color-neutral
+.bg-negative
+    background-color: $color-negative
+.bg-art
+    background-color: $color-notif-1
+.bg-comment
+    background-color: $color-notif-2
+.bg-user
+    background-color: $color-notif-3
+.bg-fave
+    background-color: $color-notif-4
+.bg-journal
+    background-color: $color-notif-5
+.bg-stream
+    background-color: $color-notif-6
+.bg-note
+    background-color: $color-notif-7
+
+.toggle
+    cursor: pointer
+
+.content
+    @extend .group
+    @extend .padding
+    color: $copy-alt
+    background: $bg-alt
+.lighter
+    background: $bg-alt-lighter
+.content-2
+    @extend .group
+    @extend .padding
+    background: $black-transparent
+.content-3
+    @extend .group
+    @extend .padding
+    +linear-gradient(left, mix($black-transparent, $title-grad-1, 94%) 0, mix($black-transparent, $title-grad-2, 93%) 60%, mix($black-transparent, $title-grad-3, 95%) 120%)
+    +prefix-w(box-shadow, (inset 0 -1px 0 transparentize($white, 0.94), inset 0 1px 0 transparentize($white, 0.94)))
+#main
+    > .content
+        &:first-child
+            margin-top: -$line
+            .page-notification + &
+                margin-top: 0
+
+.advert
+    display: inline-block
+    max-width: 100%
+    line-height: 0
+
+.csstransforms .disclose:after, .csstransforms .disclose-pre:before
+    display: inline-block
+    vertical-align: middle
+    content: ""
+    width: 0.4em
+    height: 0.4em
+    border: 3px solid
+    border-color: $action $action transparent transparent
+    +transition
+.csstransforms .disclose:after
+    margin-left: 0.5em
+    +prefix-wms(transform, translateY(-0.1em) scaleX(0.6) rotate(45deg))
+.csstransforms .disclose-pre:before
+    margin-right: 0.5em
+    +prefix-wms(transform, translateY(-0.1em) scaleX(0.6) rotate(-135deg))
+.disclose.vertical:after
+    margin-left: 0.8em
+    +prefix-wms(transform, translateY(-0.2em) scaleY(0.6) rotate(135deg))
+.disclose.active:after
+    margin-left: 0.8em
+    +prefix-wms(transform, translateY(0.08em) scaleY(-0.6) rotate(135deg))
+.disclose.below
+    position: relative
+    &:after
+        width: 0.6em
+        height: 0.6em
+        position: absolute
+        top: 50%
+        left: 50%
+        margin-top: 0.3em
+        margin-left: -0.3em
+        +prefix-wms(transform, scaleY(0.6) rotate(135deg))
+.disclose:hover:after
+    border-color: lighten($action, 10%) lighten($action, 10%) transparent transparent
+.content .disclose:after
+    border-color: $action-alt $action-alt transparent transparent
+.content .disclose:hover:after
+    border-color: lighten($action-alt, 10%) lighten($action-alt, 10%) transparent transparent
+
+.action-list
+    li
+        display: inline-block
+        vertical-align: middle
+        margin-right: $line*1.5
+        &:last-child
+            margin-right: 0
+    .action
+        display: block
+    @for $i from 1 through 7
+        li:nth-child(#{$i}) .action
+            color: mix($action-fade, $action, $i/8*100%)
+    li:nth-child(n+8) .action
+        color: $action-fade
+    li:nth-child(n) .action:hover
+        color: $white
+    .icon
+        opacity: 0.3
+        margin-right: 0.1em
+    .active .icon, .action:hover .icon
+        opacity: 1
+    li .action.active
+        color: $copy
+        .content &
+            color: $copy-alt
+    .content &
+        @for $i from 1 through 4
+            li:nth-child(#{$i}) .action
+                color: mix($title-alt-grad-3, $action-alt, $i/5*100%)
+        li:nth-child(n+5) .action
+            color: $title-alt-grad-3
+        li:nth-child(n) .action:hover
+            color: lighten($action-alt, 10%)
+
+.view-options
+    text-align: center
+    label, fieldset, .action
+        margin-left: $line/2
+        &:first-child
+            margin-left: 0
+    label, fieldset, .select-input, .select-wrapper
+        display: inline-block
+        vertical-align: middle
+    label, fieldset
+        line-height: 0
+        +prefix-w(box-shadow, inset 0 0 0 2px transparentize($white, 0.7))
+    .action
+        line-height: $line*2
+    .icon
+        display: block
+        border: $line/4 solid $black-transparent
+        font-size: $line*1.25
+        background-color: $black-transparent
+        opacity: 0.5
+        cursor: pointer
+    input[type=checkbox], input[type=radio]
+        display: none
+    input:checked + .icon
+        opacity: 1
+        border-color: transparentize($action, 0.5)
+        background-color: transparentize($action, 0.5)
+    fieldset
+        label
+            +prefix-w(box-shadow, none)
+            margin-left: 0
+
+.block-line
+    position: relative
+    &:before
+        content: ""
+        display: block
+        width: 3px
+        position: absolute
+        left: -($line+1px)
+        top: 0
+        bottom: 0
+        background: transparentize($white, 0.93)
+    .content &
+        &:before
+            background: transparentize($gray-light, 0.65)
+
+.tag
+    display: inline-block
+    vertical-align: middle
+    margin: 0 $line/2 $line/4 0
+    border-bottom: 2px solid $action-alt
+    font-size: $milli
+    &:hover
+        border-color: lighten($action-alt, 10%)
+    &.owner
+        color: $color-owner
+        border-color: $color-owner
+        &:hover
+            color: lighten($color-owner, 6%)
+            border-color: lighten($color-owner, 6%)
+
+.folder-thumbs
+    position: relative
+    padding-bottom: 100%
+.folder
+    > a
+        display: block
+    .thumb
+        position: absolute
+        left: 0
+        top: 0
+        max-width: 100%
+        max-height: 100%
+        border: 1px solid transparentize(#808080, 0.65)
+        +transition
+        z-index: 3
+        .csstransforms &
+            left: 50%
+            top: 50%
+            // blank rotate to preserve animation in some browsers
+            +prefix-wms(transform, translate(-50%, -50%) rotate(0))
+        &:nth-child(2)
+            +prefix-wms(transform, translate(-55%, -50%) rotate(-3.5deg))
+            z-index: 2
+        &:nth-child(3)
+            +prefix-wms(transform, translate(-45%, -50%) rotate(3.5deg))
+            z-index: 1
+    .no-touch & > a:hover .thumb
+        &:first-child
+            +prefix-wms(transform, translate(-40%, -80%) rotate(1.8deg))
+        &:nth-child(2)
+            +prefix-wms(transform, translate(-88%, -40%) rotate(-3.5deg))
+        &:nth-child(3)
+            +prefix-wms(transform, translate(-18%, -34%) rotate(3.5deg))
+
+.stat
+    dt
+        @extend .type-secondary
+        font-size: $milli
+        opacity: 0.9
+    dd
+        font-weight: 300
+        font-size: $kilo
+
+.activity-list
+    li
+        margin-bottom: $line/2
+        &:last-child
+            margin-bottom: 0
+    .icon
+        font-size: $kilo
+    .dot
+        font-size: $micro
+        margin: 0 ($kilo - $micro)/2
+    time
+        font-size: $milli
+        opacity: 0.65
+
+.resizing-textarea
+    position: relative
+    .resize-ref
+        display: none
+        visibility: hidden
+        white-space: pre-wrap
+        .js &
+            display: block
+    textarea
+        .js &
+            width: 100%
+            height: 100%
+            position: absolute
+            top: 0
+            left: 0
+            border: none
+            background: transparent
+            overflow: hidden // hide scrollbars
+            resize: none // hide corner resize grabber
+
+.fade-out
+    position: relative
+    &:before
+        content: ''
+        display: block
+        height: $line*4
+        max-height: 50%
+        position: absolute
+        left: 0
+        right: 0
+        bottom: 0
+    .content &:before
+        +linear-gradient(bottom, $bg-alt 0, transparentize($bg-alt, 1) 100%)
+
+.pagination
+    @extend .group
+    text-align: center
+    max-width: $reading-width
+    margin-left: auto
+    margin-right: auto
+    .prev
+        margin-right: $line
+    .next
+        margin-left: $line
+
+.spinner
+    color: $action
+    margin: $line*4 auto
+    text-align: center
+    .csstransforms3d &
+        width: $line*2
+        height: $line*2
+        color: transparent
+        background: url('../images/logo-hat.svg') no-repeat 50% 50%
+        background-size: 100% auto
+        overflow: hidden
+        -webkit-animation: flip-square 2.5s infinite ease-in-out
+        animation: flip-square 2.5s infinite ease-in-out
+        -webkit-user-select: none
+        -moz-user-select: none
+        -ms-user-select: none
+        user-select: none
+@-webkit-keyframes flip-square
+    #{0%}
+        -webkit-transform: perspective($line*4) rotateX(0deg) rotateY(0deg)
+    #{25%}
+        -webkit-transform: perspective($line*4) rotateX(-180.1deg) rotateY(0deg)
+    #{50%}
+        -webkit-transform: perspective($line*4) rotateX(-180deg) rotateY(-179.9deg)
+    #{75%}
+        -webkit-transform: perspective($line*4) rotateX(-360deg) rotateY(-179.9deg)
+    #{100%}
+        -webkit-transform: perspective($line*4) rotateX(-360deg) rotateY(-0deg)
+@keyframes flip-square
+    #{0%}
+        transform: perspective($line*4) rotateX(0deg) rotateY(0deg)
+    #{25%}
+        transform: perspective($line*4) rotateX(-180.1deg) rotateY(0deg)
+    #{50%}
+        transform: perspective($line*4) rotateX(-180deg) rotateY(-179.9deg)
+    #{75%}
+        transform: perspective($line*4) rotateX(-360deg) rotateY(-179.9deg)
+    #{100%}
+        transform: perspective($line*4) rotateX(-360deg) rotateY(-0deg)
+
+.modal
+    @extend .align-vert
+    visibility: hidden
+    &.active
+        visibility: visible
+    .content
+        position: relative
+.modal-close
+    position: absolute
+    right: $line
+    top: $line
+    opacity: 0.6
+    &:hover
+        opacity: 1
+
+
+@media all and (max-width: $break-s - 1px)
+    .min-s, .js .toggle-target-max-s:not(.active)
+        display: none !important
+
+
+@media all and (min-width: $break-s)
+    .max-s, .js .toggle-target-min-s:not(.active)
+        display: none !important
+
+
+@media all and (max-width: $break-m - 1px)
+    .min-m, .js .toggle-target-max-m:not(.active)
+        display: none !important
+    .title-toggle-max-m
+        display: block
+        max-width: none
+        margin-bottom: $line
+        margin-left: -$line
+        margin-right: -$line
+        padding-left: $line
+        padding-right: $line
+        background: transparentize($bg-alt, 0.9)
+        &.active
+            margin-bottom: $line*2
+        .content &
+            background: $bg-alt-lighter
+            .webkit-background-clip &
+                background-image: none
+                +prefix-w(background-clip, none)
+                +prefix-w(text-fill-color, $action-alt)
+    .modal
+        overflow: hidden
+        max-height: 0
+        -webkit-transition: max-height 0.2s ease-out, visibility 0s linear 0.2s
+        transition: max-height 0.2s ease-out, visibility 0s linear 0.2s
+        &.active
+            max-height: $line*30
+            -webkit-transition: max-height 0.24s ease-in, visibility 0s linear
+            transition: max-height 0.24s ease-in, visibility 0s linear
+        &:before
+            display: none
+
+
+@media all and (min-width: $break-m)
+    .max-m, .js .toggle-target-min-m:not(.active)
+        display: none !important
+    .title-toggle-max-m
+        .js &
+            cursor: default
+        &:after
+            display: none !important
+    .layout-block
+        margin-bottom: $line*3
+        &.title
+            margin-bottom: $line*2
+    .padding
+        padding: $line*3 $line*2
+    .padding-sides
+        padding-top: 0
+        padding-bottom: 0
+    #main
+        > .content, > .content-2, > .content-3
+            &:first-child
+                margin-top: -$line*2
+
+    .primary-title-wrap
+        margin-bottom: $line*2
+        &.outside-main
+            margin-top: $line*2
+    .modal
+        text-align: center
+        opacity: 0
+        transition: opacity 0.2s ease, visibility 0s linear 0.2s
+        &, & .screen
+            display: block
+            position: fixed
+            top: 0
+            right: 0
+            bottom: 0
+            left: 0
+            z-index: 100
+        .screen
+            display: block
+            background: transparentize($black, 0.2)
+            cursor: default
+        .content
+            display: inline-block
+            vertical-align: middle
+            width: $modal-width
+            position: relative
+            z-index: 101
+            text-align: left
+            border-radius: 4px
+            +prefix-w(box-shadow, 0 1px 10px transparentize($black, 0.3))
+            +prefix-wms(transform, scale(0.75))
+            +transition
+        &.active
+            opacity: 1
+            transition: opacity 0.2s ease, visibility 0s linear
+            .content
+                +prefix-wms(transform, scale(1))
+    .modal-close
+        right: $line*2
+        top: $line*2
+
+    .tag
+        padding: 0 $line*3/4
+        border-right: $line/4 solid $action-alt
+        border-bottom: none
+        border-radius: $line/4
+        line-height: $line*1.5
+        background: lighten($white, 12%)
+        +prefix-w(box-shadow, 0 1px 1px transparentize($black, 0.8))
+        position: relative
+        .csstransforms &
+            margin-left: $line/2
+            &:before, &:after
+                content: ""
+                display: block
+                position: absolute
+                top: 50%
+            &:before // triangular tag end
+                width: $line
+                height: $line
+                left: -$line/2.25
+                border-radius: 0 0 0 2px
+                margin-top: -$line/2
+                background: lighten($white, 12%)
+                +prefix-wms(transform, rotate(45deg))
+                +prefix-w(box-shadow, 0 1px 0 transparentize($black, 0.88))
+            &:after // faux tag hole
+                width: $line/3
+                height: $line/3
+                left: 0
+                margin-top: -$line/6
+                border-radius: 100%
+                background: $bg-alt
+                +prefix-w(box-shadow, 0 -1px 1px transparentize($black, 0.6))
+
+    .activity-list
+        li
+            position: relative
+            margin-left: $line/2 + $kilo/2
+        .icon, .dot
+            position: absolute
+            top: 50%
+        .icon
+            left: -($line + $kilo/2)
+            margin-top: -$kilo/2
+        .dot
+            left: -($line + $micro/2)
+            margin-top: -$micro/2
+
+
+@media all and (max-width: $break-m2 - 1px)
+    .min-m2, .js .toggle-target-max-m2:not(.active)
+        display: none !important
+
+
+@media all and (min-width: $break-m2)
+    .max-m2
+        display: none !important
+    #main.col
+        &:before
+            content: ''
+            display: block
+            width: $left-col-width
+            position: absolute
+            left: 0
+            top: 0
+            bottom: 0
+            background: $black-transparent
+            z-index: -1
+        
+
+@media all and (max-width: $break-l - 1px)
+    .min-l
+        display: none !important
+
+
+@media all and (min-width: $break-l)
+    .max-l
+        display: none !important
+        
+        
+@media all and (min-width: $break-w)
+    .max-w
+        display: none !important

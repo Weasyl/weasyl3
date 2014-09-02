@@ -1,0 +1,202 @@
+.comment
+    .avatar
+        max-width: $line*2
+        float: left
+.comment
+    .username, .attribution, time
+        display: inline-block
+    .username, .attribution
+        margin-right: $line/2
+    .attribution, time
+        font-size: $milli
+.comment-content
+    padding: $line/2 0
+    margin: 0
+    clear: left
+.comment-new-entry
+    clear: left
+    margin: $line/2 0
+.comment-actions
+    .action
+        font-size: $milli
+
+.comment-tree
+    margin-top: -$line
+    .comment
+        padding-top: $line
+    ol
+        padding-left: $line/2
+
+.comment-thread-continue
+    margin-top: $line
+
+
+@media all and (max-width: $break-s - 1px)
+    .comment-info
+        margin-left: $line*2.5
+    .comment-new
+        .avatar
+            margin-bottom: $line/2
+            margin-top: $line/2
+        .comment-info
+            padding-top: $line/2
+    .comment-new-box
+        margin-left: -$line/2
+        margin-right: -$line/2
+        padding: $line/2 $line/2 0
+        background: $bg-alt-lighter
+    .comment-tree
+        .comment ol
+            position: relative
+            &:before
+                content: ""
+                display: block
+                width: 1px
+                height: auto
+                background: mix($gray-light, $bg-alt, 65%)
+                position: absolute
+                left: 0
+                top: $line
+                bottom: 0
+
+
+@media all and (min-width: $break-s)
+    .comment
+        .avatar
+            max-width: $line*2.5
+    .comment-box, .comment-new-container
+        margin-left: $line*3
+    .comment-box
+        // max-width: $reading-width
+        padding: $line*3/4 $line/2
+        border-left: 3px solid
+        border-color: mix($gray-light, $bg-alt, 65%)
+        border-radius: 3px
+        background: $bg-alt-lighter
+        position: relative
+        &.owner
+            border-color: $color-owner
+        &.staff
+            border-color: $color-staff
+        &:before, &:after
+            content: ""
+            display: block
+            width: 0
+            height: 0
+            position: absolute
+            right: 100%
+            top: $line
+            border: solid transparent
+            +prefix-wms(transform, scaleY(1.6))
+        &:before
+            margin: 0 0 0 -5px
+            border-width: 8px 8px 8px 0
+            border-right-color: inherit
+        &:after
+            margin: 4px 0 0 -1px
+            border-width: 4px 4px 4px 0
+            border-right-color: $bg-alt-lighter
+        .no-touch &
+            .comment-actions
+                opacity: 0.5
+                +transition
+            &:hover .comment-actions
+                opacity: 1
+    .comment-new-box
+        padding: $line/2 $line/2 0
+        border: 2px dashed mix($gray-light, $bg-alt, 65%)
+        border-radius: 4px
+        background: $bg-alt
+        +transition
+        &.highlight
+            background: $bg-alt-lighter
+    .comment-content, .comment-new-entry
+        clear: none
+    .comment-new-entry
+        padding: 0
+        margin-left: 0
+        margin-bottom: 0
+        border: none
+    .comment-new-actions
+        margin: $line/2 0 0 $line/2
+    .comment-actions
+        .action
+            font-size: $text
+
+    // aw yiss better thread lines
+    .comment-tree
+        ol
+            padding-left: $line
+        .comment
+            position: relative
+            ol:before
+                content: ""
+                display: block
+                width: 1px
+                height: auto
+                background: mix($gray-light, $bg-alt, 65%)
+                position: absolute
+                left: $line/2
+                top: $line*3.75
+                bottom: 0
+        ol .comment
+            &:before
+                content: ""
+                display: block
+                width: $line/4
+                height: $line/4
+                background: $bg-alt
+                border-top: 1px solid mix($gray-light, $bg-alt, 65%)
+                position: absolute
+                left: -$line/2
+                top: $line*2.25
+            &:last-child:after
+                content: ""
+                display: block
+                width: 1px
+                height: auto
+                background: $bg-alt
+                position: absolute
+                left: -$line/2
+                top: $line*2.25
+                bottom: 0
+
+    .comment-thread-continue
+        margin-left: $line*3.5
+                
+
+@media all and (min-width: $break-m)
+    .comment
+        .avatar
+            max-width: $line*5
+        .username
+            font-size: $kilo
+    .comment-box, .comment-new-container
+        margin-left: $line*6
+    .comment-box
+        padding: $line*3/4 $line
+        &:before, &:after
+            top: $line*2.25
+    .comment-new-box
+        padding: $line*3/4 $line 0
+    .comment-new-actions
+        margin-left: $line
+    .comment-tree
+        ol
+            padding-left: $line*1.75
+        .comment
+            ol:before
+                top: $line*6.5
+                left: $line*3/4
+        ol .comment
+            &:before
+                width: $line*1/2
+                height: $line*1/2
+                top: $line*3.5
+                left: -$line
+            &:last-child:after
+                left: -$line
+                top: $line*3.5
+
+    .comment-thread-continue
+        margin-left: $line*7
