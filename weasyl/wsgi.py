@@ -2,9 +2,11 @@ import datetime
 import functools
 
 import arrow
+from pyramid_authstack import AuthenticationStackPolicy
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
+from pyramid.security import authenticated_userid
 from pyramid.traversal import quote_path_segment
 from pyramid import httpexceptions, traversal, url
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -12,12 +14,13 @@ from sqlalchemy import engine_from_config
 from zope.sqlalchemy import ZopeTransactionExtension
 
 from libweasyl.configuration import configure_libweasyl
+from libweasyl.models.users import Login
 from .media import format_media_link
 from .resources import RootResource
 from .sessions import WeasylSession
 from .views.legacy import configure_urls
 from .views.login import login_forms
-from . import authorization, predicates
+from . import authentication, authorization, predicates
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -46,6 +49,13 @@ def is_debug_on(request):
 
 def format_datetime(request, dt):
     return dt.strftime('%d %B %Y at %H:%M:%S')
+
+
+def current_user(request):
+    userid = authenticated_userid(request)
+    if userid is None:
+        return None
+    return Login.query.get(userid)
 
 
 def configure_db(config, settings):
@@ -161,6 +171,7 @@ def make_app(global_config, **settings):
     config.add_view_predicate('api', predicates.APIPredicate)
     config.add_request_method(path_for)
     config.add_request_method(format_datetime)
+    config.add_request_method(current_user, reify=True)
     config.add_request_method(is_api_request, reify=True)
     config.add_request_method(is_debug_on, reify=True)
     config.add_request_method(login_forms, reify=True)
@@ -175,8 +186,13 @@ def make_app(global_config, **settings):
     json_renderer.add_adapter(arrow.Arrow, datetime_adapter)
     config.add_renderer('json', json_renderer)
 
-    config.set_authentication_policy(
-        SessionAuthenticationPolicy(prefix='', callback=authorization.groupfinder))
+    auth_stack = AuthenticationStackPolicy(callback=authorization.groupfinder)
+    auth_stack.add_policy(
+        'api_key', authentication.APIKeyAuthenticationPolicy(callback=authorization.groupfinder))
+    auth_stack.add_policy(
+        'session', SessionAuthenticationPolicy(prefix='', callback=authorization.groupfinder))
+
+    config.set_authentication_policy(auth_stack)
     config.set_authorization_policy(authorization.DelegatedAuthorizationPolicy())
 
     config.scan('weasyl.views')

@@ -6,6 +6,7 @@ Mako==1.0.0
 MarkupSafe==0.23
 PasteDeploy==1.5.2
 pyramid==1.5.1
+pyramid-authstack==1.0.1
 pyramid-deform==0.2
 pyramid-debugtoolbar==2.2
 pyramid-jinja2==2.3.3
