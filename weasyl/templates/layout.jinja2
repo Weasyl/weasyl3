@@ -10,7 +10,7 @@
 
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css" />
     <link href="//fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="{{ 'weasyl:static/style/public.css' | static_path }}" type="text/css" />
+    <link rel="stylesheet" href="{{ 'assets/css/site.css' | asset_path }}" type="text/css" />
 
     <script>
       if ('webkitRequestAnimationFrame' in window) {
@@ -27,8 +27,8 @@
     <header class="page-header" role="banner">
 
       <a href="{{ request.resource_path(None) }}" class="header-logo block" tabindex="0">
-        <img class="mark" src="{{ 'weasyl:static/images/logo-mark.svg' | static_path }}" alt="Weasyl logomark" />
-        <img class="type" src="{{ 'weasyl:static/images/logo-type.svg' | static_path }}" alt="Weasyl" />
+        <img class="mark" src="{{ 'assets/images/logo-mark.svg' | asset_path }}" alt="Weasyl logomark" />
+        <img class="type" src="{{ 'assets/images/logo-type.svg' | asset_path }}" alt="Weasyl" />
       </a>
 
       {% if request.current_user %}
@@ -106,7 +106,7 @@
         <dl class="grid-item">
           <dt>
             <a class="footer-logo" href="{{ request.resource_path(None) }}">
-              <img class="mark" src="{{ 'weasyl:static/images/logo-mark-light.svg' | static_path }}" alt="Weasyl logomark" />
+              <img class="mark" src="{{ 'assets/images/logo-mark-light.svg' | asset_path }}" alt="Weasyl logomark" />
             </a>
           </dt>
           <dd><a href="{{ request.resource_path(None, 'share') }}">Share</a></dd>
@@ -154,7 +154,7 @@
           <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
         </dl>
         <div class="grid-item decoration">
-          <img src="{{ 'weasyl:static/images/wesley.png' | static_path }}" alt="" />
+          <img src="{{ 'assets/images/wesley.png' | asset_path }}" alt="" />
         </div>
       </nav>
       <div class="footer-info type-secondary">
@@ -164,7 +164,7 @@
       </div>
     </footer>
 
-    <script src="{{ 'weasyl:static/js/scripts.js' | static_path }}"></script>
+    <script src="{{ 'assets/js/site.js' | asset_path }}"></script>
 
   </body>
 </html>

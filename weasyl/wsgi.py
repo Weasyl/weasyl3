@@ -1,7 +1,9 @@
 import datetime
 import functools
+import json
 
 import arrow
+import pkg_resources
 from pyramid_authstack import AuthenticationStackPolicy
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.config import Configurator
@@ -140,10 +142,22 @@ class NoLeadingUnderscoresJSON(JSON):
         return _render
 
 
+def load_assets():
+    assets = pkg_resources.resource_string('weasyl', 'assets.json')
+    return json.loads(assets.decode())
+
+
+def make_asset_path_finder():
+    assets = load_assets()
+    def asset_path(request, asset):
+        return url.static_path('weasyl:' + assets[asset], request)
+    return asset_path
+
+
 def make_app(global_config, **settings):
     settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
     settings['jinja2.filters'] = """
-        static_path = pyramid_jinja2.filters:static_path_filter
+        asset_path = weasyl.filters.asset_path_filter
         markdown = weasyl.filters.markdown_filter
         relative_date = weasyl.filters.relative_date
     """
@@ -171,6 +185,7 @@ def make_app(global_config, **settings):
     config.add_view_predicate('api', predicates.APIPredicate)
     config.add_request_method(path_for)
     config.add_request_method(format_datetime)
+    config.add_request_method(make_asset_path_finder())
     config.add_request_method(current_user, reify=True)
     config.add_request_method(is_api_request, reify=True)
     config.add_request_method(is_debug_on, reify=True)
