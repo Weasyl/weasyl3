@@ -28,7 +28,7 @@ all: ve assets
 # Creates python environment
 ve: etc/requirements.txt
 	test -e $@ || { $(PYVENV) $@; $@/bin/pip install -U pip setuptools; }
-	$@/bin/pip install -i $(PYPI) -r etc/requirements.txt $(USE_WHEEL)
+	$@/bin/pip install -i $(PYPI) -r $< $(USE_WHEEL)
 	touch $@
 
 # Installs weasyl package in develop mode
@@ -41,7 +41,7 @@ node_modules: package.json
 	touch node_modules
 
 weasyl/static: node_modules $(ASSETS)
-	node_modules/.bin/grunt
+	$</.bin/grunt
 	touch weasyl/static
 
 .PHONY: assets
