@@ -5,3 +5,4 @@
 __pycache__
 /version.txt
 /weasyl/_version.py
+/node_modules

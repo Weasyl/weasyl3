@@ -1,0 +1,9 @@
+{
+    "name": "weasyl",
+    "version": "3.0.0",
+    "devDependencies": {
+	"grunt": "~0.4.5",
+	"grunt-cli": "~0.1.13",
+	"grunt-filerev": "~0.2.1"
+    }
+}
