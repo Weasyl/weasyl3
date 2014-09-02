@@ -1,5 +1,7 @@
 import logging
 
+from pyramid import httpexceptions
+
 from libweasyl.exceptions import ExpectedWeasylError
 from ..sessions import make_session_id
 from .decorators import also_api_view
@@ -34,3 +36,17 @@ def exception_catchall(exc, request):
             'description': exc_type.__doc__,
         })
     return ret
+
+
+@also_api_view(context=httpexceptions.HTTPException, template='errors/generic.jinja2')
+def http_exception_catchall(exc, request):
+    request.response.status = exc.code
+    return {
+        'error': True,
+        'event_id': None,
+        'request_id': None,
+        '_http_code': exc.code,
+        'code': exc.title,
+        'description': None,
+        'message': exc.explanation,
+    }
