@@ -5,113 +5,89 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta content="IE=edge;chrome=1" http-equiv="X-UA-Compatible" />
 
     <title>{% block title %}{% endblock %} | Weasyl</title>
 
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css" />
-    <link href="//fonts.googleapis.com/css?family=PT+Serif:400italic" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" type="text/css" />
     <link rel="stylesheet" href="{{ 'assets/css/site.css' | asset_path }}" type="text/css" />
-
-    <script>
-      if ('webkitRequestAnimationFrame' in window) {
-        document.documentElement.className += ' webkit-background-clip';
-      }
-    </script>
-
   </head>
 
   <body>
 
     <a href="#main" id="skip-to-content">Skip to content</a>
 
-    <header class="page-header" role="banner">
+    <div id="login-modal" class="modal">
+      <div class="screen toggle" data-toggle-target="#login-modal"></div>
+      <div class="content">
+        <button class="modal-close toggle" data-toggle-target="#login-modal" aria-hidden="true">[close]</button>
+        <header class="primary-title-wrap">
+          <h2 class="title primary text-grad">Sign in</h2>
+        </header>
+        {{ f.login_form(request.login_forms['signin'], None) }}
+      </div>
+    </div><!-- #login-modal -->
 
-      <a href="{{ request.resource_path(None) }}" class="header-logo block" tabindex="0">
-        <img class="mark" src="{{ 'assets/images/logo-mark.svg' | asset_path }}" alt="Weasyl logomark" />
-        <img class="type" src="{{ 'assets/images/logo-type.svg' | asset_path }}" alt="Weasyl" />
+    <header class="page-header group" role="banner">
+
+      <a href="{{ request.resource_path(None) }}" class="header-logo">
+        <img class="header-logo-mark block" src="{{ 'assets/images/logo-mark.svg' | asset_path }}" alt="Weasyl Logomark" />
+        <img class="header-logo-type block" src="{{ 'assets/images/logo-type.svg' | asset_path }}" alt="Weasyl Logomark" />
       </a>
 
       {% if request.current_user %}
       <div class="header-actions-container">
-        <span class="header-actions-toggle icon icon-nav-gears toggle" data-toggle-target="next" aria-hidden="true"></span>
-        <div class="header-actions small-menu">
-          <a href="#" class="action small">Inbox <span class="icon icon-nav-notes"></span></a>
-          <a href="#" class="action small">Settings <span class="icon icon-nav-gear"></span></a>
-          {% call f.logout_form() %}
-          <button type="submit" name="signout" class="action disclose">Sign out</button>
-          {% endcall %}
+        <button class="header-actions-toggle icon icon-gears toggle min-m" data-toggle-target="next" aria-hidden="true"></button>
+        <div class="header-actions mobile-menu">
+          <p class="user">Logged in as {{ f.user_link(request.current_user) }}</p>
+          <a href="#" class="action small">Messages <span class="icon icon-ha-note"></span></a>
+          <a href="#" class="action small">Settings <span class="icon icon-ha-gear"></span></a>
+          <a href="#" class="action small">Sign out <span class="icon icon-ha-exit"></span></a>
         </div><!-- .header-actions -->
       </div><!-- /header-actions-container -->
+      {% else %}
+      <ul class="header-guest action-list">
+        <li><a href="{{ request.resource_path(None, 'signin') }}" class="action small toggle" data-toggle-target="#login-modal" aria-hidden="true">Sign in</a></li>
+        <li><a href="{{ request.resource_path(None, 'register') }}" class="action small"><span class="max-s" aria-hidden="true">Join</span><span class="min-s">New account</span></a></li>
+      </ul>
       {% endif %}
 
-      <nav class="header-nav small-menu" role="navigation">
-	<a href="{{ request.resource_path(None, 'share') }}" tabindex="0" class="color-art bg-art block">Share</a>
-        <a href="{{ request.resource_path(None, 'explore') }}" tabindex="0" class="color-comment bg-comment block">Explore</a>
-        <a href="https://forums.weasyl.com/" tabindex="0" class="color-stat bg-stat block">Forums</a>
-        <a href="{{ request.resource_path(None, 'help') }}" tabindex="0" class="color-journal bg-journal block">Help</a>
-        <form action="{{ request.resource_path(None, 'search') }}" class="header-search-form">
-          <label class="header-search-label bg-note">
-            <input type="search" name="s" class="header-search-input text-input" />
-            <span class="header-search-icon icon icon-search"></span>
-          </label>
+      <nav class="header-nav{% if not request.current_user %} guest{% endif %} mobile-menu" role="navigation">
+        <a href="{{ request.resource_path(None, 'explore') }}">Explore</a>
+        {% if request.current_user %}
+	<a href="{{ request.resource_path(None, 'share') }}">Share</a>
+        {% endif %}
+        <a href="https://forums.weasyl.com/">Forums</a>
+        <a href="{{ request.resource_path(None, 'help') }}">Help</a>
+        <form action="{{ request.resource_path(None, 'search') }}" method="get" class="header-search-form" role="search">
+          <input type="text" name="s" class="header-search-input" placeholder="Search" />
+          <button type="submit" class="header-search-submit icon icon-search min-m"></button>
         </form>
-      </nav><!-- .header-nav -->
+      </nav>
 
       {% if request.current_user %}
-      <div class="header-user group">
-        {{ f.user_avatar(request.current_user) }}
-        <p class="text-container align-vert">
-          <span class="text">
-            <span class="type-alt">Welcome back,</span> {{ f.user_link(request.current_user) }}
-          </span>
-        </p>
-      </div><!-- .header-user -->
-      {% else %}
-      <div class="header-user group guest">
-        <p class="text-container align-vert">
-          <span class="text">
-            <span class="type-alt">Welcome!</span>
-            <a href="{{ request.resource_path(None, 'signin') }}" class="toggle" data-toggle-target="#login-modal">
-              Sign in
-            </a>
-            <span class="type-alt">or</span>
-            <a href="{{ request.resource_path(None, 'register') }}">create a new account</a>
-          </span>
-        </p>
-      </div><!-- .header-user -->
+      {{ f.user_avatar(request.current_user, class_='header-avatar') }}
       {% endif %}
 
-      <a class="small-menu-toggle toggle icon icon-nav-gears max-m" data-toggle-target=".small-menu" aria-hidden="true"></a>
+      <button class="mobile-menu-toggle toggle icon icon-gears max-m" data-toggle-target=".mobile-menu" aria-hidden="true"></button>
 
     </header><!-- .page-header -->
 
-
-    <div id="login-modal" class="modal toggle-target">
-      <div class="content">
-        <h3 class="title secondary">Sign in</h3>
-        {{ f.login_form(request.login_forms['signin'], None) }}
-        <a href="#" class="action small close toggle" data-toggle-target="#login-modal">Close</a>
-      </div>
-      <a href="#" class="screen toggle" data-toggle-target="#login-modal"><!-- click anywhere to close --></a>
-    </div><!-- #login-modal -->
-
-
-    <main role="main" id="main">
+    <section role="main" id="main">
       {% block body %}{% endblock %}
-    </main>
-
+    </section>
 
     <footer class="page-footer" role="contentinfo">
       <nav class="footer-nav grid">
-        <dl class="grid-item">
-          <dt>
-            <a class="footer-logo" href="{{ request.resource_path(None) }}">
-              <img class="mark" src="{{ 'assets/images/logo-mark-light.svg' | asset_path }}" alt="Weasyl logomark" />
+        <dl class="grid-item block-line">
+          <dt class="group">
+            <a class="footer-logo block" href="{{ request.resource_path(None) }}">
+              <img class="mark block" src="{{ 'assets/images/logo-mark-light.svg' | asset_path }}" alt="Weasyl logomark" />
             </a>
           </dt>
-          <dd><a href="{{ request.resource_path(None, 'share') }}">Share</a></dd>
           <dd><a href="{{ request.resource_path(None, 'explore') }}">Explore</a></dd>
           {% if request.current_user %}
+          <dd><a href="{{ request.resource_path(None, 'share') }}">Share</a></dd>
           <dd><a href="{{ request.resource_path(None, '~', 'settings') }}">Settings</a></dd>
           <dd>
             {% call f.logout_form() %}
@@ -123,21 +99,23 @@
           <dd><a href="{{ request.resource_path(None, 'signin') }}">Sign in</a></dd>
           {% endif %}
         </dl>
-        <dl class="grid-item">
+        <dl class="grid-item block-line">
           <dt><h4 class="title secondary">About</h4></dt>
           <dd><a href="{{ request.resource_path(None, 'help', 'about') }}">About Weasyl</a></dd>
           <dd><a href="{{ request.resource_path(None, 'help', 'faq') }}">FAQ</a></dd>
           <dd><a href="{{ request.resource_path(None, 'staff') }}">Staff</a></dd>
           <dd><a href="{{ request.resource_path(None, 'thanks') }}">Awesome people</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'ads') }}">Ad repository</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'colophon') }}">Colophon</a></dd>
         </dl>
-        <dl class="grid-item">
+        <dl class="grid-item block-line">
           <dt><h4 class="title secondary">Community</h4></dt>
           <dd><a href="https://forums.weasyl.com/">Forums</a></dd>
           <dd><a href="http://blog.weasyl.com/">Tumblr</a></dd>
           <dd><a href="https://twitter.com/Weasyl"><span class="icon icon-social icon-tw">Twitter:</span> @Weasyl</a></dd>
           <dd><a href="https://twitter.com/WeasylDev"><span class="icon icon-social icon-tw">Twitter:</span> @WeasylDev</a></dd>
         </dl>
-        <dl class="grid-item">
+        <dl class="grid-item block-line">
           <dt><h4 class="title secondary">Policy</h4></dt>
           <dd><a href="{{ request.resource_path(None, 'policy/community') }}">Community Guidelines</a></dd>
           <dd><a href="{{ request.resource_path(None, 'policy/tos') }}">Terms of Service</a></dd>
@@ -145,7 +123,7 @@
           <dd><a href="{{ request.resource_path(None, 'policy/scoc') }}">Staff Code of Conduct</a></dd>
           <dd><a href="{{ request.resource_path(None, 'policy/privacy') }}">Privacy Policy</a></dd>
         </dl>
-        <dl class="grid-item">
+        <dl class="grid-item block-line">
           <dt><h4 class="title secondary">Support</h4></dt>
           <dd><a href="{{ request.resource_path(None, 'help') }}">Help topics</a></dd>
           <dd><a href="{{ request.resource_path(None, 'help', 'ratings') }}">Ratings guidelines</a></dd>
@@ -153,7 +131,7 @@
           <dd><a href="mailto:support@weasyl.com">support@weasyl.com</a></dd>
           <dd><a href="mailto:sysop@weasyl.com">sysop@weasyl.com</a></dd>
         </dl>
-        <div class="grid-item decoration">
+        <div class="grid-item footer-decoration">
           <img src="{{ 'assets/images/wesley.png' | asset_path }}" alt="" />
         </div>
       </nav>
@@ -164,6 +142,11 @@
       </div>
     </footer>
 
+    <script>
+      if ('webkitRequestAnimationFrame' in window) {
+        document.documentElement.className += ' webkit-background-clip';
+      }
+    </script>
     <script src="{{ 'assets/js/site.js' | asset_path }}"></script>
 
   </body>

@@ -35,19 +35,21 @@
 {% endmacro %}
 
 {% macro login_form(form, errors) %}
-<form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
+<form action="{{ request.resource_path(None, 'signin') }}" method="post" class="form modal-width content-block">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
-  {{ form['user'].serialize() | safe }}
-  {{ form['password'].serialize() | safe }}
-  <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
-    Sign in
-  </button>
-  <ul class="actions">
-    <li><a href="#">Create a new account</a></li>
-    <li><a href="#">Forgot your info?</a></li>
-  </ul>
+  {{ form['user'].serialize(label_class='content-block') | safe }}
+  {{ form['password'].serialize(show_password_container=True, label_class='content-block') | safe }}
+  <div class="pagination">
+    <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
+      Sign in
+    </button>
+  </div>
 </form>
+<div class="text-align-center">
+  <a href="{{ request.resource_path(None, 'register') }}">Create a new account</a><br />
+  <a href="{{ request.resource_path(None, 'lost-account') }}">Forgot your info?</a>
+</div>
 {% endmacro %}
 
 {% macro logout_form() %}
