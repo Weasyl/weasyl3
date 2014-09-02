@@ -35,11 +35,11 @@ module.exports = function (grunt) {
             },
             js: {
                 src: 'assets/js/site.js',
-                dest: 'weasyl/static',
+                dest: 'weasyl/static/js',
             },
             css: {
                 src: 'assets/css/site.css',
-                dest: 'weasyl/static',
+                dest: 'weasyl/static/style',
             },
         },
 
@@ -51,13 +51,25 @@ module.exports = function (grunt) {
                 },
             },
         },
+
+        usemin: {
+            css: ['assets/css/site.css'],
+        },
     });
 
     grunt.loadNpmTasks('grunt-filerev');
     grunt.loadNpmTasks('grunt-filerev-assets');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-usemin');
 
-    grunt.registerTask(
-        'default', ['uglify', 'sass', 'filerev', 'filerev_assets']);
+    grunt.registerTask('default', [
+        'uglify',
+        'sass',
+        'filerev:images',
+        'filerev:js',
+        'usemin',
+        'filerev:css',
+        'filerev_assets',
+    ]);
 };
