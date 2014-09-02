@@ -31,10 +31,10 @@ class APIKeyAuthenticationPolicy(CallbackAuthenticationPolicy):
         return token_object.userid
 
     def remember(self, request, principal, **kw):
-        pass
+        return []
 
     def forget(self, request):
-        pass
+        return []
 
 
 @implementer(IAuthenticationPolicy)
@@ -54,7 +54,7 @@ class OAuth2AuthenticationPolicy(CallbackAuthenticationPolicy):
         return token_object.userid
 
     def remember(self, request, principal, **kw):
-        pass
+        return []
 
     def forget(self, request):
-        pass
+        return []
