@@ -4,6 +4,7 @@ module.exports = function (grunt) {
             js: {
                 files: {
                     'assets/js/site.js': [
+                        'assets/js/modernizr.js',
                         'assets/js/scripts.js',
                     ],
                 },
