@@ -34,12 +34,12 @@
 {% endif %}
 {% endmacro %}
 
-{% macro login_form(form, errors) %}
+{% macro login_form(form, errors, label_class='') %}
 <form action="{{ request.resource_path(None, 'signin') }}" method="post" class="form modal-width content-block">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
-  {{ form['user'].serialize(label_class='content-block') | safe }}
-  {{ form['password'].serialize(show_password_container=True, label_class='content-block') | safe }}
+  {{ form['user'].serialize(label_class=label_class + ' content-block') | safe }}
+  {{ form['password'].serialize(show_password_container=True, label_class=label_class + ' content-block') | safe }}
   <div class="pagination">
     <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
       Sign in
@@ -66,7 +66,7 @@
     <div class="rating {{ submission.rating.name }}">Rated {{ submission.rating.name }}</div>
     {% if with_caption -%}
     <figcaption class="info">
-      <h4 class="title">{{ submission.title }}</h4>
+      <h4 class="title text-grad">{{ submission.title }}</h4>
       {% if with_user -%}
       <p class="byline">{{ by_user(submission.owner) }}</p>
       {%- endif %}

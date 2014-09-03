@@ -117,11 +117,11 @@
         </dl>
         <dl class="grid-item block-line">
           <dt><h4 class="title secondary">Policy</h4></dt>
-          <dd><a href="{{ request.resource_path(None, 'policy/community') }}">Community Guidelines</a></dd>
-          <dd><a href="{{ request.resource_path(None, 'policy/tos') }}">Terms of Service</a></dd>
-          <dd><a href="{{ request.resource_path(None, 'policy/copyright') }}">Copyright Policy</a></dd>
-          <dd><a href="{{ request.resource_path(None, 'policy/scoc') }}">Staff Code of Conduct</a></dd>
-          <dd><a href="{{ request.resource_path(None, 'policy/privacy') }}">Privacy Policy</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy', 'community') }}">Community Guidelines</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy', 'tos') }}">Terms of Service</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy', 'copyright') }}">Copyright Policy</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy', 'scoc') }}">Staff Code of Conduct</a></dd>
+          <dd><a href="{{ request.resource_path(None, 'policy', 'privacy') }}">Privacy Policy</a></dd>
         </dl>
         <dl class="grid-item block-line">
           <dt><h4 class="title secondary">Support</h4></dt>
@@ -144,7 +144,7 @@
 
     <script>
       if ('webkitRequestAnimationFrame' in window) {
-        document.documentElement.className += ' webkit-background-clip';
+          document.getElementsByTagName('html')[0].className += ' webkit-background-clip';
       }
     </script>
     <script src="{{ 'assets/js/site.js' | asset_path }}"></script>
