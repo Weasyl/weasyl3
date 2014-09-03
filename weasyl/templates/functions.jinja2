@@ -84,23 +84,26 @@
     <header class="comment-info">
       {{ user_link(comment.poster) }}
       {% if user_class == 'owner' %}
-      <span class="comment-attr owner">(page owner)</span>
+      <span class="attribution color-owner">(page owner)</span>
       {% elif user_class == 'staff' %}
-      <span class="comment-attr staff">(staff)</span>
+      <span class="attribution color-staff">(staff)</span>
       {% endif %}
-      {{ comment.unixtime | relative_date }}
+      {{ comment.unixtime | relative_date(class_='type-secondary type-alt') }}
     </header>
-    <section class="comment-content formatted">
+    <section class="comment-content formatted reading-width">
       {{ comment.content | markdown }}
     </section>
-    <ul class="comment-actions action-set">
+    <ul class="comment-actions action-list">
       <li><a href="#" class="action small">Reply</a></li>
-      <li><a href="#" class="icon icon-action-warning">Report</a></li>
+      <li><a href="#" class="action small">Report</a></li>
+      <li><a href="#" class="action small">#</a></li>
     </ul>
   </article>
+  {% if comment.subcomments %}
   <ol>
     {% for subc in comment.subcomments %}{{ show_comment(subc, ownerid) }}{% endfor %}
   </ol>
+  {% endif %}
 </li><!-- .comment -->
 {% endmacro %}
 
