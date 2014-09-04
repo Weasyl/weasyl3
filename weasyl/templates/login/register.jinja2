@@ -3,45 +3,54 @@
 {% block title %}Sign In{% endblock %}
 {% block body %}
 <div class="content">
-  <div class="title-wrap small-width">
-    <h3 class="title primary">Create a new account</h3>
-  </div>
+  <header class="primary-title-wrap">
+    <h3 class="title primary text-grad">Create a new account</h3>
+  </header>
 
-  <form action="" method="post" class="standard-form medium-width">
+  <form action="" method="post" class="form modal-width">
     {{ f.form_errors(_errors) }}
     {{ _form['csrf_token'].serialize() | safe }}
-    {{ _form['username'].serialize() | safe }}
-    <div class="grid compact">
-      <div class="grid-item grid-1-2-s">
-        {{ _form['password'].serialize() | safe }}
-      </div>
-      <div class="grid-item grid-1-2-s">
-        {{ _form['password_confirm'].serialize() | safe }}
-      </div>
-    </div><!-- .grid -->
-    <p class="form-helper-text type-alt type-secondary">
-      Minimum of eight characters
+    {{ _form['username'].serialize(label_class='side') | safe }}
+    <p id="username-help" class="form-help side content-block">
+      <span class="help">This will identify you to others on Weasyl. Up to 30 characters</span>
+      <span class="if-valid" aria-hidden="true"><span class="icon icon-valid"></span> &#8220;<span id="valid-user"></span>&#8221; is available</span>
+      <span class="if-invalid" aria-hidden="true"><span class="icon icon-invalid"></span> This username is already taken. Please try another</span>
     </p>
-    {% call f.render_field(_form['email']) %}
-    <p class="form-helper-text type-alt type-secondary">
-      We won't spam you or share your email. <a href="#privacypolicy" target="_blank">Privacy Policy</a>
+
+    {{ _form['password'].serialize(label_class='side') | safe }}
+    <p id="pw-help" class="form-help side content-block">
+      <span class="help">Eight characters or more. More is better!</span>
+      <span class="if-valid" aria-hidden="true"><span class="icon icon-valid"></span> Meets our requirements</span>
+      <span class="if-invalid" aria-hidden="true"><span class="icon icon-invalid"></span> We need at least eight characters here</span>
     </p>
+
+    {{ _form['password_confirm'].serialize(label_class='side content-block') | safe }}
+
+    {% call f.render_field(_form['email'], field_type='email') %}
     {% endcall %}
-    <div class="grid compact">
-      <div class="grid-item grid-1-3-s align-bottom">
-        {{ _form['day_born'].serialize(descriptive_option='Day') | safe }}
-      </div>
-      <div class="grid-item grid-1-3-s align-bottom">
-        {{ _form['month_born'].serialize(descriptive_option='Month') | safe }}
-      </div>
-      <div class="grid-item grid-1-3-s align-bottom">
-        {{ _form['year_born'].serialize(descriptive_option='Year') | safe }}
-      </div>
-    </div>
-    <p class="form-helper-text type-alt type-secondary">
-      <a href="#helpfile" target="_blank">Why do we need this?</a>
+    <p id="email-help" class="form-help side content-block">
+      <span class="help">We won't spam you or share your email with others. <a href="#" target="_blank">Our privacy policy</a></span>
+      <span class="if-valid" aria-hidden="true"><span class="icon icon-valid"></span> We'll send a confirmation email to this address</span>
+      <span class="if-invalid" aria-hidden="true"><span class="icon icon-invalid"></span> This email address is already registered with us. Would you like to <a href="login.htm" class="toggle" data-toggle-target="#login-modal">sign in</a> or <a href="#">recover your password</a>?</span>
     </p>
-    <div class="text-align-right">
+
+  <label class="passive-label side">When were you born?</label>
+    <div class="form-date group">
+      {{ _form['day_born'].serialize(descriptive_option='Day') | safe }}
+      {{ _form['month_born'].serialize(descriptive_option='Month') | safe }}
+      {{ _form['year_born'].serialize(descriptive_option='Year') | safe }}
+    </div>
+    <p id="dob-help" class="form-help side layout-block-small">
+      <span class="help"><a href="#" target="_blank">Why do we need this?</a></span>
+      <span class="if-valid" aria-hidden="true"><span class="icon icon-valid"></span> You're old enough to make an account</span>
+      <span class="if-invalid" aria-hidden="true"><span class="icon icon-invalid"></span> We need a valid birthdate here. <a href="#" target="_blank">Why?</a></span>
+    </p>
+    
+    <div class="formatted content-block">
+      <p class="text-align-center">By signing up, you agree to follow <a href="#community-guidelines-url" target="_blank">the rules</a>.</p>
+    </div>
+    
+    <div class="pagination">
       <button type="submit" name="register" class="action disclose" tabindex="1">Create my account</button>
     </div>
   </form>

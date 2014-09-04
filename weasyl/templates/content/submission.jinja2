@@ -2,158 +2,298 @@
 
 {% block title %}{{ submission.title }}{% endblock %}
 {% block body %}
-<div class="sub-container">
-
-  <header class="title-wrap">
-    <h1 class="title primary">{{ submission.title }}</h1>
-    <h2 class="title-complement">{{ f.by_user(submission.owner) }}</h2>
+<section class="sub-container">
+  <header class="primary-title-wrap">
+    <h1 class="title primary text-grad">{{ submission.title }}</h1>
+    <h2 class="title-supplement">{{ f.by_user(submission.owner) }}</h2>
   </header>
 
-  <a class="sub-zoom-toggle" href="{{ submission.submission_media['display_url'] }}">
-    <img class="sub-image" src="{{ submission.cover_media['display_url'] }}" alt="sub image" />
+  <a href="{{ submission.submission_media['display_url'] }}" class="sub-zoom-toggle block layout-block">
+    <img src="{{ submission.cover_media['display_url'] }}" alt="" class="sub-image block" />
   </a>
 
-  <ul class="action-set sub-actions">
+  {% if submission.folder %}
+  <a href="#" class="sub-nav-prev action disclose-pre">
+    <span class="min-s">Previous</span><span class="min-l"> in &#8220;Landscapes&#8221;</span>
+    <img src="http://lorempixel.com/300/200" alt="" class="thumb min-m" />
+  </a>
+  <a href="#" class="sub-nav-next action disclose">
+    <span class="min-s">Next</span><span class="min-l"> in &#8220;Landscapes&#8221;</span>
+    <img src="http://lorempixel.com/100/300" alt="" class="thumb min-m" />
+  </a>
+  {% endif %}
+
+  <ul class="sub-actions action-list layout-block text-align-center">
     <li><a href="#" class="action"><span class="icon icon-action-star"></span> Favorite</a></li>
     <li><a href="#" class="action"><span class="icon icon-action-heart"></span> Recommend</a></li>
     <li><a href="#" class="action"><span class="icon icon-action-warning"></span> Report</a></li>
   </ul>
+</section><!-- .sub-container -->
 
-</div><!-- .sub-container -->
-
-
-<div class="content content-group">
-
-  <div class="sub-basic lighter group">
-    <div class="sub-owner">
-      {{ f.user_avatar(submission.owner) }}
-      <div class="info">
-        {{ f.user_link(submission.owner) }} {{ submission.unixtime | relative_date }}
-      </div>
-    </div><!-- .sub-owner -->
-    <div class="formatted sub-description">
+<div class="content lighter">
+  <div class="sub-info grid">
+    <section class="sub-attribution grid-item">
+      {{ f.user_avatar(submission.owner, class_='content-block') }}
+      {{ f.user_link(submission.owner) }}
+      {{ submission.unixtime | relative_date }}
+    </section><!-- .sub-attribution -->
+    <section class="sub-about formatted grid-item reading-width block-line">
       {{ submission.content | markdown }}
-    </div><!-- .sub-description -->
-    <div class="sub-tags">
-      {% for tag in submission.tags | sort -%}
-      <a href="#" class="tag">{{ tag }}</a>
-      {%- endfor %}
-      <a href="#" class="action disclose small">Modify</a>
-      <a href="{{ request.path_for(submission, 'tag-history') }}" class="action disclose small">History</a>
-    </div><!-- .sub-tags -->
-  </div><!-- .sub-basic -->
+    </section>
+  </div><!-- .sub-info -->
+  <section class="sub-tags text-align-center">
+    <span class="icon icon-tags max-m">Tags:</span>
+    {% for tag in submission.tags | sort -%}
+    <a href="#" class="tag">{{ tag }}</a>
+    {% endfor %}
+    <a href="#" class="action small disclose">Modify</a>
+    <a href="#" class="action small disclose">History</a>
+  </section><!-- .sub-tags -->
+</div><!-- .sub-info -->
 
-  <div class="sub-stats">
-    <h4 class="title secondary toggle disclose title-toggle-max-m max-m" data-toggle-target="next">Stats</h4>
-    <!-- would love to use a dl here, but order is wrong and multiple columns is a drag -->
-    <ul class="stats-list grid toggle-target-max-m">
-      <li class="grid-item"><strong class="stat">{{ submission.page_views }}</strong> Views</li>
-      <li class="grid-item"><strong class="stat">{{ n_comments }}</strong> Comments</li>
-      <li class="grid-item"><strong class="stat">25</strong> Favorites</li>
-      <li class="grid-item"><strong class="stat">{{ submission.rating.name.title() }}</strong> Rating</li>
-    </ul>
-  </div><!-- .sub-stats -->
+<div class="content">
+
+  <section class="sub-stats">
+    <h3 class="title secondary text-grad layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">Submission Stats</h3>
+    <div class="grid toggle-target-max-m content-block">
+      <dl class="stat grid-item grid-1-2 grid-1-3-s">
+        <dt>Views</dt>
+        <dd>{{ submission.page_views }}</dd>
+      </dl>
+      <dl class="stat grid-item grid-1-2 grid-1-3-s">
+        <dt>Comments</dt>
+        <dd>{{ n_comments }}</dd>
+      </dl>
+      <dl class="stat grid-item grid-1-2 grid-1-3-s">
+        <dt>Favorites</dt>
+        <dd>XXX</dd>
+      </dl>
+      <dl class="stat grid-item grid-1-2 grid-1-3-s">
+        <dt>Rating</dt>
+        <dd>{{ submission.rating.name.title() }}</dd>
+      </dl>
+      <dl class="stat grid-item grid-1-2 grid-1-3-s">
+        <dt>Size</dt>
+        <dd>XXX</dd>
+      </dl>
+      <dl class="stat grid-item grid-1-2 grid-1-3-s">
+        <dt>Category</dt>
+        <dd>XXX</dd>
+      </dl>
+    </div><!-- .grid -->
+  </section><!-- .sub-stats -->
 
   <section class="sub-comments">
-    <h4 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">13 comments</h4>
-    <div class="toggle-target-max-m">
+    <h3 class="title secondary text-grad layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">
+      {{ n_comments }} comments
+    </h3>
+
+    <div class="toggle-target-max-m layout-block">
       {% if request.current_user %}
-      <form action="{{ request.path_for(submission, 'comment') }}" class="comment" method="post">
+      <form action="{{ request.path_for(submission, 'comment') }}" class="comment comment-new layout-block" method="post">
+        {{ f.user_avatar(request.current_user) }}
         {{ f.form_errors(_comment_errors) }}
         {{ _comment_form['csrf_token'].serialize() | safe }}
-        {{ f.user_avatar(request.current_user) }}
-        <div class="comment-box hypothetical">
-          <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
-          {{ _comment_form['comment'].serialize() | safe }}
-          <ul class="comment-actions action-set">
-            <li><a href="#" class="action small">Formatting help</a></li>
+        <div class="comment-new-container">
+          <div class="comment-new-box">
+            <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
+            <div class="resizing-textarea reading-width comment-new-entry">
+              <div class="resize-ref" aria-hidden="true"></div>
+              {{ _comment_form['comment'].serialize() | safe }}
+            </div>
+          </div>
+          <ul class="comment-actions comment-new-actions action-list">
+            <li>
+              <button type="submit" name="post" class="comment-submit action small disclose"
+                      {{ f.autofocus_submit(_comment_form) }}>
+                Post
+              </button>
+            </li>
+            <li><a href="#" class="comment-help action small">Formatting help</a></li>
           </ul>
-          <button name="save" class="comment-submit action disclose" {{ f.autofocus_submit(_comment_form) }}>
-            Save
-          </button>
-        </div><!-- .comment-box -->
-      </form><!-- .comment -->
+        </div>
+      </form>
+      {% else %}
+      <div class="comment-new-box guest">
+        <a href="/signin" class="toggle" data-toggle-target="#login-modal">Sign in</a> or <a href="/register"><span class="max-s" aria-hidden="true">Join</span><span class="min-s">make a new account</span></a> to share your thoughts
+      </div>
       {% endif %}
 
       <ol class="comment-tree">
         {% for comment in comments %}{{ f.show_comment(comment, submission.userid) }}{% endfor %}
       </ol>
-    </div><!-- .toggle-target-s -->
+    </div><!-- .toggle-target -->
 
   </section><!-- .sub-comments -->
 
-  <div class="sub-related">
-    <h4 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">More in &#8220;Landscapes&#8221;</h4>
-    <div class="toggle-target-max-m">
-      <div class="title-wrap"><h5 class="title tertiary">Older</h5></div>
-      <div class="grid thumbs-grid full">
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/221" alt="" />
-              <div class="rating explicit">Rated explicit</div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/276" alt="" />
-              <div class="rating explicit">Rated explicit</div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/259" alt="" />
-              <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/109" alt="" />
-              <div class="rating mature">Rated mature</div>
-              <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/226" alt="" />
-            </div>
-        </a></div>
-      </div><!-- .thumbs-grid -->
+  {#
+    we might want to extend .sub-related to the full screen width if less
+    than n comments on page, for visual balance. 0 <= n <= 3? 4?
+    
+    I've provided the class 'full-width' to add to .sub-related if we decide
+    to do this  ~a
+  #}
 
-      <div class="title-wrap"><h5 class="title tertiary">Newer</h5></div>
-      <div class="grid thumbs-grid full">
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/221" alt="" />
-              <div class="rating explicit">Rated explicit</div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/276" alt="" />
-              <div class="rating explicit">Rated explicit</div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/259" alt="" />
-              <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/109" alt="" />
-              <div class="rating mature">Rated mature</div>
-              <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-            </div>
-        </a></div>
-        <div class="grid-item"><a href="submission.htm" class="item-container">
-            <div class="thumb-container">
-              <img class="thumb" src="http://lorempixel.com/300/226" alt="" />
-            </div>
-        </a></div>
-      </div><!-- .thumbs-grid -->
+  <section class="sub-related">
+    <h3 class="title secondary text-grad layout-block">Similar artwork</h3>
+
+    <div class="mosaic">
+      <figure class="item" data-init-aspect="2.7"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/300/111" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.37"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/100/267" alt="" />
+          <div class="rating moderate">Rated moderate</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.66"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/150/227" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="1.15"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/196/170" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-lit">Literature</span></div></div>
+          <div class="rating mature">Rated mature</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">A Literature Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="1.31"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/250/221" alt="" />
+          <div class="rating explicit">Rated explicit</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.43"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/120/276" alt="" />
+          <div class="rating explicit">Rated explicit</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.92"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/270/294" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-music">Music</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="2.02"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/220/109" alt="" />
+          <div class="rating mature">Rated mature</div>
+          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.71"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/160/226" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="2.64"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/290/110" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="1.53"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/300/196" alt="" />
+          <div class="rating explicit">Rated explicit</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="1.04"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/202/194" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="2.41"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/248/103" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+          <div class="rating explicit">Rated explicit</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="1.66"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/176/106" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.88"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/236/267" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.52"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/148/287" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.74"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/182/245" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-lit">Literature</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="1.27"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/214/168" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.38"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/109/289" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
+      <figure class="item" data-init-aspect="0.67"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/192/288" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+      </a></figure>
     </div>
-  </div><!-- .sub-related -->
+
+  </section><!-- .sub-related -->
 
 </div><!-- .content -->
 {% endblock %}

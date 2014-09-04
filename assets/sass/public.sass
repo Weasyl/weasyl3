@@ -1,0 +1,1776 @@
+// please minify output
+// sass --watch sass:style --style compressed
+
+@import _mixins
+@import _variables
+@import _reset
+
+/* ------------------------------------ =basic -- */
+
+*
+    +box-sizing
+html
+    font-size: 62.5%
+    -webkit-text-size-adjust: 100%
+    -ms-text-size-adjust: 100%
+body
+    color: $copy
+    background: $bg url('../images/bg.jpg') no-repeat 50% 0
+    background: url('../images/noise.png') repeat 0 0, $bg url('../images/bg.jpg') no-repeat 50% 0
+    +prefix-w(background-size, (auto, 100% auto))
+    overflow-x: hidden
+    position: relative
+    &.zoomed
+        background: $black
+        overflow-x: visible
+img
+    -ms-interpolation-mode: bicubic
+
+#skip-to-content
+    position: absolute
+    left: -9999px
+    color: transparent
+    z-index: -1
+
+#main
+    @extend .group
+    margin-top: $line
+    position: relative
+
+
+@media all and (min-width: $break-m)
+    #main
+        margin-top: $line*2
+
+
+/* ------------------------------------ =type, =typography -- */
+
+@import _typography
+
+
+/* ------------------------------------ =icons -- */
+
+@import _icons
+
+
+/* ------------------------------------ standard =grids -- */
+
+@import _grids
+
+
+/* ------------------------------------ misc =common =components -- */
+
+@import _components
+
+
+/* ------------------------------------ =forms, =inputs -- */
+
+@import _forms
+
+
+/* ------------------------------------ =thumbs -- */
+
+@import _thumbs
+
+
+/* ------------------------------------ =comments -- */
+
+@import _comments
+
+
+/* ------------------------------------ =header, =nav -- */
+
+.page-header
+    +linear-gradient(left, transparentize(darken($title-grad-1, 12%), 0.85) 0, transparentize(darken($title-grad-2, 12%), 0.85) 60%, transparentize(darken($title-grad-3, 12%), 0.85) 120%)
+    +prefix-w(box-shadow, inset 0 -1px 0 transparentize($white, 0.88))
+    position: relative
+    z-index: 20
+    a
+        color: $copy
+.header-logo
+    display: block
+    min-height: $line*2  // supports header height
+    padding: $line/4 $line/2
+    background: $gray-light
+    float: left
+    white-space: nowrap
+    &:hover, &:focus
+        background: lighten($gray-light, 5%)
+.header-logo-mark, .header-logo-type
+    display: inline-block
+    vertical-align: middle
+.header-logo-mark
+    height: $line*1.5
+.header-logo-type
+    max-height: $line*1.5
+    width: $line*2.5
+    position: relative
+    top: 2px // descender throwing off centering
+
+.header-actions
+    .user
+        font-size: $milli
+    .username
+        color: $action
+
+.header-nav
+    a
+        display: block
+.header-search-input
+    display: block
+    width: 100%
+    border: none
+    color: $copy
+    background: transparent
+    +transition
+
+.header-avatar
+    max-width: $line*2
+
+.header-notifs
+    clear: both
+    text-align: center
+    background: $black-transparent
+    a
+        display: inline-block
+        padding: $line/4
+    .total
+        opacity: 0.8
+    .icon
+        font-size: $kilo
+    .figure, .total
+        font-size: $milli
+
+.header-guest
+    position: absolute
+    right: $line*3
+    top: 0
+    li
+        margin-right: $line
+    .action
+        line-height: $line*2
+
+.page-notification
+    padding: $line/2 $line
+    margin: $line*2 0
+    text-align: center
+    &.bg-positive
+        background-color: transparentize($color-positive, 0.6)
+        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($color-positive, 0.9) 5px, transparentize($color-positive, 0.9) 10px)
+    &.bg-neutral
+        background-color: transparentize($color-neutral, 0.6)
+        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($color-neutral, 0.9) 5px, transparentize($color-neutral, 0.9) 10px)
+    &.bg-negative
+        background-color: transparentize($color-negative, 0.6)
+        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($color-negative, 0.9) 5px, transparentize($color-negative, 0.9) 10px)
+
+
+@media all and (max-width: $break-m - 1px)
+    .header-actions, .header-nav
+        background: $bg
+        background: $black-transparent
+
+    .header-avatar, .mobile-menu-toggle
+        position: absolute
+        top: 0
+        right: 0
+    .header-avatar
+        right: $line*2
+
+    .header-actions
+        clear: both
+        max-height: $line*7
+        text-align: center
+        padding: $line/2 $line 0
+        .action
+            opacity: 0.8
+            padding: $line/2
+            &:hover
+                opacity: 1
+        .icon
+            display: none
+
+    .header-nav a, .header-search-input
+        padding: $line/4 $line
+        border: solid transparentize($white, 0.8)
+        border-width: 0 0 1px
+    .header-nav
+        clear: both
+        max-height: $line*10
+        a
+            &:first-child
+                border-width: 1px 0
+    @each $placeholder in $placeholders
+        .header-search-input#{$placeholder}
+            color: $copy
+            opacity: 1
+    
+    .mobile-menu-toggle
+        font-size: $line*2
+        opacity: 0.5
+        &:hover, &.active
+            opacity: 1
+    .header-actions, .header-nav
+        +transition
+        overflow: hidden
+    .js
+        .header-actions, .header-nav
+            &:not(.active)
+                max-height: 0
+                padding-top: 0
+                padding-bottom: 0
+
+
+@media all and (min-width: $break-m)
+    .header-logo
+        width: $left-col-width
+        min-height: $line*3
+        padding: $line*5/8 $line
+        text-align: center
+    .header-logo-mark
+        height: $line*1.75
+    .header-logo-type
+        max-height: $line*1.75
+        width: $line*3.5
+        margin-left: $line/2
+
+    .header-actions, .header-actions-toggle
+        position: absolute
+        right: 0
+        top: 0
+    .header-actions-toggle
+        font-size: $line*3
+        opacity: 0.4
+        z-index: 2
+        &.active, .header-actions-container:hover &
+            opacity: 1
+            background-color: $bg-alt
+    .header-actions
+        top: $line*3
+        width: $line*9
+        padding-bottom: $line/2
+        background: $bg-alt
+        color: $copy-alt
+        opacity: 0
+        visibility: hidden
+        +prefix(transition, (opacity 0.18s ease, visibility 0s linear 0.18s))
+        .header-actions-container:hover &, .header-actions-toggle.active + &
+            opacity: 1
+            visibility: visible
+            +prefix-w(box-shadow, 0 0 0 2px $bg)
+            +prefix(transition, (opacity 0.18s ease, visibility 0s linear))
+        .user
+            padding: $line/2 $line
+        .username
+            color: $action-alt
+        .action
+            display: block
+            padding: $line/2 $line*2 $line/2 $line
+            color: $action-alt
+            position: relative
+            &:hover
+                color: $bg-alt
+                background: $action-alt
+        .action, .user
+            +prefix-wms(transform, translateY($line*1.5))
+            transition: transform 0s linear 0.2s
+        .icon
+            display: block
+            font-size: $line
+            position: absolute
+            right: $line
+            top: $line/2
+    .header-actions-container:hover, .header-actions-toggle.active + .header-actions
+        .action, .user
+            +prefix-wms(transform, translateY(0))
+        .user
+            transition: transform 0.12s ease
+        .action
+            transition: transform 0.18s ease 0.01s
+            &:nth-child(3)
+                transition: transform 0.24s ease 0.02s
+            &:nth-child(4)
+                transition: transform 0.3s ease 0.03s
+            &:nth-child(5)
+                transition: transform 0.36s ease 0.04s
+            &:nth-child(n+6)
+                transition: transform 0.42s ease 0.05s
+
+    .header-nav a, .header-search-input
+        padding: $line $line
+        margin-left: -$line/2
+    .header-nav
+        a
+            float: left
+            opacity: 0.8
+            &:first-child
+                margin-left: 0
+            &:hover, &:focus
+                opacity: 1
+            &:nth-child(1):hover, &:nth-child(1):focus
+                background: $color-notif-1
+            &:nth-child(2):hover, &:nth-child(2):focus
+                background: $color-notif-3
+            &:nth-child(3):hover, &:nth-child(3):focus
+                background: $color-notif-4
+            &:nth-child(n+4):hover, &:nth-child(n+4):focus
+                background: $color-notif-6
+    .header-search-input
+        width: $line*4.5
+        height: $line*3
+        position: absolute
+        left: $line*25.25
+        &:hover
+            background: $color-notif-7
+        &:focus
+            width: $line*19.25
+            padding-right: $line*2.5
+            margin-left: 0
+            left: $left-col-width
+            background: darken($color-positive, 10%)
+        .guest &
+            left: $line*22
+            &:focus
+                width: $line*16
+                left: $left-col-width
+    @each $placeholder in $placeholders
+        .header-search-input#{$placeholder}
+            color: $copy
+            opacity: 0.8
+    .header-search-submit
+        position: absolute
+        top: -$line*2
+        left: $line*27.25
+        font-size: $line
+        +transition(top)
+        cursor: pointer
+        .guest &
+            left: $line*24
+    .header-search-input:focus + .header-search-submit
+        top: $line
+    .header-avatar
+        float: right
+        max-width: $line*3
+        margin-right: $line*3
+
+    .header-notifs
+        a
+            padding: $line/2
+
+    .header-guest
+        right: $line
+        line-height: $line*3
+
+
+@media all and (min-width: $break-m2)
+    .header-nav a, .header-search-input
+        padding: $line $line*1.25
+        margin-left: -$line/2
+    .header-search-input
+        width: $line*5
+        left: $line*27.25
+        &:focus
+            width: $line*21.75
+        .guest &
+            left: $line*23.25
+            &:focus
+                width: $line*17.75
+    .header-search-submit
+        left: $line*29.25
+        .guest &
+            left: $line*25.25
+    .header-guest
+        right: $line*2
+
+
+@media all and (max-width: $break-l - 1px)
+    .header-notifs
+        a
+            background-color: transparent
+
+
+@media all and (min-width: $break-l)
+    .header-notifs
+        float: right
+        clear: none
+        margin-right: $line
+        background: transparent
+        a
+            display: block
+            float: left
+            width: $line*3
+            height: $line*3
+            padding: $line/4 0
+            opacity: 0.9
+            overflow: hidden
+            &:hover
+                opacity: 1
+        .icon
+            display: block
+            margin: $line/4 auto
+        .total
+            background: transparentize($bg-alt, 0.8)
+            .figure
+                display: block
+                padding-top: $line/4
+
+
+/* ------------------------------------ =left =column =layout -- */
+
+.col-layout-header
+    position: relative
+.col-layout-title
+    font-size: $kilo
+
+
+@media all and (max-width: $break-m - 1px)
+    .col-layout-title
+        display: block
+        padding: $line/2 0
+        overflow: hidden
+
+
+@media all and (min-width: $break-m)
+    .col-layout-title
+        padding: $line/4 0
+        font-size: $giga
+        line-height: $line*1.5
+
+
+@media all and (max-width: $break-m2 - 1px)
+    .col-layout-header
+        padding: 0 $line
+    .col-layout-main
+        clear: both
+
+
+@media all and (min-width: $break-m2)
+    .col-layout-header-main, .col-layout-main
+        margin-left: $left-col-width
+    .col-layout-corner, .col-layout-col, .col-layout-secondary
+        width: $left-col-width
+    .col-layout-corner
+        position: absolute
+        left: 0
+        top: 0
+        z-index: 2
+        background: $bg
+    .col-layout-header-main
+        width: 100%
+        margin-left: -$left-col-width
+        float: right
+        padding: $line $line*2 $line ($left-col-width + $line*2)
+        background: $black-transparent
+    .col-layout-col
+        float: left
+        position: relative
+        z-index: 2
+    .col-layout-main-wrap
+        width: 100%
+        float: right
+        margin-left: -$left-col-width
+    .col-layout-main
+        margin-left: $left-col-width
+
+    .col-layout-secondary
+        clear: left
+        padding: $line*2 0
+        overflow: hidden
+        background: none
+        position: relative
+        z-index: 2
+
+
+@media all and (min-width: $break-m3)
+    .col-layout-title
+        display: inline-block
+        vertical-align: middle
+        padding-top: $line/4
+        padding-bottom: $line/4
+        margin-right: $line*2
+
+
+@media all and (min-width: $break-l)
+    .col-layout-title
+        font-size: $tera
+
+
+/* ------------------------------------ =home -- */
+
+.home-guest-actions
+    .or
+        display: inline-block
+        margin: 0 $line/4
+        font-size: $milli
+.home-guest-spiel
+    opacity: 0.8
+
+.home-tabs
+    li .action.active
+        color: $copy
+.home-views, .home-adverts
+    text-align: center
+.home-streams
+    .grid-item
+        position: relative
+    .avatar
+        max-width: $line*2
+        float: left
+    .block-line
+        margin-left: $line*4
+    .type-secondary, .description
+        font-size: $milli
+    .stream-link
+        padding: $line/2 0
+        display: block
+    .description
+        opacity: 0.8
+
+
+@media all and (max-width: $break-s - 1px)
+    .home-streams
+        .block-line
+            margin-left: $line*3
+            &:before
+                left: -$line/2
+
+
+@media all and (max-width: $break-m - 1px)
+    .home-tabs
+        li
+            display: block
+            margin-right: 0
+        .disclose
+            &:after
+                display: none
+    .home-views-toggle, .home-tabs .action
+        padding: $line/4 $line
+    .home-views-toggle
+        width: 100%
+        font-size: $kilo
+        .icon
+            margin-left: $line
+    .home-adverts
+        .advert + .advert
+            margin-top: $line
+
+
+@media all and (min-width: $break-m)
+    .home-guest-intro
+        margin-bottom: $line*2
+    .home-tabs
+        .disclose:after
+            border-color: $copy $copy transparent transparent
+    .home-mosaic:not(.ragged)
+        margin-left: $line*2
+        margin-right: $line*2
+    .home-adverts
+        .advert + .advert
+            margin-left: $line*2
+    .home-streams
+        .avatar
+            max-width: $line*4
+        .block-line
+            margin-left: $line*6
+
+
+@media all and (min-width: $break-l)
+    .home-views
+        padding: 0 $line*2
+    .home-tabs
+        width: 80%
+        text-align: left
+        float: left
+    .home-views .view-options
+        float: right
+
+
+/* ------------------------------------ =user -- */
+
+.user-banner
+    width: 100%
+    max-height: 55px  // 1640/250 = 359/x
+    max-height: 15.24vw  // 250 / 1640 = 15.24%
+    overflow: hidden
+    position: relative
+    z-index: 10
+    > img
+        display: block
+        width: 100%
+
+.user-avatar
+    margin-bottom: $line
+
+.user-info
+    .user-title
+        font-size: $milli
+        opacity: 0.9
+    .action-list
+        margin: $line 0
+
+.drilldown-marker
+    display: inline-block
+    vertical-align: middle
+    margin: 0 0.5em
+    .csstransforms &
+        width: 0.6em
+        height: 0.6em
+        color: transparent
+        border: 3px solid
+        border-color: $title-grad-2 $title-grad-2 transparent transparent
+        +prefix-wms(transform, translateY(-0.1em) scaleX(0.6) rotate(45deg))
+
+.user-nav
+    @extend .content-3
+    a
+        // @for $i from 1 through 8
+        //     &:nth-child(#{$i})
+        //         color: mix($title-grad-3, $title-grad-1, $i/10*100%)
+        &:nth-child(1)
+            color: $title-grad-1
+        &:nth-child(2)
+            color: mix($title-grad-1, $title-grad-2, 75%)
+        &:nth-child(3)
+            color: mix($title-grad-1, $title-grad-2, 50%)
+        &:nth-child(4)
+            color: mix($title-grad-1, $title-grad-2, 25%)
+        &:nth-child(5)
+            color: $title-grad-2
+        &:nth-child(6)
+            color: mix($title-grad-2, $title-grad-3, 75%)
+        &:nth-child(7)
+            color: mix($title-grad-2, $title-grad-3, 50%)
+        &:nth-child(8)
+            color: mix($title-grad-2, $title-grad-3, 25%)
+        &:nth-child(9)
+            color: $title-grad-3
+        &:nth-child(n)
+            &:hover, &.active
+                color: $copy
+    .dot
+        font-size: 0.5em
+        margin-left: 0.5em
+
+.user-about  // specificity
+    .user-data, .user-status
+        margin-left: 0
+        list-style: none
+.user-data, .user-status
+    li
+        margin-bottom: 0
+.user-data
+    .icon
+        opacity: 0.4
+
+.user-avatar-list
+    text-align: left
+    .grid-item
+        width: 20%
+
+.user-stats
+    .grid-item
+        width: 50%
+
+.user-social
+    text-align: left
+    .grid-item
+        padding-bottom: 0
+    a
+        display: block
+        padding: $line/4 0
+        color: $copy
+        opacity: 0.8
+        &:hover
+            opacity: 1
+    .icon
+        font-size: $line
+        margin-right: $line/2
+
+
+@media all and (min-width: $break-s)
+    .user-banner
+        max-height: 109px  // 1640/250 = 719/x
+        max-height: 15.24vw
+    .user-social
+        .grid-item
+            width: 50%
+
+
+@media all and (min-width: $break-s) and (max-width: $break-m2 - 1px)
+    .user-avatar
+        float: left
+        margin-right: $line
+    .user-info
+        text-align: left
+        .action-list
+            position: relative
+            left: -$line/2  // align
+
+
+@media all and (max-width: $break-m - 1px)
+    .user-header.interior
+        .user-title, .action-list
+            display: none
+        .user-avatar
+            max-width: $line*2
+            float: left
+            margin-right: $line
+        .user-info
+            text-align: left
+
+
+@media all and (min-width: $break-m)
+    .user-banner
+        max-height: 250px
+        max-height: 15.24vw
+    .user-avatar
+        margin-bottom: $line*2
+    .user-info
+        .action-list
+            margin-top: $line/2
+    .user-latest
+        position: relative
+        margin: -$line*3 (-$line*2) 0
+        padding: $line*2 $line*2 0
+        background: $bg-alt-darker
+        .thumbs-grid .action
+            position: absolute
+            top: $line*2
+            right: $line*2
+    .user-avatar-list
+        .grid-item
+            width: 10%
+    .user-stats, .user-social
+        .grid-item
+            width: 33.3%
+
+
+@media all and (min-width: $break-m) and (max-width: $break-l - 1px)
+    .user-latest
+        .grid-item:nth-child(n + 6)
+            display: none
+        .full
+            .grid-item
+                width: 20%
+            .item-container
+                height: $line*7
+                height: 15vw
+            .thumb
+                max-height: $line*7
+                max-height: 15vw
+
+
+@media all and (max-width: $break-m2 - 1px)
+    .user-header
+        text-align: center
+        &.interior
+            padding-top: $line
+            padding-bottom: $line
+            background: $black-transparent
+            .user-avatar, .action-list
+                margin-bottom: 0
+            .user-nav
+                display: none
+    .user-avatar
+        .avatar
+            max-width: $line*5
+    .user-info
+        .action-list
+            li
+                margin: 0
+        .action
+            padding: 0 $line/2
+            line-height: $line*1.5
+    .user-nav
+        margin: 0 (-$line)
+        padding: $line
+        clear: left
+        a
+            padding: $line/4 $line*3/4
+        .active
+            color: $copy
+
+
+@media all and (min-width: $break-m2)
+    .user-banner
+        + #main
+            margin-top: 0
+    .user-avatar
+        height: $left-col-width
+    .csstransforms .user-avatar
+        .avatar
+            width: $left-col-width  // fix a webkit bug
+            height: $left-col-width
+            img
+                position: absolute
+                top: 50%
+                left: 50%
+                +prefix-wms(transform, translate(-50%, -50%))
+    .user-info
+        .action-list
+            margin: 0
+
+    .user-nav
+        width: $left-col-width
+        padding: ($left-col-width + $line) 0 0
+        float: left
+        clear: left
+        background: transparent
+        position: relative
+        z-index: 2
+        +prefix-w(box-shadow, none)
+        &.no-avatar
+            padding-top: $line*3
+        a
+            display: block
+            padding: 0 $line 0 $line*2
+            position: relative
+            // @for $i from 1 through 8
+            //     &:nth-child(#{$i})
+            //         &:hover, &.active
+            //             background-color: mix($title-grad-3, $title-grad-1, $i/10*100%)
+            &:nth-child(1)
+                &:hover, &.active
+                    background-color: $title-grad-1
+            &:nth-child(2)
+                &:hover, &.active
+                    background-color: mix($title-grad-1, $title-grad-2, 75%)
+            &:nth-child(3)
+                &:hover, &.active
+                    background-color: mix($title-grad-1, $title-grad-2, 50%)
+            &:nth-child(4)
+                &:hover, &.active
+                    background-color: mix($title-grad-1, $title-grad-2, 25%)
+            &:nth-child(5)
+                &:hover, &.active
+                    background-color: $title-grad-2
+            &:nth-child(6)
+                &:hover, &.active
+                    background-color: mix($title-grad-2, $title-grad-3, 75%)
+            &:nth-child(7)
+                &:hover, &.active
+                    background-color: mix($title-grad-2, $title-grad-3, 50%)
+            &:nth-child(8)
+                &:hover, &.active
+                    background-color: mix($title-grad-2, $title-grad-3, 25%)
+            &:nth-child(9)
+                &:hover, &.active
+                    background-color: $title-grad-3
+            &.active
+                .csstransforms &:after
+                    content: ''
+                    display: block
+                    width: $line*1.42
+                    height: $line*1.42
+                    background: inherit
+                    position: absolute
+                    left: 100%
+                    top: 50%
+                    margin-left: -$line*1.42/2
+                    margin-top: -$line*1.42/2
+                    +prefix-wms(transform, scaleX(0.6) rotate(45deg))
+        .dot
+            position: absolute
+            left: $line
+            top: 50%
+            margin-left: -0.25em
+            margin-top: -0.25em
+
+    .user-stats, .user-social
+        .grid-item
+            width: 100%
+    .user-stats .stat
+        padding: 0 $line*2 $line
+        &:last-child
+            padding-bottom: 0
+    .user-social
+        a
+            padding: $line/4 $line*2
+            position: relative
+        .icon
+            position: absolute
+            left: $line/2
+            top: 50%
+            margin-top: -$line/2
+
+
+@media all and (min-width: $break-m3)
+    .user-info
+        padding-right: $line*27
+        position: relative
+        .user-title
+            display: inline-block
+            vertical-align: middle
+        .action-list
+            position: absolute
+            right: $line*2
+            top: 50%
+            margin-top: -$line*2
+        .action
+            line-height: $line*4
+
+
+@media all and (min-width: $break-l) and (max-width: $break-l2 - 1px)
+    .user-latest
+        .grid-item:nth-child(n + 7)
+            display: none
+        .full
+            .grid-item
+                width: 16.6%
+            .item-container
+                height: $line*7
+                height: 12vw
+            .thumb
+                max-height: $line*7
+                max-height: 12vw
+
+
+@media all and (min-width: $break-l)
+    .user-featured
+        width: $golden-l
+        clear: left
+        padding-right: $line
+    .user-featured
+        float: left
+    .user-about, .user-activity
+        width: $golden-s
+        float: right
+        clear: right
+        padding-left: $line
+    .user-favorites, .user-community, .user-shouts
+        clear: both
+
+
+@media all and (min-width: $break-l2) and (max-width: $break-w - 1px)
+    .user-latest
+        .grid-item:nth-child(n + 8)
+            display: none
+        .full
+            .grid-item
+                width: 14.28%
+            .item-container
+                height: $line*8
+                height: 10.5vw
+            .thumb
+                max-height: $line*8
+                max-height: 10.5vw
+
+
+@media all and (min-width: $break-w)
+    .user-latest
+        .grid-item:nth-child(n + 9)
+            display: none
+        .full
+            .grid-item
+                width: 12.5%
+            .item-container
+                height: $line*9
+                height: 9vw
+            .thumb
+                max-height: $line*9
+                max-height: 9vw
+
+
+/* ------------------------------------ =works -- */
+
+.works-folders
+    .grid-item
+        text-align: center
+    .folder-thumbs
+        width: $line*5
+        height: $line*5
+        margin: 0 auto $line
+        padding-bottom: 0
+
+.works-main
+    .view-options
+        margin-top: -$line
+        text-align: left
+
+
+@media all and (min-width: $break-s)
+    .works-folders
+        .grid-item
+            width: 50%
+
+
+@media all and (min-width: $break-m)
+    .works-folders
+        .grid-item
+            width: 33.3%
+    .works-main
+        .view-options
+            margin-top: -$line*4
+            margin-bottom: $line*2
+            text-align: right
+
+
+@media all and (min-width: $break-m) and (max-width: $break-l2 - 1px)
+    .works-folders-title
+        display: none
+
+
+@media all and (min-width: $break-m3)
+    .works-folders
+        .grid-item
+            width: 25%
+
+
+@media all and (min-width: $break-l)
+    .works-folders
+        .grid-item
+            width: 20%
+
+
+@media all and (min-width: $break-l2)
+    .works-folders
+        width: $line*10
+        float: left
+        .grid-item
+            width: 100%
+        .folder-thumbs
+            width: $line*7.5
+            height: $line*7.5
+        + .works-main
+            margin-left: $line*12
+            overflow: hidden
+
+            
+@media all and (min-width: $break-w)
+    .works-folders
+        width: $line*12
+        .folder-thumbs
+            width: $line*10
+            height: $line*10
+        + .works-main
+            margin-left: $line*14
+
+
+/* ------------------------------------ =submission -- */
+
+.sub-container
+    text-align: center
+.sub-zoom-toggle
+    .js &
+        cursor: zoom-in
+    &.active
+        cursor: zoom-out
+        .sub-image
+            max-width: none
+
+.sub-nav-prev, .sub-nav-next
+    padding: $line*1.5 $line/2
+    opacity: 0.5
+    &:hover
+        opacity: 1
+.csstransforms .sub-nav-prev:before, .csstransforms .sub-nav-next:after
+    width: 0.8em
+    height: 0.8em
+
+.sub-nav-prev
+    float: left
+.sub-nav-next
+    float: right
+
+.sub-attribution
+    text-align: center
+    .avatar
+        max-width: $line*4
+    .username
+        font-size: $kilo
+    time
+        font-size: $milli
+.sub-tags
+    .icon
+        opacity: 0.4
+        margin-right: $line/2
+
+
+@media all and (max-width: $break-m - 1px)
+    .sub-actions
+        li, li:last-child
+            display: block
+            max-width: 65%
+            margin: $line/2 auto 0
+
+
+
+@media all and (min-width: $break-m)
+    .sub-container
+        padding: 0 $line
+    .sub-nav-prev, .sub-nav-next
+        padding: 0 $line
+    .sub-info
+        margin-bottom: $line
+    .sub-tags
+        .action
+            position: relative
+            top: -$line/8  // account for margin at bottom of tags
+    .sub-nav-next, .sub-nav-prev
+        position: relative
+        +prefix-wms(transform, translateX(0))
+        -webkit-transition: -webkit-transform 0.3s ease, opacity 0.2s ease
+        transition: transform 0.3s ease, opacity 0.2s ease
+        .thumb
+            max-width: $line*4
+            max-height: $line*6
+            position: absolute
+            top: 50%
+            +prefix-wms(transform, translateY(-50%))
+            transition: opacity 0.4s ease
+            opacity: 0
+        .no-touch &:hover
+            -webkit-transition: -webkit-transform 0.4s ease 0.5s, opacity 0.2s ease
+            transition: transform 0.4s ease 0.5s, opacity 0.2s ease
+            .thumb
+                opacity: 1
+                transition: opacity 0.4s ease 0.5s
+    .sub-nav-prev
+        .thumb
+            right: 100%
+        .no-touch &:hover
+            +prefix-wms(transform, translateX($line*4))
+    .sub-nav-next
+        .thumb
+            left: 100%
+        .no-touch &:hover
+            +prefix-wms(transform, translateX(-$line*4))
+
+@media all and (max-width: $break-m3 - 1px)
+    .sub-about
+        &:before
+            display: none
+
+
+@media all and (min-width: $break-m3)
+    .sub-attribution, .sub-about
+        width: auto
+        vertical-align: middle
+    .sub-attribution
+        .avatar
+            max-width: $line*5
+            float: left
+            margin-right: $line
+            margin-bottom: 0
+        .username, time
+            display: block
+            margin-left: $line*6
+            padding-right: $line
+            text-align: left
+        .username
+            font-size: $mega
+            margin-top: $line
+            margin-bottom: $line/2
+    .sub-about
+        &:before
+            bottom: $line  // due to it having padding from being a grid-item
+    .sub-stats
+        width: 33.3%
+        padding-left: $line
+        margin-right: 0  // account for grid margin
+        float: right
+    .sub-related
+        padding-left: $line
+        clear: right
+        overflow: hidden
+        &.full-width
+            width: 100%
+            padding-left: 0
+            clear: both
+    .sub-comments
+        width: 66.6%
+        padding-right: $line
+        float: left
+
+
+@media all and (min-width: $break-l)
+    .sub-container
+        padding: 0 $line*2
+
+
+/* ------------------------------------ =notifications -- */
+
+.notif-types
+    background: $black-transparent
+    a
+        display: block
+        width: 16.65%
+        float: left
+        line-height: $line*1.5
+        text-align: center
+        &:not(.active)
+            background: transparent
+
+.notif-view-options
+    margin: $line 0 (-$line)
+
+.notif-list, .notif-expanded-list, .notif-tiles
+    ul, span, a, time, button, .description, .notif-content  // todo: better way to accomplish this
+        position: relative  // new stacking context in order to be above label
+.notif-list-label
+    position: absolute
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    z-index: 0
+    &.checked
+        background: transparentize($white, 0.92)
+.notif-list-checkbox
+    position: absolute
+    top: $line
+    left: $line
+    .csstransforms &
+        top: $line*1.5
+        +prefix-wms(transform, translate(-50%, -50%))
+
+.notif-list
+    li
+        @extend .group
+        position: relative
+        padding: $line
+        + li
+            border-top: 1px solid transparentize($white, 0.83)
+    ul
+        z-index: 2
+    .thumb-container, .description, .notif-content
+        margin-top: $line
+    .info
+        .action
+            margin-left: 1em
+    .art-group, .avatar-group
+        border-top: 1px dashed transparentize($white, 0.88)
+        margin-top: $line
+        li
+            border-top-style: dashed
+    .avatar-group
+        li
+            text-align: left
+            padding-left: $line*2
+        .avatar
+            max-width: $line*2.5
+        &.active .avatar
+            float: left
+            margin-right: $line/2
+    .js &
+        .art-group:not(.active), .avatar-group:not(.active)
+            li
+                display: inline-block
+                vertical-align: top
+                padding: $line/4
+                margin-top: $line*3/4
+                border-top: none
+            .info, .description, .notif-list-checkbox, .type
+                display: none
+            .thumb-container
+                display: block
+                max-width: $line*4
+                margin-top: 0
+                img
+                    max-height: $line*3
+
+.notif-expanded-list
+    padding-left: 0
+    padding-right: 0
+    > li
+        @extend .padding-sides
+        padding-top: $line*2
+        position: relative
+        &:last-child
+            padding-bottom: $line*2
+    .info
+        padding: 0 $line*1.5
+    .title.secondary
+        margin-top: -$line/2  // bring in line with checkbox/icon
+    .notif-list-icon, .notif-list-checkbox
+        top: $line*2.5
+        +prefix-wm(transform, translateY(-50%))
+    .notif-list-icon
+        position: absolute
+        left: $line
+    .notif-list-checkbox
+        left: auto
+        right: $line
+
+.notif-grid
+    margin-right: -$line/2
+    .grid-item
+        padding: 0 $line/2 $line/2 0
+    .item-container, .info
+        padding: $line/2
+    label
+        &.checked
+            background: transparentize($white, 0.92)
+.notif-grid-checkbox
+    position: absolute
+    top: 0
+    left: 0
+    padding: $line/2
+
+.notif-actions
+    li
+        vertical-align: top
+        margin-bottom: $line/2
+        .action.color-neutral
+            color: $color-neutral
+        .action.color-negative
+            color: $color-negative
+
+
+@media all and (min-width: $break-s)
+    .notif-view-options
+        .select-wrapper
+            width: 12em
+
+
+@media all and (max-width: $reading-width - 1px)
+    .notif-expanded-list, .notif-expanded-list .content
+        margin-left: -$line
+        margin-right: -$line
+
+
+@media all and (max-width: $break-m - 1px)
+    .notif-list, .notif-list ul, .notif-list .notif-content
+        margin-left: -$line
+        margin-right: -$line
+    .notif-list
+        text-align: center
+        .info, .description, .notif-content
+            text-align: left
+        .info
+            margin-left: $line
+        .description
+            display: none
+        .thumb-container
+            max-width: $line*10
+            img
+                max-height: $line*10
+
+
+@media all and (min-width: $break-m)
+    .notif-list, .notif-expanded-list
+        .notif-list-icon
+            font-size: $line
+    .notif-list
+        li
+            padding: $line $line*2 $line $line*2.5
+        > li
+            &:before
+                content: ''
+                width: 1px
+                position: absolute
+                left: $line
+                top: $line*2.5
+                bottom: -$line/2
+                background: transparentize($white, 0.8)
+            &:last-child:before
+                display: none
+        ul
+            margin-left: -$line*2.5
+            margin-right: -$line*2
+            &:not(.active)
+                padding-left: $line*2
+        .notif-list-icon
+            position: absolute
+            left: $line/2
+            top: $line
+        .thumb-container
+            max-width: $line*10
+            float: left
+            margin-right: $line
+            img
+                max-height: $line*10
+        .description
+            font-size: $milli
+            opacity: 0.85
+    .notif-list
+        .js &
+            .art-group:not(.active)
+                .thumb-container
+                    margin-right: 0
+        .notif-list-checkbox
+            top: $line
+            left: auto
+            right: $line
+            .csstransforms &
+                top: $line*1.5
+                +prefix-wms(transform, translate(50%, -50%))
+    .notif-grid
+        .item-container, .info
+            padding: $line
+        &.col
+            .item-container
+                height: $line*8
+                height: 30vw
+
+
+@media all and (max-width: $break-m2 - 1px)
+    .notif-header
+        text-align: center
+        margin-bottom: $line
+    .notif-tiles
+        margin-left: -$line/2
+        margin-right: -$line/2
+
+
+@media all and (min-width: $break-m2)
+    .notif-types
+        width: $left-col-width
+        position: absolute
+        left: 0
+        top: 0
+        z-index: 3
+        a
+            line-height: $line*4
+    .notif-view-options
+        position: absolute
+        right: $line*2
+        top: $line/8
+    .notif-actions
+        padding-top: $line*4
+        overflow: visible
+        li, .action, .type-secondary
+            display: block
+        li
+            margin: 0
+        .action
+            width: 100%  // button elements
+            text-align: left
+        .action, .type-secondary
+            padding-left: $line
+        li .action:hover
+            background: $action-alt
+        li .action.color-neutral:hover
+            color: $white
+            background: $color-neutral
+        li .action.color-negative:hover
+            color: $white
+            background: $color-negative
+        .sticky
+            width: $left-col-width
+            padding: $line*2 0
+        .stuck
+            position: fixed
+            top: 0
+            left: 0
+            z-index: 3
+        .blocked
+            position: absolute
+            top: auto
+            bottom: 0
+            left: 0
+        .notif-actions-manage
+            margin-bottom: $line*2
+    .notif-grid
+        &.col
+            .item-container
+                height: $line*9
+                height: 20vw
+
+
+@media all and (min-width: $break-m3)
+    .notif-grid
+        &.col
+            .item-container
+                height: $line*10
+                height: 19vw
+
+
+@media all and (min-width: $break-w)
+    .notif-grid
+        &.col
+            .item-container
+                height: 16vw
+
+
+/* ------------------------------------ =explore -- */
+
+.explore-header
+    padding-left: $line*2
+    padding-right: $line*2
+.explore-refine
+    clear: both
+    .grid-item
+        vertical-align: middle
+    .submit
+        padding-bottom: 0
+#main > .content-2:first-child
+    margin-top: 0
+
+
+@media all and (min-width: $break-s)
+    .explore-refine
+        .ratings
+            .checkbox-label
+                width: 50%
+                float: left
+                padding: 0 $line/2
+
+                
+@media all and (max-width: $break-m - 1px)
+    .explore-header
+        text-align: center
+        .title
+            margin-bottom: $line
+
+
+@media all and (min-width: $break-m)
+    .explore-header
+        .title
+            float: left
+        .view-options
+            // margin-top: $line/8
+            float: right
+    .explore-refine
+        .ratings
+            .checkbox-label
+                width: 25%
+
+
+@media all and (min-width: $break-m2)
+    .explore-header
+        background: transparent
+    .explore-refine
+        background: transparent
+        padding: $line $line/2
+        .ratings
+            .checkbox-label
+                width: 100%
+
+
+@media all and (min-width: $break-l)
+    .explore-header
+        .view-options
+            margin-top: $line/2
+
+
+/* ------------------------------------ =notes, =inbox -- */
+
+.inbox-list, .note-list
+    > li
+        position: relative
+        + li
+            border-top: 1px solid transparentize($copy-alt, 0.8)
+.inbox-list
+    margin-top: -$line*1.5
+    > li
+        margin: 0 (-$line)
+    label
+        display: block
+        padding: $line*1.5 $line $line*1.5 $line*2.5
+        &.checked
+            background: $bg-alt-lighter
+    .checkbox
+        position: absolute
+        left: $line*3/4
+        top: 50%
+        +prefix-wms(transform, translateY(-50%))
+    .avatar
+        max-width: $line*2
+        margin-left: $line
+        float: right
+    .new, .thread-count, h2
+        display: inline-block
+    .new, h2
+        margin-right: $line/2
+    .title
+        clear: none
+    .thread-count
+        opacity: 0.7
+    .info
+        margin: $line/2 0
+    .description
+        @extend .ellipsis
+        width: auto
+        font-size: $milli
+    .type-secondary
+        opacity: 0.9
+
+.note-list
+    > li
+        + li
+            margin-top: $line*1.5
+            padding-top: $line*1.5
+            &:before, &:after
+                content: ''
+                width: 0
+                height: 0
+                border: $line/2 solid transparent
+                border-bottom-width: 0
+                position: absolute
+                left: 50%
+                top: 0
+                margin-left: -$line/2
+                +prefix-wms(transform, scaleX(1.4))
+            &:before
+                border-top-color: transparentize($copy-alt, 0.8)
+            &:after
+                border-top-color: $bg-alt
+                top: -2px
+    .avatar
+        max-width: $line*2
+        float: left
+        margin-right: $line/2
+    time
+        display: block
+        margin-bottom: $line
+    .formatted
+        clear: left
+
+
+@media all and (min-width: $break-m)
+    .inbox-list
+        > li
+            margin: 0 (-$line*2)
+        .checkbox
+            left: $line*5/4
+        label
+            padding-left: $line*3.5
+            padding-right: $line*2
+        .avatar
+            max-width: $line*4
+
+
+@media all and (min-width: $break-m2)
+    .inbox-actions
+        padding-top: $line*2
+        padding-bottom: 0
+        .action, .type-secondary
+            padding-left: $line*2
+    .inbox-content
+        min-height: $line*29  // magic number! sue me :v
+
+
+@media all and (min-width: $break-m3)
+    .note-list
+        position: relative
+        left: $line*3
+        .avatar
+            max-width: $line*5
+            position: absolute
+            right: 100%
+            top: $line
+            margin-right: $line
+        li:first-child .avatar
+            top: -$line/2
+        + .comment-new
+            max-width: $reading-width + $line*6
+
+
+/* ------------------------------------ =streams -- */
+
+
+
+
+/* ------------------------------------ =preferences/=settings -- */
+
+
+
+
+/* ------------------------------------ =footer -- */
+
+.page-footer
+    @extend .padding
+    +linear-gradient(left, transparentize($title-grad-1, 0.95) 0, transparentize($title-grad-2, 0.95) 60%, transparentize($title-grad-3, 0.95) 120%)
+    +prefix-w(box-shadow, inset 0 1px 0 transparentize($white, 0.94))
+.footer-logo
+    display: inline-block
+    img
+        height: $line*2
+.footer-nav
+    dl
+        &:nth-child(2) .title
+            color: mix($title-grad-3, $title-grad-2, 60%)
+        &:nth-child(3) .title
+            color: $title-grad-2
+        &:nth-child(4) .title
+            color: mix($title-grad-2, $title-grad-1, 50%)
+        &:nth-child(n+5) .title
+            color: $title-grad-1
+    dd
+        display: inline-block
+        margin-right: $line*1.5
+        a
+            display: block
+            padding: $line/4 0
+            color: $copy
+            opacity: 0.65
+            &:hover
+                color: $action
+                opacity: 1
+.footer-decoration
+    padding: $line*2 0
+    img
+        width: $line*6
+.footer-info
+    text-align: center
+    font-size: $milli
+    color: $color-secondary
+    opacity: 0.8
+    p
+        margin-bottom: $line/2
+.footer-revision
+    @extend .swash-line
+    opacity: 0.6
+
+
+@media all and (max-width: $break-m2 - 1px)
+    .footer-nav .block-line:before
+        display: none
+
+
+@media all and (min-width: $break-m2)
+    .page-footer
+        padding-top: $line*3
+    .footer-nav .block-line:before
+        left: $left-col-width - $line*2 - 1px
+        top: -$line
+        bottom: -$line
+
+
+@media all and (min-width: $break-m2) and (max-width: $break-l - 1px)
+    .footer-nav
+        dl
+            position: relative
+            padding: 0 0 0 $left-col-width
+            margin-bottom: $line*2
+        .title
+            font-size: $giga
+        dt
+            width: $left-col-width - $line*4
+            position: absolute
+            left: 0
+            top: 50%
+            margin-top: -$line
+            text-align: right
+    .footer-logo
+        position: relative
+        top: 4px
+
+
+@media all and (min-width: $break-l)
+    .footer-nav
+        margin-bottom: $line*2
+        .grid-item
+            width: 16.6%
+        .block-line:before
+            top: 0
+            left: -$line
+            bottom: $line/2
+        dt
+            min-height: $line*2.5
+        .title
+            font-size: $tera
+        dd
+            display: block
+    .footer-decoration
+        padding-top: $line*2.5
+        img
+            width: $line*8
+            margin-left: 0
+
+
+/* ------------------------------------ =fixes -- */
+
+.group
+    +clear

@@ -1,20 +1,18 @@
-<label class="standard-label">
+<label class="select-wrapper">
   <span>{{ _(field.description) }}</span>
-  <div class="select-input">
-    <select name="{{ field.name }}" id="{{ field.oid }}" tabindex="1"
-            {%- if field.widget.size %} size="{{ field.widget.size }}"{% endif %}
-            {%- if field.widget.multiple %} multiple{% endif %}
-            {%- if field.autofocus %} autofocus{% endif %}>
-      {% if descriptive_option %}
-      <option>{{ _(descriptive_option) }}</option>
-      {% endif %}
-      {% for value, description in field.widget.values -%}
-      <option value="{{ value }}"
-              {%- if value | string == cstruct %} selected="selected" {% endif %}>
-        {{- description -}}
-      </option>
-      {%- endfor %}
-    </select>
-  </div>
+  <select name="{{ field.name }}" id="{{ field.oid }}" class="select-input" tabindex="1"
+          {%- if field.widget.size %} size="{{ field.widget.size }}"{% endif %}
+          {%- if field.widget.multiple %} multiple{% endif %}
+          {%- if field.autofocus %} autofocus{% endif %}>
+    {% if descriptive_option %}
+    <option>{{ _(descriptive_option) }}</option>
+    {% endif %}
+    {% for value, description in field.widget.values -%}
+    <option value="{{ value }}"
+            {%- if value | string == cstruct %} selected="selected" {% endif %}>
+      {{- description -}}
+    </option>
+    {%- endfor %}
+  </select>
   {{ extra_html }}
 </label>

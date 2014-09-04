@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 
 
 def comment_success(context, request, appstruct):
+    log.debug('comment success: %r', appstruct)
     if request.is_api_request:
         return render_to_response('json', {'status': 'ok'}, request=request)
     return httpexceptions.HTTPSeeOther('/')
@@ -29,7 +30,7 @@ def comment_success(context, request, appstruct):
 @also_api_view(name='view', context=SubmissionResource,
                template='content/submission.jinja2', permission='view')
 @view_config(context=SubmissionResource, renderer='content/submission.jinja2', permission='view')
-@form_renderer(CommentForm, 'comment', success=comment_success, button='save',
+@form_renderer(CommentForm, 'comment', success=comment_success, button='post',
                name='comment', context=SubmissionResource,
                renderer='content/submission.jinja2', permission='comment')
 def view_submission(context, request, forms):

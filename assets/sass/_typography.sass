@@ -1,0 +1,182 @@
+body, input, textarea, button, select
+    font: normal #{$text}/$line "Open Sans", sans-serif
+    word-wrap: break-word
+    overflow-wrap: break-word // new spec
+select
+    font-size: $milli
+a, button
+    text-decoration: none
+    +prefix(transition, (color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease))
+    color: $action
+    .content &
+        color: $action-alt
+
+.type-alt
+    font-family: Georgia, Palatino, serif
+    font-size: $text - 1px  // looks bloated next to open sans
+    font-weight: 400
+    font-style: italic
+
+.type-secondary
+    color: $color-secondary
+    .content &
+        .color: $color-secondary-alt
+
+.title
+    clear: both
+    font-weight: 300
+    font-style: italic
+    text-rendering: optimizeLegibility
+    &, & a
+        color: $title
+    .content &, .content & a
+        color: $title-alt
+    &.primary
+        font-size: $tera
+        line-height: $line*2
+        margin-left: auto
+        margin-right: auto
+    &.secondary
+        font-size: $giga
+        line-height: $line*2
+    &.tertiary
+        font-size: $kilo
+.title-supplement
+    color: $color-secondary
+    color: transparentize($color-secondary, 0.2)
+
+.text-grad
+    display: inline-block // shrink-wrap bounds for gradients
+    max-width: 100%
+    padding-right: 0.15em // gradient coverage for larger characters, e.g. italic 'f'
+    color: $title
+    .webkit-background-clip &
+        background-image: -webkit-linear-gradient(left, $title-grad-1 -8%, $title-grad-2 70%, $title-grad-3 140%)
+        background-image: linear-gradient(left, $title-grad-1 -8%, $title-grad-2 70%, $title-grad-3 140%)
+        +prefix-w(background-clip, text)
+        +prefix-w(text-fill-color, transparent)
+    .content &
+        color: $title-alt
+        .webkit-background-clip &
+            background-image: -webkit-linear-gradient(left, $title-alt-grad-1 -20%, $title-alt-grad-2 75%, $title-alt-grad-3 120%)
+            background-image: linear-gradient(left, $title-alt-grad-1 -20%, $title-alt-grad-2 75%, $title-alt-grad-3 120%)
+
+.action
+    display: inline-block
+    vertical-align: middle
+    font-weight: 300
+    font-style: italic
+    color: $action
+    &:hover, &:focus
+        color: $white
+    .content &
+        color: $action-alt
+        &:hover, &:focus
+            color: lighten($action-alt, 10%)
+    &:not(.small)
+        font-size: $kilo
+
+.color-owner
+    color: $color-owner
+.color-staff
+    color: $color-staff
+
+.swash-line
+    &:before, &:after
+        content: "\2014"
+        display: inline-block
+        margin: 0 $line/2
+
+.advert-title
+    @extend .type-alt
+    @extend .swash-line
+    text-align: center
+    font-size: $milli
+    opacity: 0.5
+
+.formatted
+    p, ol, ul, blockquote
+        font-size: $text - 1px // looks better
+        +rems(margin-bottom, $line)
+        &:last-child
+            margin-bottom: 0
+    ol, ul
+        margin-left: 2em
+    ul
+        list-style-type: disc
+    blockquote
+        padding: $line/2
+        border: 1px dashed $gray-light
+        background: transparentize($gray-light, 0.93)
+    a
+        +linear-gradient(bottom, transparent 0, transparent 2px, transparentize($action, 0.3) 2px, transparentize($action, 0.3) 3px, transparent 3px)
+        text-shadow: 1px 0 $bg, -1px 0 $bg
+        +transition
+        &:hover
+            color: $bg-alt
+        .content &
+            +linear-gradient(bottom, transparent 0, transparent 2px, transparentize(desaturate($action-alt, 20%), 0.5) 2px, transparentize(desaturate($action-alt, 20%), 0.5) 3px, transparent 3px)
+            text-shadow: 1px 0 $bg-alt, -1px 0 $bg-alt
+            &:hover
+                color: $action-alt
+                background-color: $bg-alt-lighter
+    h1, h2, h3, h4, h5, h6
+        margin: $line 0
+        text-rendering: optimizeLegibility
+    h6
+        font-weight: 400
+    h4
+        font-size: $kilo
+    h3
+        font-size: $mega
+    h2
+        font-size: $giga
+        line-height: $line*1.5
+    h1
+        font-size: $tera
+        line-height: $line*2
+
+.ellipsis
+    width: 100%
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+
+
+@media all and (max-width: $break-m - 1px)
+    .title-supplement
+        font-size: $milli
+
+
+@media all and (min-width: $break-m)
+    .title
+        &.primary
+            font-size: $peta
+        &.secondary
+            font-size: $tera
+        &.tertiary
+            font-size: $mega
+
+    .action:not(.small)
+        font-size: $mega
+        line-height: $line*2
+
+
+@media all and (min-width: $break-m2)
+    .formatted.columnized
+        +prefix-wm(column-count, 2)
+        +prefix-wm(column-gap, $line*2)
+
+
+@media all and (min-width: $break-l)
+    .title
+        &.primary
+            font-size: $exa
+            line-height: $line*3
+        &.secondary
+            font-size: $peta
+    .action
+        &.small
+            font-size: $kilo
+    .formatted.columnized
+        +prefix-wm(column-count, 3)

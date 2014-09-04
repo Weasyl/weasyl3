@@ -17,7 +17,7 @@
 {% endmacro %}
 
 {% macro render_field(field) -%}
-{{ field.serialize(extra_html=caller()) | safe }}
+{{ field.serialize(extra_html=caller(), **kwargs) | safe }}
 {%- endmacro %}
 
 {% macro form_errors(errors) %}
@@ -34,20 +34,22 @@
 {% endif %}
 {% endmacro %}
 
-{% macro login_form(form, errors) %}
-<form action="{{ request.resource_path(None, 'signin') }}" method="post" class="login-form standard-form small-width">
+{% macro login_form(form, errors, label_class='') %}
+<form action="{{ request.resource_path(None, 'signin') }}" method="post" class="form modal-width content-block">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
-  {{ form['user'].serialize() | safe }}
-  {{ form['password'].serialize() | safe }}
-  <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
-    Sign in
-  </button>
-  <ul class="actions">
-    <li><a href="#">Create a new account</a></li>
-    <li><a href="#">Forgot your info?</a></li>
-  </ul>
+  {{ form['user'].serialize(label_class=label_class + ' content-block') | safe }}
+  {{ form['password'].serialize(show_password_container=True, label_class=label_class + ' content-block') | safe }}
+  <div class="pagination">
+    <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
+      Sign in
+    </button>
+  </div>
 </form>
+<div class="text-align-center">
+  <a href="{{ request.resource_path(None, 'register') }}">Create a new account</a><br />
+  <a href="{{ request.resource_path(None, 'lost-account') }}">Forgot your info?</a>
+</div>
 {% endmacro %}
 
 {% macro logout_form() %}
@@ -64,9 +66,9 @@
     <div class="rating {{ submission.rating.name }}">Rated {{ submission.rating.name }}</div>
     {% if with_caption -%}
     <figcaption class="info">
-      <h4 class="title">{{ submission.title }}</h4>
+      <h4 class="title text-grad">{{ submission.title }}</h4>
       {% if with_user -%}
-      <p class="byline">{{ by_user(submission.owner) }}</p>
+      <p class="byline"><span class="type-alt">by</span> {{ submission.owner.profile.username }}</p>
       {%- endif %}
     </figcaption>
     {%- endif %}
@@ -82,23 +84,26 @@
     <header class="comment-info">
       {{ user_link(comment.poster) }}
       {% if user_class == 'owner' %}
-      <span class="comment-attr owner">(page owner)</span>
+      <span class="attribution color-owner">(page owner)</span>
       {% elif user_class == 'staff' %}
-      <span class="comment-attr staff">(staff)</span>
+      <span class="attribution color-staff">(staff)</span>
       {% endif %}
-      {{ comment.unixtime | relative_date }}
+      {{ comment.unixtime | relative_date(class_='type-secondary type-alt') }}
     </header>
-    <section class="comment-content formatted">
+    <section class="comment-content formatted reading-width">
       {{ comment.content | markdown }}
     </section>
-    <ul class="comment-actions action-set">
+    <ul class="comment-actions action-list">
       <li><a href="#" class="action small">Reply</a></li>
-      <li><a href="#" class="icon icon-action-warning">Report</a></li>
+      <li><a href="#" class="action small">Report</a></li>
+      <li><a href="#" class="action small">#</a></li>
     </ul>
   </article>
+  {% if comment.subcomments %}
   <ol>
     {% for subc in comment.subcomments %}{{ show_comment(subc, ownerid) }}{% endfor %}
   </ol>
+  {% endif %}
 </li><!-- .comment -->
 {% endmacro %}
 
