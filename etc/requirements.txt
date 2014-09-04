@@ -1,4 +1,4 @@
-libweasyl==0.5.0.dev5
+libweasyl==0.6.0
 
 deform_jinja2==0.5-2
 Jinja2==2.7.2
@@ -21,10 +21,7 @@ colander==1.0b1
 decorator==3.4.0
 deform==2.0a2
 peppercorn==0.4
-psycopg2==2.5.2
-py-bcrypt==0.4
 python3-memcached==1.51
-pytz==2014.2
 repoze.lru==0.6
 simplejson==3.4.0
 transaction==1.4.3
