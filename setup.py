@@ -1,8 +1,35 @@
+from distutils.command.build import build as _build
+from distutils.core import Command
+import subprocess
+
 from setuptools import setup, find_packages
 from pip.req import parse_requirements
 
 
 reqs = [str(ir.req) for ir in parse_requirements('etc/requirements.txt')]
+
+
+class build_assets(Command):
+    description = 'build static assets'
+
+    user_options = []
+    boolean_options = []
+    help_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.check_call(['make', 'assets'])
+
+
+class build(_build):
+    sub_commands = [
+        ('build_assets', lambda self: True),
+    ] + _build.sub_commands
 
 
 setup(
@@ -27,4 +54,5 @@ setup(
             'sentry=weasyl.middleware:SentryMiddleware',
         ],
     },
+    cmdclass={'build': build, 'build_assets': build_assets},
 )
