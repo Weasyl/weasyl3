@@ -485,30 +485,24 @@ function wzlLabels(el) {
 }
 
 // debounced window resize event
-// https://github.com/porada/resizeend
-(function(window) {
-    var currentOrientation, debounce, dispatchResizeEndEvent, document, events, getCurrentOrientation, initialOrientation, resizeDebounceTimeout;
-    document = window.document;
-    if (!(window.addEventListener && document.createEvent)) {
+(function() {
+    if (!window.addEventListener || !document.createEvent) {
         return;
     }
-    events = ['resize:end', 'resizeend'].map(function(name) {
-        var event;
-        event = document.createEvent('Event');
-        event.initEvent(name, false, false);
-        return event;
-    });
-    dispatchResizeEndEvent = function() {
-        return events.forEach(window.dispatchEvent.bind(window));
-    };
-    getCurrentOrientation = function() {
-        return Math.abs(+window.orientation || 0) % 180;
-    };
-    initialOrientation = getCurrentOrientation();
-    currentOrientation = null;
-    resizeDebounceTimeout = null;
-    debounce = function() {
-        currentOrientation = getCurrentOrientation();
+
+    var event = document.createEvent('Event');
+    event.initEvent('resize:end', false, false);
+
+    function dispatchResizeEndEvent() {
+        window.dispatchEvent(event);
+    }
+
+    var initialOrientation = window.orientation;
+    var resizeDebounceTimeout = null;
+
+    function debounce() {
+        var currentOrientation = window.orientation;
+
         if (currentOrientation !== initialOrientation) {
             dispatchResizeEndEvent();
             initialOrientation = currentOrientation;
@@ -516,9 +510,10 @@ function wzlLabels(el) {
             clearTimeout(resizeDebounceTimeout);
             resizeDebounceTimeout = setTimeout(dispatchResizeEndEvent, 100);
         }
-    };
-    return window.addEventListener('resize', debounce, false);
-})(window);
+    }
+
+    window.addEventListener('resize', debounce, false);
+})();
 
 forEach.call(document.getElementsByClassName('mosaic'), wzlMosaic);
 forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
