@@ -68,6 +68,7 @@ if (!document.documentElement.classList && Object.defineProperty && typeof HTMLE
     });
 }
 
+
 // helper function: nodelist to array
 function toArray(obj) {
     var array = [];
@@ -78,7 +79,7 @@ function toArray(obj) {
 }
 
 
-// helper functions: replace jquery parents() method
+// helper functions: get parents
 function getParents(obj) {
     var parents = [];
     while ( obj !== document.documentElement ) {
@@ -103,8 +104,44 @@ function getParentsByClassName(obj, cl) {
 }
 
 
+// debounced window resize event
+// https://github.com/porada/resizeend
+(function(window) {
+    var currentOrientation, debounce, dispatchResizeEndEvent, document, events, getCurrentOrientation, initialOrientation, resizeDebounceTimeout;
+    document = window.document;
+    if (!(window.addEventListener && document.createEvent)) {
+        return;
+    }
+    events = ['resize:end', 'resizeend'].map(function(name) {
+        var event;
+        event = document.createEvent('Event');
+        event.initEvent(name, false, false);
+        return event;
+    });
+    dispatchResizeEndEvent = function() {
+        return events.forEach(window.dispatchEvent.bind(window));
+    };
+    getCurrentOrientation = function() {
+        return Math.abs(+window.orientation || 0) % 180;
+    };
+    initialOrientation = getCurrentOrientation();
+    currentOrientation = null;
+    resizeDebounceTimeout = null;
+    debounce = function() {
+        currentOrientation = getCurrentOrientation();
+        if (currentOrientation !== initialOrientation) {
+            dispatchResizeEndEvent();
+            initialOrientation = currentOrientation;
+        } else {
+            clearTimeout(resizeDebounceTimeout);
+            resizeDebounceTimeout = setTimeout(dispatchResizeEndEvent, 100);
+        }
+    };
+    return window.addEventListener('resize', debounce, false);
+})(window);
+
+
 // weasyl mosaic thumbnail layout
-// https://www.weasyl.com/~aden
 function wzlMosaic(el) {
     var maxBlockWidth = 96,
         aspectRatios = [0.33, 0.66, 1, 1.5, 3],
@@ -120,18 +157,29 @@ function wzlMosaic(el) {
         for ( var i = 0; i < columnCount; i++ ) {
             grid[row].push(0);
         }
+        console.log('created new grid row at ' + row);
     }
 
     // set up container properties
     function setupContainer() {
+        console.log('setting up container...');
         globalOffset = 0;
+
+        el.setAttribute('style', 'display: block !important;');  // infinite loop if no width to go on
+        el.parentNode.setAttribute('style', 'display: block !important;');
         containerWidth = el.offsetWidth;
+        el.removeAttribute('style');
+        el.parentNode.removeAttribute('style');
+
+        console.log('container width: ' + containerWidth);
         columnCount = Math.ceil(containerWidth / maxBlockWidth);
         blockDim = Math.floor(containerWidth / columnCount);
 
         // wipe existing grid (if any) and create three empy grid rows to work within
         grid.length = 0;
+        console.log('wiped existing grid');
         newGridRow(0); newGridRow(1); newGridRow(2);
+        console.log('created starter rows');
 
         // ragged top - randomize layout of first two rows
         if ( el.classList.contains('ragged') ) {
@@ -143,14 +191,17 @@ function wzlMosaic(el) {
                     }
                 }
             }
+            console.log('created ragged gaps');
         }
     }
 
     // process tile properties
     function setupTiles(offset) {
+        console.log('setting up tiles ...');
         if ( !offset ) { offset = 0; }
         tiles = toArray(el.getElementsByClassName('item'));
         tileCount = tiles.length;
+        console.log(tileCount + ' tiles in set');
 
         var offsetTiles = tiles.slice(offset);
         for ( var i = 0; i < offsetTiles.length; i++ ) {
@@ -159,9 +210,12 @@ function wzlMosaic(el) {
                 closestRatio = null,
                 thumbImage = thisTile.querySelector('.thumb').getAttribute('src'),
                 childA = thisTile.querySelector('a');
+            console.log('Processing the following tile:');
+            console.log(thisTile);
 
             // set as background image in order to let the browser handle sizing
             childA.style.backgroundImage = 'url("' + thumbImage + '")';
+            console.log('backgroundImage set');
 
             // assign closest aspect
             for ( var j = 0; j < aspectRatios.length; j++ ) {
@@ -171,6 +225,7 @@ function wzlMosaic(el) {
             }
             thisTile.setAttribute('data-snapped-aspect', closestRatio);
             thisTile.setAttribute('data-placed', 0);
+            console.log('aspect ratio set: ' + closestRatio);
 
             // assign cell dimensions and denote resizeability
             if (closestRatio == 0.33) {
@@ -207,11 +262,13 @@ function wzlMosaic(el) {
                 thisTile.setAttribute('data-resizeable2', 0);
                 thisTile.setAttribute('data-resizeable1', 0);
             }
+            console.log('cell data applied to tile');
         }
     }
 
     // the fun part
     function mosaicLayout(isAppend) {
+        console.log('Fitting tiles ...');
         var curTile = 0,
             isLookahead = false,
             posX = 0,
@@ -230,6 +287,7 @@ function wzlMosaic(el) {
 
         // function to find empty spaces to the right of a given point
         function findSpaceFromPoint(posX, posY) {
+            console.log('Finding space from ' + posX + ', ' + posY + ' ...');
             if (posX >= columnCount) { return [false, posX]; }
             var availableSpace = 0;
 
@@ -245,11 +303,13 @@ function wzlMosaic(el) {
                 if ( grid[posY][posX] == 1 ) { break; }
             }
 
+            console.log('space available: ' + availableSpace);
             return [availableSpace, shiftedX];
         }
 
         // function to place a tile into the grid
         function placeTile(t) {
+            console.log('Placing tile into the grid ...');
             tiles[t].setAttribute('data-tilePosX', posX);
             tiles[t].setAttribute('data-tilePosY', posY);
             tiles[t].setAttribute('data-placed', 1);
@@ -267,6 +327,7 @@ function wzlMosaic(el) {
 
         // walk through and fit each tile
         while (curTile < tileCount) {
+            console.log('fitting a tile ...');
 
             if (isLookahead) {
                 isLookahead = false;
@@ -289,6 +350,7 @@ function wzlMosaic(el) {
                 tileSizeY = parseInt(thisTile.getAttribute('data-sizeY'));
 
             // get space available right now
+            console.log('tile dimensions: ' + tileSizeX + ', ' + tileSizeY);
             var spaceAvail = findSpaceFromPoint(posX, posY);
 
             // if reached end of row without finding space
@@ -302,24 +364,24 @@ function wzlMosaic(el) {
 
             // can this fit?
             if ( tileSizeX <= spaceAvail[0] ) {
-                // alert('found space');
+                console.log('found space');
                 placeTile(curTile);
             } else if ( spaceAvail[0] >= 2 && thisTile.getAttribute('data-resizeable2') == 1 ) {
-                // alert('shrunk to 2');
+                console.log('shrank tile to 2 units wide');
                 tileSizeX = parseInt(thisTile.getAttribute('data-size2X'));
                 tileSizeY = parseInt(thisTile.getAttribute('data-size2Y'));
                 thisTile.setAttribute('data-sizeX', tileSizeX);
                 thisTile.setAttribute('data-sizeY', tileSizeY);
                 placeTile(curTile);
             } else if ( spaceAvail[0] >= 1 && thisTile.getAttribute('data-resizeable1') == 1 ) {
-                // alert('shrunk to 1');
+                console.log('shrank tile to 1 unit wide');
                 tileSizeX = parseInt(thisTile.getAttribute('data-size1X'));
                 tileSizeY = parseInt(thisTile.getAttribute('data-size1Y'));
                 thisTile.setAttribute('data-sizeX', tileSizeX);
                 thisTile.setAttribute('data-sizeY', tileSizeY);
                 placeTile(curTile);
             } else {
-                // alert("didn't find space");
+                console.log("didn't find space");
                 var b = 0;
                 var foundTile = false;
                 for ( b = curTile + 1; b < tileCount; b++ ) {
@@ -329,7 +391,7 @@ function wzlMosaic(el) {
                     }
                 }
                 if (foundTile) {
-                    // alert('looking ahead');
+                    console.log('looking ahead ... ');
                     foundTile = false;
                     isLookahead = true;
                     curTile = b;
@@ -337,11 +399,11 @@ function wzlMosaic(el) {
                 }
                 // if didn't find a suitable tile, do what we can with remaining space
                 if (posX < columnCount) {
-                    // alert('advancing x position, trying again');
+                    console.log('advancing x position, trying again');
                     posX++;
                     continue;
                 } else {
-                    // alert('making new row, trying again');
+                    console.log('making new row, trying again');
                     posX = 0;
                     posY++;
                     newGridRow(posY + 2);
@@ -353,6 +415,7 @@ function wzlMosaic(el) {
 
     // place each tile into css layout
     function drawTiles(offset) {
+        console.log('placing tiles into css layout ...');
         if (!offset) { offset = 0; }
 
         for ( var i = offset; i < tileCount; i++ ) {
@@ -362,11 +425,13 @@ function wzlMosaic(el) {
                 thisHeight = parseInt(thisTile.getAttribute('data-sizeY')) * blockDim,
                 thisPosX = parseInt(thisTile.getAttribute('data-tilePosX')) * blockDim,
                 thisPosY = parseInt(thisTile.getAttribute('data-tilePosY')) * blockDim;
+            console.log(thisTile);
 
             thisTile.style.width = thisWidth + 'px';
             thisTile.style.height = thisHeight + 'px';
             thisTile.style.left = thisPosX + 'px';
             thisTile.style.top = thisPosY + 'px';
+            console.log('applied style attributes');
 
             // position info tooltips
             thisInfo.style.width = (blockDim * 3) + 'px';
@@ -381,11 +446,13 @@ function wzlMosaic(el) {
             } else {
                 thisInfo.style.marginLeft = (-blockDim * 3/2) + 'px';
             }
+            console.log('positioned info tooltip');
 
             globalOffset++;
         }
 
         // trim grid
+        console.log('trimming excess grid rows ...');
         var trimLength = 0;
         for (var n = grid.length - 1; n >= 0; n--) {
             if (grid[n].indexOf(1) <= -1) {
@@ -394,17 +461,18 @@ function wzlMosaic(el) {
                 break;
             }
         }
+        console.log('grid trimmed');
         // and set height of container
         el.style.height = ((grid.length - trimLength) * blockDim) + 'px';
+        console.log('container height set');
 
-        // log
-        // var logEl = document.getElementById('log');
         // for (var k = 0; k < grid.length; k++) {
-        //     logEl.innerHTML = logEl.innerHTML + grid[k] + '<br />';
+            // console.log(grid[k]);
         // }
     }
 
     // light the fuse
+    console.log('starting initial run ...');
     setupContainer();
     setupTiles();
     mosaicLayout();
@@ -412,6 +480,7 @@ function wzlMosaic(el) {
 
     // recalculate on resize
     window.addEventListener('resize:end', function(event) {
+        console.log('resize event detected, recalculating mosaic ...');
         setupContainer();
         setupTiles();
         mosaicLayout();
@@ -428,16 +497,18 @@ function wzlMosaic(el) {
             }, 940);
         }
     });
+    console.log('added mouseenter handler');
     el.addEventListener('mouseleave', function() {
         hoverDebounce = false;
         clearTimeout(hoverDelay);
         el.classList.remove('hovered');
     });
+    console.log('added mouseleave handler');
 }
 
 
 // generic toggles
-// <el class="toggle" data-toggle-target="[next|parentnext|css-selector]" />
+// <el class="toggle" data-toggle-target="[next|parentnext|css selector]" />
 function wzlToggles(el) {
     var toggleTarget = el.getAttribute('data-toggle-target'),
         targetObject = null;
@@ -459,7 +530,52 @@ function wzlToggles(el) {
     }
 
     el.classList.toggle('active');
+    // window.dispatchEvent(new Event('resize'));
 }
+
+
+// shared height elements
+// <el class="shared-height" data-height-group="[string]">
+(function() {
+    var heightEls = document.querySelectorAll('.shared-height'),
+        heightGroups = [], uniqueHeightGroups = [];
+
+    // get height groups together
+    for ( var i = 0; i < heightEls.length; i++ ) {
+        heightGroups.push(heightEls[i].getAttribute('data-height-group'));
+    }
+    uniqueHeightGroups = heightGroups.filter(function(val, pos) {
+        return heightGroups.indexOf(val) == pos;
+    })
+
+    function evenHeights() {
+        // blank slate
+        for ( var i = 0; i < heightEls.length; i++ ) {
+            heightEls[i].style.minHeight = 'auto';
+        }
+        // iterate over groups
+        for ( var i = 0; i < uniqueHeightGroups.length; i++ ) {
+            var thisHeight, lastHeight = 1, maxHeight = 2,
+                groupEls = document.querySelectorAll('.shared-height[data-height-group="' + uniqueHeightGroups[i] + '"]');
+            for ( var j = 0; j < groupEls.length; j++ ) {
+                var el = groupEls[j];
+                thisHeight = parseInt(el.clientHeight);
+                if ( thisHeight > lastHeight ) {
+                    maxHeight = thisHeight;
+                }
+                lastHeight = thisHeight;
+            }
+            for ( var j = 0; j < groupEls.length; j++ ) {
+                var el = groupEls[j];
+                el.style.minHeight = maxHeight + 'px';
+            }
+        }
+    }
+
+    window.addEventListener('load', evenHeights);
+    window.addEventListener('resize', evenHeights);
+
+})();
 
 
 // active form labels
@@ -474,6 +590,7 @@ function wzlLabels(el) {
         }
     }
     checkFilled();
+    window.addEventListener('load', checkFilled);
 
     input.addEventListener('focus', function() {
         el.classList.add('active');
@@ -484,80 +601,23 @@ function wzlLabels(el) {
     });
 }
 
-// debounced window resize event
-(function() {
-    if (!window.addEventListener || !document.createEvent) {
-        return;
-    }
-
-    var event = document.createEvent('Event');
-    event.initEvent('resize:end', false, false);
-
-    function dispatchResizeEndEvent() {
-        window.dispatchEvent(event);
-    }
-
-    var initialOrientation = window.orientation;
-    var resizeDebounceTimeout = null;
-
-    function debounce() {
-        var currentOrientation = window.orientation;
-
-        if (currentOrientation !== initialOrientation) {
-            dispatchResizeEndEvent();
-            initialOrientation = currentOrientation;
-        } else {
-            clearTimeout(resizeDebounceTimeout);
-            resizeDebounceTimeout = setTimeout(dispatchResizeEndEvent, 100);
-        }
-    }
-
-    window.addEventListener('resize', debounce, false);
-})();
-
-forEach.call(document.getElementsByClassName('mosaic'), wzlMosaic);
-forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
-
-forEach.call(document.getElementsByClassName('toggle'), function(el) {
-    el.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        wzlToggles(el);
-    });
-});
-
-
-// slightly refine header search hover
-(function() {
-    var el = document.querySelector('.header-search-input');
-    el.addEventListener('focus', function() {
-        el.parentNode.classList.add('active');
-    });
-    el.addEventListener('blur', function() {
-        el.parentNode.classList.remove('active');
-    });
-})();
-
 
 // art zoom
-(function() {
-    var el = document.querySelector('.sub-zoom-toggle');
-
-    if ( el ) {
-        el.addEventListener('click', function(ev) {
-            ev.preventDefault();
-            el.classList.toggle('active');
-            document.querySelector('.page-header').classList.toggle('hide');
-            document.querySelector('.page-footer').classList.toggle('hide');
-            var artSiblings = document.getElementById('main').children;
-            for ( var i = 0; i < artSiblings.length; i++ ) {
-                if ( !artSiblings[i].classList.contains('sub-container') ) {
-                    artSiblings[i].classList.toggle('hide');
-                }
+forEach.call(document.getElementsByClassName('sub-zoom-toggle'), function(el) {
+    el.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        el.classList.toggle('active');
+        document.querySelector('.page-header').classList.toggle('hide');
+        document.querySelector('.page-footer').classList.toggle('hide');
+        var artSiblings = document.getElementById('main').children;
+        for ( var i = 0; i < artSiblings.length; i++ ) {
+            if ( !artSiblings[i].classList.contains('sub-container') ) {
+                artSiblings[i].classList.toggle('hide');
             }
-            document.body.classList.toggle('zoomed');
-        });
-    }
-})();
+        }
+        document.body.classList.toggle('zoomed');
+    });
+});
 
 
 // modal escape listener
@@ -575,50 +635,157 @@ forEach.call(document.getElementsByClassName('toggle'), function(el) {
 })();
 
 
-// checkbox/radio classes
-(function() {
-    var inputs = document.querySelectorAll('input[type=checkbox], input[type=radio]');
-    forEach.call(inputs, function(el) {
-        var parentLabel = getParentsByTagName(el, 'label')[0],
-            isParent = el.classList.contains('checkbox-parent'),
-            isChild = el.classList.contains('checkbox-child');
+// resizing textareas
+function textareas(parentEl) {
+    var el = parentEl.getElementsByTagName('textarea')[0],
+        ref = parentEl.getElementsByClassName('resize-ref')[0],
+        style = window.getComputedStyle(el, null),
+        container = getParentsByClassName(el, 'comment-new-box')[0];
 
-        if ( el.checked ) {
-            parentLabel.classList.add('checked');
-        }
+    function doCopy() {
+        // copies textarea value to reference element
+        // appends additional <br /> so IE respects trailing whitespace
+        ref.innerHTML = el.value.replace(/\n/g, '<br />') + ' <br /> ';
+    }
+    doCopy();
 
-        el.addEventListener('change', function() {
-            if ( isParent || isChild ) {
-                // dependent checkboxes
-                var groupEl = getParentsByClassName(el, 'checkbox-group')[0],
-                    parentBox = groupEl.getElementsByClassName('checkbox-parent')[0],
-                    childBoxes = groupEl.getElementsByClassName('checkbox-child');
-                if ( isParent ) {
-                    forEach.call(childBoxes, function(childEl) {
-                        childEl.checked = el.checked;
-                    });
-                } else if ( !el.checked ) {
-                    parentBox.checked = false;
-                }
+    el.addEventListener('input', doCopy, false);
 
-                var allBoxes = [parentBox];
-                Array.prototype.push.apply(allBoxes, childBoxes);
-
-                allBoxes.forEach(function(thisBox) {
-                    var thisLabel = getParentsByTagName(thisBox, 'label')[0];
-
-                    thisLabel.classList.toggle('checked', thisBox.checked);
-                });
-            } else {
-                // normal single behavior
-                parentLabel.classList.toggle('checked');
+    // adds appropriate class to container element for focus visualization
+    if (container) {
+        el.addEventListener('focus', function() {
+            container.classList.add('highlight');
+        });
+        el.addEventListener('blur', function() {
+            if (el.value.length == 0) {
+                container.classList.remove('highlight');
             }
         });
+    }
+}
+forEach.call(document.getElementsByClassName('resizing-textarea'), function(el) {
+    textareas(el);
+});
+
+
+// checkbox/radio events
+function areAllChecked(els) {  // returns true if all elements in given set are checked
+    for (var i = els.length >>> 0; i--;) {
+        if (els[i].checked === false) {
+            return false;
+        }
+    }
+    return true;
+}
+function getCheckboxes(context) {  // gets valid checkboxes in given context
+    var checkboxes = context.querySelectorAll('input[type="checkbox"]'),
+        result = [];
+    for (var i = checkboxes.length >>> 0; i--;) {
+        if (!checkboxes[i].classList.contains('checkbox-parent')) {
+            result.push(checkboxes[i]);
+        }
+    }
+    return result;
+}
+function updateCounts() {  // updates count elements with number of checked boxes in context
+    forEach.call(document.getElementsByClassName('checked-count'), function(el) {
+        var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context'))),
+            count = 0;
+        for (var i = checkboxes.length >>> 0; i--;) {
+            if (checkboxes[i].checked) {
+                count++;
+            }
+        }
+        el.innerHTML = count + ' of ' + checkboxes.length;
     });
-})();
+}
+updateCounts();
+function triggerChange(el) {  // trigger events that fire on checkbox change
+    var event = document.createEvent('HTMLEvents');
+    event.initEvent('change', true, false);
+    el.dispatchEvent(event);
+}
+function changeCheckboxStates(context, action) {  // change all checkboxes in context with given action
+    var checkboxes = getCheckboxes(context);
+    forEach.call(checkboxes, function(checkbox) {
+        if (action === 'on' && !checkbox.checked) {
+            checkbox.checked = true;
+            triggerChange(checkbox);
+        } else if (action === 'off' && checkbox.checked) {
+            checkbox.checked = false;
+            triggerChange(checkbox);
+        } else if (action === 'invert') {
+            checkbox.checked = !checkbox.checked;
+            triggerChange(checkbox);
+        }
+    });
+    updateCounts();
+}
+function changeParentLabel(el) {
+    var thisLabel = getParentsByTagName(el, 'label')[0];
+    if (el.checked) {
+        thisLabel.classList.add('checked');
+    } else {
+        thisLabel.classList.remove('checked');
+    }
+}
+// handle individual checkbox changes
+forEach.call(document.querySelectorAll('input[type=checkbox], input[type=radio]'), function(el) {
+    var isParent = el.classList.contains('checkbox-parent'),
+        isChild = el.classList.contains('checkbox-child');
+    
+    changeParentLabel(el);
+    
+    el.addEventListener('change', function() {
+        // hierarchical checkboxes
+        if ( isParent || isChild ) {
+            var groupEl = getParentsByClassName(el, 'checkbox-group')[0],
+                parentBox = groupEl.getElementsByClassName('checkbox-parent')[0],
+                childBoxes = groupEl.getElementsByClassName('checkbox-child');
+
+            if ( isParent ) {
+                forEach.call(childBoxes, function(childEl) {
+                    childEl.checked = el.checked;
+                });
+            } else if ( !el.checked ) {
+                parentBox.checked = false;
+            } else if (areAllChecked(childBoxes)) {
+                parentBox.checked = true;
+            }
+
+            forEach.call([parentBox].concat(toArray(childBoxes)), function(thisBox) {
+                changeParentLabel(thisBox);
+            });
+
+        // standalone checkboxes
+        } else {
+            changeParentLabel(el);
+        }
+        updateCounts();
+    });
+});
+// handle check/uncheck/invert all
+forEach.call(document.querySelectorAll('.check-all, .uncheck-all, .invert-all'), function(el) {    
+    var context = document.querySelector(el.getAttribute('data-context'));
+    if (context) {
+        if (el.classList.contains('check-all')) {
+            el.addEventListener('click', function() {
+                changeCheckboxStates(context, 'on');
+            });
+        } else if (el.classList.contains('uncheck-all')) {
+            el.addEventListener('click', function() {
+                changeCheckboxStates(context, 'off');
+            });
+        } else if (el.classList.contains('invert-all')) {
+            el.addEventListener('click', function() {
+                changeCheckboxStates(context, 'invert');
+            });
+        }
+    }
+});
 
 
-// sticky notif utility scroll
+// sticky notification utilities
 function getTopOffset(el) {
     var y = 0;
     while ( el ) {
@@ -628,23 +795,24 @@ function getTopOffset(el) {
     return y;
 }
 (function() {
-    var el = document.querySelector('.sticky-top'),
-        container = document.querySelector('.col-main'),
-        elPos = getTopOffset(el),
-        elHeight, scrollPos, footerPos;
-
+    var el = document.getElementsByClassName('sticky')[0];
     if (!el) {
         return;
     }
+    var mainCol = document.getElementsByClassName('col-layout-main')[0],
+        elPos, elHeight, scrollPos, footerPos;
 
     function setup() {
+        elPos = getTopOffset(el);
         elHeight = el.offsetHeight;
-        container.style.minHeight = elHeight + 'px';
+        mainCol.style.minHeight = elHeight + 'px';
         footerPos = getTopOffset(document.getElementsByClassName('page-footer')[0]);
     }
 
     window.addEventListener('load', setup);
     window.addEventListener('resize:end', setup, false);
+    // if there's a better way to do this, let me know
+    window.setInterval(setup, 1000);
 
     document.addEventListener('scroll', function() {
         scrollPos = window.pageYOffset;
@@ -660,6 +828,38 @@ function getTopOffset(el) {
         }
     });
 })();
+
+
+// show password fields
+forEach.call(document.getElementsByClassName('show-password'), function(el) {
+    var targetEls = document.querySelectorAll(el.getAttribute('data-target')),
+        isActive;
+    el.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        el.classList.toggle('active');
+        isActive = el.classList.contains('active');
+        for (var i = targetEls.length >>> 0; i--;) {
+            if (isActive) {
+                targetEls[i].setAttribute('type', 'text');
+            } else {
+                targetEls[i].setAttribute('type', 'password');
+            }
+        }
+    });
+});
+
+
+
+
+forEach.call(document.getElementsByClassName('mosaic'), wzlMosaic);
+forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
+
+forEach.call(document.getElementsByClassName('toggle'), function(el) {
+    el.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        wzlToggles(el);
+    });
+});
 
 document.documentElement.classList.remove('no-js');
 document.documentElement.classList.add('js');
