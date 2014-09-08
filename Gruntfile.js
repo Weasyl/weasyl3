@@ -35,7 +35,7 @@ module.exports = function (grunt) {
                 dest: 'weasyl/static/images',
             },
             js: {
-                src: 'assets/js/site.js',
+                src: ['assets/js/modernizr.js', 'assets/js/scripts.js'],
                 dest: 'weasyl/static/js',
             },
             css: {
