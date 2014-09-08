@@ -10,35 +10,38 @@
   <p class="home-guest-actions"><a href="#" class="action small">Sign in</a> <span class="or type-secondary">or</span> <a href="#" class="action small">create a new account</a></p>
 </div><!-- .home-guest-intro -->
 {% else %}
-<div class="home-views group">
-  <ul class="home-tabs action-set tabs">
+<button class="toggle home-views-toggle max-m" data-toggle-target="next" aria-hidden="true">
+  <span class="action text-grad">Viewing: Everything</span>
+  <span class="icon icon-mosaic"></span>
+</button>
+
+<div class="home-views content-block-top toggle-target-max-m group">
+  <ul class="home-tabs action-list content-block">
     <li><a href="#" class="action active disclose below">Everything</a></li>
     <li><a href="#" class="action">Visual</a></li>
     <li><a href="#" class="action">Literature</a></li>
     <li><a href="#" class="action">Multimedia</a></li>
     <li><a href="#" class="action">Random</a></li>
-    <li><a href="#relevantSettingsPage" class="icon icon-gear">Tabs settings</a></li>
   </ul>
-  <form class="view-options" method="post">
-    <label class="view-options-label">
-      <input type="checkbox" name="critique" />
-      <span class="icon icon-view-crit">Show only submissions that have requested critique</span>
+  <form method="post" class="view-options">
+    <label class="switch">
+      <input type="checkbox" name="crit" />
+      <span class="icon icon-crit">Filter by critique only</span>
     </label>
-    <label class="view-options-label">
+    <label class="switch">
       <input type="checkbox" name="filter-bypass" />
-      <span class="icon icon-view-bypass">Temporarily bypass my tag filters</span>
+      <span class="icon icon-override">Override my tag filters</span>
     </label>
-    <fieldset class="view-options-group">
-      <label class="view-options-label">
+    <fieldset>
+      <label class="switch">
         <input type="radio" name="view-mode" value="mosaic" checked="checked" />
-        <span class="icon icon-view-mosaic">Mosaic view</span>
+        <span class="icon icon-mosaic">Mosaic view</span>
       </label>
-      <label class="view-options-label">
+      <label class="switch">
         <input type="radio" name="view-mode" value="grid" />
-        <span class="icon icon-view-grid">Grid view</span>
+        <span class="icon icon-grid">Grid view</span>
       </label>
     </fieldset>
-    <input type="submit" value="Go" />
   </form>
 </div><!-- .home-views -->
 {% endif %}
@@ -52,12 +55,12 @@
 </div>
 
 {% if streams %}
-  <div class="content-2 home-streaming content-group">
+  <div class="home-streams content-2">
     <!-- aligns an inline block .title.primary for better webkit gradient coverage -->
-    <div class="title-wrap">
-      <h3 class="title primary">Streaming Now</h3>
-    </div>
-    <div class="grid">
+    <header class="primary-title-wrap">
+      <h2 class="title primary"><a href="#" class="text-grad">Now Streaming</a></h2>
+    </header>
+    <div class="grid expanded">
       {% for stream in streams[:3] %}
         <div class="grid-item grid-1-3-m">
           {{ f.user_avatar(stream.owner) }}
@@ -72,10 +75,16 @@
     </div><!-- .grid -->
 
     {% if streams | length > 3 %}
-      <div class="center-action"><a href="streams.htm" class="action disclose">{{ streams | length }} total</a></div>
+      <div class="text-align-center content-block"><a href="#" class="action disclose">{{ streams | length }} total</a></div>
     {% endif %}
   </div><!-- .home-streaming -->
 {% endif %}
+
+<div class="home-adverts padding">
+  <h6 class="advert-title content-block">Advertisement</h6>
+  <a href="#" class="advert"><img src="images/ad-300x100.png" alt="" class="block" /></a>
+  <a href="#" class="advert"><img src="images/ad-300x100.png" alt="" class="block" /></a>
+</div><!-- .home-ads -->
 
 <article class="home-update content">
   <header class="primary-title-wrap">
