@@ -1,211 +1,341 @@
 {% extends "users/layout.jinja2" %}
 
 {% block user_page_title %}profile{% endblock %}
-{% block user_header %}
-<p class="user-title type-alt">{{ user.profile.full_name }}</p>
-<ul class="action-set user-actions">
-  <li><a href="{{ request.path_for(user, 'follow') }}" class="action active"><span class="icon icon-action-star"></span> Following</a></li>
-  <li><a href="{{ request.path_for(user, 'friend') }}" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
-  <li><a href="{{ request.path_for(user, 'message') }}" class="action"><span class="icon icon-action-note"></span> Message</a></li>
-  <li><a href="{{ request.path_for(user, 'ignore') }}" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
-</ul>
-{% endblock %}
 
 {% block user_body %}
+  <div class="user-latest">
+    <h3 class="title secondary layout-block toggle title-toggle-max-m disclose active" data-toggle-target="next">Latest</h3>
 
-<div class="user-latest">
-  <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Latest</h3>
-  <div class="grid thumbs-grid full toggle-target-max-m">
-    {% for sub in submissions %}{{ f.submission_thumb(sub, with_caption=False) }}{% endfor %}
-    <div><a href="{{ request.path_for(user, 'works') }}" class="action disclose">Full works</a></div>
-  </div><!-- .thumbs-grid -->
-</div><!-- .user-latest -->
+    <div class="grid thumbs-grid info full layout-block toggle-target-max-m active">
+      {% for sub in submissions %}{{ f.submission_thumb(sub, with_caption=False) }}{% endfor %}
+      <div><a href="{{ request.path_for(user, 'works') }}" class="action disclose">Full works</a></div>
+    </div><!-- .thumbs-grid -->
+  </div><!-- .user-latest -->
 
-<div class="user-about">
-  <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Profile</h3>
-  <div class="formatted toggle-target-max-m">
-    <p>
-      <strong class="icon icon-location">Location:</strong> {#{ user.profile.location }#}<br />
-      <strong class="icon icon-stopwatch"></strong> Member since {{ user.profile.unixtime | relative_date }}
-    </p>
-    <p>
-      <span class="dot bg-positive"></span> Commissions: <strong class="color-positive">Open</strong><!-- , <a href="" class="action small disclose">$10&ndash;$400</a> --><br />
-      <span class="dot bg-neutral"></span> Trades: <strong class="color-neutral">Sometimes</strong><br />
-      <span class="dot bg-negative"></span> Requests: <strong class="color-negative">Closed</strong>
-    </p>
+  <div class="user-about">
+    <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Profile</h3>
+    <div class="formatted toggle-target-max-m layout-block">
+      <ul class="user-data activity-list">
+        <li><span class="icon icon-location">Location:</span> {{ user.info.country }} </li>
+        <li><span class="icon icon-time"></span> Member for <strong>FIXME</strong> {{ user.profile.unixtime | relative_date }}</li>
+      </ul>
+      <ul class="user-status activity-list">
+        <li><span class="dot bg-positive"></span> Commissions: <strong class="color-positive">Open</strong></li>
+        <li><span class="dot bg-neutral"></span> Trades: <strong class="color-neutral">Sometimes</strong></li>
+        <li><span class="dot bg-negative"></span> Requests: <strong class="color-negative">Closed</strong></li>
+      </ul>
 
-    {{ user.profile.profile_text | markdown }}
-  </div>
-</div><!-- .user-about -->
+      {{ user.profile.profile_text | markdown }}
+    </div>
+  </div><!-- .user-about -->
 
-<div class="user-highlight content-group">
-  {% if featured %}
-  <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Featured work</h3>
-  <div class="toggle-target-max-m">
-    <h3 class="title secondary"><a href="{{ request.path_for(featured) }}">{{ featured.title }}</a></h3>
-    <h4 class="title-complement">Featured work, shared {{ featured.unixtime | relative_date }}</h4>
-    <div class="user-featured">
-      <a href="submission.htm" class="thumb-container"><img class="thumb" src="{{ featured.submission_media['display_url'] }}" alt="" /></a>
-    </div><!-- .user-featured -->
-  </div>
-  {% endif %}
+  <div class="user-featured">
+    {% if featured %}
+      <h3 class="title secondary layout-block toggle tile-toggle-max-m max-m disclose" data-toggle-target="next">Featured work</h3>
 
-  <h3 class="title secondary toggle disclose title-toggle max-m" data-toggle-target="next">Latest Journal</h3>
-  <div class="toggle-target-max-m">
-    <h3 class="title secondary"><a href="#">Journal Wow Neat</a></h3>
-    <h4 class="title-complement">Latest journal, written 9 days ago</h4>
-    <div class="formatted user-journal cut">
-      <!-- .cut if this is not the full text -->
-      <p>Photo booth tattooed gluten-free Wes Anderson, typewriter paleo pug trust fund street art wolf stumptown. Cosby sweater Tonx Terry Richardson, food truck DIY bitters aesthetic stumptown sartorial master cleanse Blue Bottle hella Echo Park vegan. Blue Bottle fashion axe sriracha banjo, umami salvia blog. Cornhole pork belly tattooed 90's, retro single-origin coffee mixtape irony fingerstache chillwave Portland selfies freegan salvia.</p>
-      <p>Stumptown craft beer kogi, banjo raw denim authentic cornhole Tumblr seitan irony hella cred direct trade XOXO. Actually Wes Anderson twee, biodiesel next level Shoreditch tote bag mlkshk four loko single-origin coffee selvage PBR&amp;B. Chia McSweeney's Echo Park, wolf bespoke ugh squid cornhole gastropub four loko fashion axe swag Portland Etsy. Pop-up try-hard tofu seitan, disrupt readymade mixtape tote bag vegan High Life wayfarers next level.</p>
-      <!-- cut off after a reasonable amount of text? allow user to define cut a la livejournal? -->
-    </div><!-- .user-journal -->
-    <div class="user-more"><a href="#" class="action disclose">Read more (4 comments)</a></div>
-  </div>
-</div><!-- .user-highlight -->
-
-<div class="user-activity content-group">
-  <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Activity</h3>
-  <ol class="activity-list toggle-target-max-m">
-    <li>
-      <p><span class="icon icon-comment">Comment: </span> Left <a href="user.htm" class="username">Boomerang26</a> a shout <time datetime="[the time]">2 hours ago</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-journal">Journal: </span> New journal entry: <a href="#">Journal Wow Neat</a> <time datetime="[the time]">5 hours ago</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-comment">Comment: </span> Commented on <a href="submission.htm">A Picture of a Mountain or Something</a> by <a href="user.htm" class="username">CatCatCatCatCatCatCatCatCatCat</a> <time datetime="[the time]">Yesterday</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-stat">Stat: </span> Began following <a class="username" href="user.htm">TwinkleToes</a> <time datetime="[the time]">Yesterday</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-star">Favorite: </span> Favorited <a href="submission.htm">This Is a Kitty</a> by <a class="username" href="user.htm">TwinkleToes</a> <time datetime="[the time]">Yesterday</time></p>
-      <a href="submission.htm" class="thumb-container">
-        <img class="thumb" src="//lorempixel.com/248/232" alt="" />
-        <div class="rating moderate">Rated moderate</div>
-      </a>
-    </li>
-    <li>
-      <p><span class="icon icon-art">Art: </span> New artwork: <a href="#">This Is the Title of the Thing</a> <time datetime="[the time]">2 days ago</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-art">Art: </span> New artwork: <a href="#">A Really Long Title Sit Dolor Consectetur et Cetera and So Forth</a> <time datetime="[the time]">A week ago</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-star">Favorite: </span> Favorited <a href="submission.htm">Wow</a> by <a class="username" href="user.htm">Wow</a> <time datetime="[the time]">A week ago</time></p>
-      <a href="submission.htm" class="thumb-container">
-        <img class="thumb" src="//lorempixel.com/300/150" alt="" />
-      </a>
-    </li>
-    <li>
-      <p><span class="icon icon-heart"></span> Usernameguy and <a href="user.htm" class="username">Boomerang26</a> are now friends <time datetime="[the time]">12 December 2013</time></p>
-    </li>
-    <li>
-      <p><span class="icon icon-journal">Journal: </span> New journal entry: <a href="#">Don't Send Me Friend Requests</a> <time datetime="[the time]">11 December 2013</time></p>
-    </li>
-    <!-- option to load more? -->
-  </ol>
-
-  <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Connections</h3>
-  <div class="user-connections toggle-target-max-m">
-    <h4><a href="#" class="action disclose">Following 76</a></h4>
-    <ul class="grid compact">
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-    </ul>
-    <h4><a href="#" class="action disclose">Followed by 140</a></h4>
-    <ul class="grid compact">
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-    </ul>
-    <h4><a href="#" class="action disclose">5 friends</a></h4>
-    <ul class="grid compact">
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-      <li class="grid-item grid-1-5"><a href="user.htm" class="avatar"><img src="//lorempixel.com/200/200" alt="" /></a></li>
-    </ul>
-  </div>
-</div><!-- .user-activity -->
-
-
-<div class="user-comments">
-  <h4 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Shouts</h4>
-  <div class="toggle-target-max-m">
-    {% if request.current_user %}
-    <form action="{{ request.path_for(user, 'shout') }}" class="comment" method="post">
-      {{ f.form_errors(_comment_errors) }}
-      {{ _comment_form['csrf_token'].serialize() | safe }}
-      {{ f.user_avatar(request.current_user) }}
-      <div class="comment-box hypothetical">
-        <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
-        {{ _comment_form['comment'].serialize() | safe }}
-        <ul class="comment-actions action-set">
-          <li><a href="#" class="action small">Formatting help</a></li>
-        </ul>
-        <button type="submit" name="save" class="comment-submit action disclose">Save</button>
-      </div><!-- .comment-box -->
-    </form><!-- .comment -->
+      <div class="toggle-target-max-m">
+        <h3 class="title secondary"><a href="{{ request.path_for(featured) }}">{{ featured.title }}</a></h3>
+        <h4 class="title-complement">Featured work, shared {{ featured.unixtime | relative_date }}</h4>
+        <div class="user-featured">
+          <a href="submission.htm" class="thumb-container"><img class="thumb" src="{{ featured.submission_media['display_url'] }}" alt="" /></a>
+        </div><!-- .user-featured -->
+      </div>
     {% endif %}
 
-    <ol class="comment-tree">
-      {% for shout in shouts %}{{ f.show_comment(shout, user.userid) }}{% endfor %}
+    <h3 class="title secondary layout-block toggle title-toggle-max-m max-m disclose" data-toggle-target="next">Latest journal</h3>
+
+    <div class="toggle-target-max-m">
+      <h3 class="title secondary"><a href="#">Journal Wow Neato</a></h3>
+      <h4 class="title-supplement content-block">Latest journal, written 9 days ago</h4>
+
+      <div class="formatted content-block fade-out">
+        <!-- .fade-out if this is not the full text -->
+        <p>Photo booth tattooed gluten-free Wes Anderson, typewriter paleo pug trust fund street art wolf stumptown. Cosby sweater Tonx Terry Richardson, food truck DIY bitters aesthetic stumptown sartorial master cleanse Blue Bottle hella Echo Park vegan. Blue Bottle fashion axe sriracha banjo, umami salvia blog. Cornhole pork belly tattooed 90's, retro single-origin coffee mixtape irony fingerstache chillwave Portland selfies freegan salvia.</p>
+        <p>Stumptown craft beer kogi, banjo raw denim authentic cornhole Tumblr seitan irony hella cred direct trade XOXO. Actually Wes Anderson twee, biodiesel next level Shoreditch tote bag mlkshk four loko single-origin coffee selvage PBR&amp;B. Chia McSweeney's Echo Park, wolf bespoke ugh squid cornhole gastropub four loko fashion axe swag Portland Etsy. Pop-up try-hard tofu seitan, disrupt readymade mixtape tote bag vegan High Life wayfarers next level.</p>
+        <!-- cut off after a reasonable amount of text? allow user to define cut à la livejournal? -->
+      </div><!-- .user-journal -->
+      <div class="user-more"><a href="#" class="action disclose layout-block">Continue reading (350 more words, 4 comments)</a></div>
+    </div>
+  </div><!-- .user-featured -->
+
+  <div class="user-activity">
+    <h3 class="title secondary layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">Recent activity</h3>
+
+    <ol class="activity-list layout-block toggle-target-max-m">
+      <li>
+        <span class="icon icon-comment"></span>
+        Left <a href="user.htm" class="username">Abrahammer Lincolnlog</a> a shout
+        <time datetime="blah" class="type-alt">2 hours ago</time>
+      </li>
+      <li>
+        <span class="icon icon-journal"></span>
+        New journal entry: <a href="#">Journal Title Wow Neat</a>
+        <time datetime="blah" class="type-alt">5 hours ago</time>
+      </li>
+      <li>
+        <span class="icon icon-user"></span>
+        Began following <a href="user.htm" class="username">Catcat</a>
+        <time datetime="blah" class="type-alt">yesterday</time>
+      </li>
+      <li>
+        <span class="icon icon-fave"></span>
+        Favorited <a href="#">It's a Kitty!</a> by <a href="user.htm" class="username">Usernameguy</a>
+        <time datetime="blah" class="type-alt">yesterday</time>
+      </li>
+      <li>
+        <span class="icon icon-art"></span>
+        New artwork: <a href="#">This Is the Title of the Thing</a>
+        <time datetime="blah" class="type-alt">2 days ago</time>
+      </li>
+      <li>
+        <span class="icon icon-art"></span>
+        New artwork: <a href="#">This Is a Really Long Title Dolor Sit Amet Consectetur Adipisicing Elit Sunt Assumenda Aspernatur Dolores</a>
+        <time datetime="blah" class="type-alt">3 days ago</time>
+      </li>
+      <li>
+        <span class="icon icon-fave"></span>
+        Favorited <a href="#">Wow</a> by <a href="user.htm" class="username">Wow</a>
+        <time datetime="blah" class="type-alt">3 days ago</time>
+      </li>
+      <li>
+        <span class="icon icon-user"></span>
+        <a href="user.htm" class="username">Usernameguy</a> and <a href="user.htm" class="username">Abloobloo</a> are now friends
+        <time datetime="blah" class="type-alt">12 April 2014</time>
+      </li>
+      <li>
+        <span class="icon icon-journal"></span>
+        New journal entry: <a href="#">Please Don't Send Me Friend Requests</a>
+        <time datetime="blah" class="type-alt">11 April 2014</time>
+      </li>
+      <li>
+        <span class="icon icon-art"></span>
+        New artwork: <a href="#">Angsty Introspective Title</a>
+        <time datetime="blah" class="type-alt">8 April 2014</time>
+      </li>
     </ol>
-    <div class="user-more"><a href="#" class="action disclose">See all 102 shouts</a></div>
-  </div>
-</div><!-- .user-comments -->
+  </div><!-- .user-activity -->
+
+  <div class="user-favorites">
+    <h3 class="title secondary layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">Favorite works</h3>
+    <div class="toggle-target-max-m layout-block">
+      <div class="mosaic content-block">
+        <figure class="item" data-init-aspect="2.7"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/300/111" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="2.02"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/220/109" alt="" />
+          <div class="rating mature">Rated mature</div>
+          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="1.04"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/202/194" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="0.38"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/109/289" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="2.41"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/248/103" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
+          <div class="rating explicit">Rated explicit</div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="1.66"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/176/106" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="0.88"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/236/267" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="0.52"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/148/287" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="0.74"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/182/245" alt="" />
+          <div class="type"><div class="ribbon"><span class="icon icon-type-lit">Literature</span></div></div>
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+        <figure class="item" data-init-aspect="1.27"><a href="submission.htm" class="thumb-container">
+          <img class="thumb" src="http://lorempixel.com/214/168" alt="" />
+          <figcaption class="info">
+            <h4 class="title text-grad">This Is the Title of the Thing</h4>
+            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
+          </figcaption>
+        </a></figure>
+      </div><!-- .mosaic -->
+      <h4 class="title tertiary content-block"><a href="#" class="disclose">24 favorites total</a></h4>
+    </div><!-- toggle target -->
+  </div><!-- .user-favorites -->
+
+  <div class="user-community">
+    <h3 class="title secondary layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">People</h3>
+    <div class="user-people toggle-target-max-m layout-block">
+      <ul class="user-avatar-list grid compressed">
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/199/199" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/198/198" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/197/197" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/196/196" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/195/195" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/194/194" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/193/193" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/192/192" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/191/191" alt="" /></a></li>
+      </ul>
+      <h4 class="title tertiary content-block"><a href="#" class="disclose">Following 40</a></h4>
+
+      <ul class="user-avatar-list grid compressed">
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/190/190" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/189/189" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/188/188" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/187/187" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/186/186" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/185/185" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/184/184" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/183/183" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/182/182" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/181/181" alt="" /></a></li>
+      </ul>
+      <h4 class="title tertiary content-block"><a href="#" class="disclose">109 following Usernameguy</a></h4>
+
+      <ul class="user-avatar-list grid compressed">
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/180/180" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/179/179" alt="" /></a></li>
+        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/178/178" alt="" /></a></li>
+      </ul>
+      <h4 class="title tertiary"><a href="#" class="disclose">3 friends</a></h4>
+    </div><!-- toggle target -->
+  </div><!-- .user-community -->
+
+  <div class="user-shouts">
+    <h4 class="title secondary layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">Shouts</h4>
+    <div class="toggle-target-max-m">
+      {% if request.current_user %}
+        <form action="{{ request.path_for(user, 'shout') }}" class="comment comment-new layout-block" method="post">
+          {{ f.form_errors(_comment_errors) }}
+          {{ _comment_form['csrf_token'].serialize() | safe }}
+          {{ f.user_avatar(request.current_user) }}
+          <div class="comment-new-container">
+            <div class="comment-new-box">
+              <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
+              <div class="resizing-textarea reading-width comment-new-entry">
+                <div class="resize-ref" aria-hidden="true"></div>
+                {# TODO: does this have the right placeholder? #}
+                {{ _comment_form['comment'].serialize() | safe }}
+              </div>
+            </div>
+            <ul class="comment-actions comment-new-actions action-list">
+              <li><button type="submit" class="comment-submit action small disclose">Post</button></li>
+              <li><a href="#" class="comment-help action small">Formatting help</a></li>
+            </ul>
+          </div><!-- .comment-box -->
+        </form><!-- .comment -->
+      {% endif %}
+
+      <ol class="comment-tree layout-block">
+        {% for shout in shouts %}
+          {{ f.show_comment(shout, user.userid) }}
+        {% endfor %}
+      </ol>
+      <h4 class="title tertiary content-block"><a href="#" class="disclose">91 shouts total</a></h4>
+    </div>
+  </div><!-- .user-shouts -->
 {% endblock %}
 
 {% block user_sidebar %}
-<ul class="stats-list grid user-stats">
-  <li class="grid-item"><strong class="stat">2041</strong> Profile Views</li>
-  <li class="grid-item"><strong class="stat">140</strong> Followers</li>
-  <li class="grid-item"><strong class="stat">76</strong> Following</li>
-  <li class="grid-item"><strong class="stat">102</strong> Favorites given</li>
-  <li class="grid-item"><strong class="stat">139</strong> Comments given</li>
-  <li class="grid-item"><strong class="stat">6</strong> Times you've visited</li>
-</ul>
-<ul class="user-social grid social-list">
-  <li class="grid-item"><a href="#" title="AIM"><strong class="icon icon-social icon-aim">AIM:</strong> aimusername</a></li>
-  <li class="grid-item"><a href="#" title="Bebo"><strong class="icon icon-social icon-bebo">Bebo:</strong> beboname</a></li>
-  <li class="grid-item"><a href="#" title="Behance"><strong class="icon icon-social icon-behance">Behance:</strong> behanceprofile</a></li>
-  <li class="grid-item"><a href="#" title="deviantArt"><strong class="icon icon-social icon-da">deviantArt:</strong> dausername</a></li>
-  <li class="grid-item"><a href="#" title="Dribbble"><strong class="icon icon-social icon-dribbble">Dribbble:</strong> dribbblepage</a></li>
-  <li class="grid-item"><a href="#" title="Email"><strong class="icon icon-social icon-email">Email:</strong> email@address.com</a></li>
-  <li class="grid-item"><a href="#" title="Facebook"><strong class="icon icon-social icon-fb">Facebook:</strong> facebookname</a></li>
-  <li class="grid-item"><a href="#" title="Flickr"><strong class="icon icon-social icon-flickr">Flickr:</strong> flickrpage</a></li>
-  <li class="grid-item"><a href="#" title="Fur Affinity"><strong class="icon icon-social icon-fa">Fur Affinity:</strong> fausername</a></li>
-  <li class="grid-item"><a href="#" title="Github"><strong class="icon icon-social icon-github">Github:</strong> githubusername</a></li>
-  <li class="grid-item"><a href="#" title="Google Plus"><strong class="icon icon-social icon-g">Google Plus:</strong> googlename</a></li>
-  <li class="grid-item"><a href="#" title="ICQ"><strong class="icon icon-social icon-icq">ICQ:</strong> 129831289318</a></li>
-  <li class="grid-item"><a href="#" title="Inkbunny"><strong class="icon icon-social icon-ib">InkBunny:</strong> ibusername</a></li>
-  <li class="grid-item"><a href="#" title="Last.fm"><strong class="icon icon-social icon-lastfm">Last.fm:</strong> lastfmusername</a></li>
-  <li class="grid-item"><a href="#" title="LinkedIn"><strong class="icon icon-social icon-li">LinkedIn:</strong> linkedinpage</a></li>
-  <li class="grid-item"><a href="#" title="LiveJournal"><strong class="icon icon-social icon-lj">LiveJournal:</strong> ljusername</a></li>
-  <li class="grid-item"><a href="#" title="MSN"><strong class="icon icon-social icon-msn">MSN:</strong> msnname</a></li>
-  <li class="grid-item"><a href="#" title="MySpace"><strong class="icon icon-social icon-myspace">MySpace:</strong> myspacepage</a></li>
-  <li class="grid-item"><a href="#" title="Path"><strong class="icon icon-social icon-path">Path:</strong> pathprofile</a></li>
-  <li class="grid-item"><a href="#" title="Pinterest"><strong class="icon icon-social icon-pin">Pinterest:</strong> pinterestpage</a></li>
-  <li class="grid-item"><a href="#" title="PSN"><strong class="icon icon-social icon-psn">PSN:</strong> psnusername</a></li>
-  <li class="grid-item"><a href="#" title="Reddit"><strong class="icon icon-social icon-reddit">Reddit:</strong> redditname</a></li>
-  <li class="grid-item"><a href="#" title="Skype"><strong class="icon icon-social icon-skype">Skype:</strong> skypename</a></li>
-  <li class="grid-item"><a href="#" title="Snapchat"><strong class="icon icon-social icon-snapchat">Snapchat:</strong> snapchat</a></li>
-  <li class="grid-item"><a href="#" title="SoFurry"><strong class="icon icon-social icon-sofurry">SoFurry:</strong> sfusername</a></li>
-  <li class="grid-item"><a href="#" title="Soundcloud"><strong class="icon icon-social icon-soundcloud">Soundcloud:</strong> soundcloudpage</a></li>
-  <li class="grid-item"><a href="#" title="Steam"><strong class="icon icon-social icon-steam">Steam:</strong> steamusername</a></li>
-  <li class="grid-item"><a href="#" title="Tumblr"><strong class="icon icon-social icon-tumblr">Tumblr:</strong> tumblrpage</a></li>
-  <li class="grid-item"><a href="#" title="Twitter"><strong class="icon icon-social icon-tw">Twitter:</strong> @twittername</a></li>
-  <li class="grid-item"><a href="#" title="Vimeo"><strong class="icon icon-social icon-vimeo">Vimeo:</strong> vimeoprofile</a></li>
-  <li class="grid-item"><a href="#" title="XBox Live"><strong class="icon icon-social icon-xbl">XBox Live:</strong> xblname</a></li>
-  <li class="grid-item"><a href="#" title="Yahoo"><strong class="icon icon-social icon-yahoo">Yahoo:</strong> yahoosomething</a></li>
-  <li class="grid-item"><a href="#" title="YouTube"><strong class="icon icon-social icon-yt">YouTube:</strong> youtubepage</a></li>
-</ul>
+  <div class="user-stats grid layout-block">
+    <dl class="stat grid-item">
+      <dt>Profile Views</dt>
+      <dd>2041</dd>
+    </dl>
+    <dl class="stat grid-item">
+      <dt>Your views</dt>
+      <dd>6</dd>
+    </dl>
+    <dl class="stat grid-item">
+      <dt>Followers</dt>
+      <dd>140</dd>
+    </dl>
+    <dl class="stat grid-item">
+      <dt>Following</dt>
+      <dd>76</dd>
+    </dl>
+    <dl class="stat grid-item">
+      <dt>Favorites given</dt>
+      <dd>102</dd>
+    </dl>
+    <dl class="stat grid-item">
+      <dt>Comments given</dt>
+      <dd>139</dd>
+    </dl>
+  </div><!-- .grid -->
+
+  <ul class="user-social grid">
+    <li class="grid-item"><a href="#" title="AIM"><strong class="icon icon-social icon-aim">AIM:</strong> aimusername</a></li>
+    <li class="grid-item"><a href="#" title="Bebo"><strong class="icon icon-social icon-bebo">Bebo:</strong> beboname</a></li>
+    <li class="grid-item"><a href="#" title="Behance"><strong class="icon icon-social icon-behance">Behance:</strong> behanceprofile</a></li>
+    <li class="grid-item"><a href="#" title="deviantArt"><strong class="icon icon-social icon-da">deviantArt:</strong> dausername</a></li>
+    <li class="grid-item"><a href="#" title="Dribbble"><strong class="icon icon-social icon-dribbble">Dribbble:</strong> dribbblepage</a></li>
+    <li class="grid-item"><a href="#" title="Email"><strong class="icon icon-social icon-email">Email:</strong> email@address.com</a></li>
+    <li class="grid-item"><a href="#" title="Facebook"><strong class="icon icon-social icon-fb">Facebook:</strong> facebookname</a></li>
+    <li class="grid-item"><a href="#" title="Flickr"><strong class="icon icon-social icon-flickr">Flickr:</strong> flickrpage</a></li>
+    <li class="grid-item"><a href="#" title="Fur Affinity"><strong class="icon icon-social icon-fa">Fur Affinity:</strong> fausername</a></li>
+    <li class="grid-item"><a href="#" title="GitHub"><strong class="icon icon-social icon-github">GitHub:</strong> githubusername</a></li>
+    <li class="grid-item"><a href="#" title="Google Plus"><strong class="icon icon-social icon-g">Google Plus:</strong> googlename</a></li>
+    <li class="grid-item"><a href="#" title="ICQ"><strong class="icon icon-social icon-icq">ICQ:</strong> 129831289318</a></li>
+    <li class="grid-item"><a href="#" title="Inkbunny"><strong class="icon icon-social icon-ib">Inkbunny:</strong> ibusername</a></li>
+    <li class="grid-item"><a href="#" title="Last.fm"><strong class="icon icon-social icon-lastfm">Last.fm:</strong> lastfmusername</a></li>
+    <li class="grid-item"><a href="#" title="LinkedIn"><strong class="icon icon-social icon-li">LinkedIn:</strong> linkedinpage</a></li>
+    <li class="grid-item"><a href="#" title="LiveJournal"><strong class="icon icon-social icon-lj">LiveJournal:</strong> ljusername</a></li>
+    <li class="grid-item"><a href="#" title="MSN"><strong class="icon icon-social icon-msn">MSN:</strong> msnname</a></li>
+    <li class="grid-item"><a href="#" title="MySpace"><strong class="icon icon-social icon-myspace">MySpace:</strong> myspacepage</a></li>
+    <li class="grid-item"><a href="#" title="Path"><strong class="icon icon-social icon-path">Path:</strong> pathprofile</a></li>
+    <li class="grid-item"><a href="#" title="Pinterest"><strong class="icon icon-social icon-pin">Pinterest:</strong> pinterestpage</a></li>
+    <li class="grid-item"><a href="#" title="PSN"><strong class="icon icon-social icon-psn">PSN:</strong> psnusername</a></li>
+    <li class="grid-item"><a href="#" title="Reddit"><strong class="icon icon-social icon-reddit">Reddit:</strong> redditname</a></li>
+    <li class="grid-item"><a href="#" title="Skype"><strong class="icon icon-social icon-skype">Skype:</strong> skypename</a></li>
+    <li class="grid-item"><a href="#" title="Snapchat"><strong class="icon icon-social icon-snapchat">Snapchat:</strong> snapchat</a></li>
+    <li class="grid-item"><a href="#" title="SoFurry"><strong class="icon icon-social icon-sofurry">SoFurry:</strong> sfusername</a></li>
+    <li class="grid-item"><a href="#" title="Soundcloud"><strong class="icon icon-social icon-soundcloud">Soundcloud:</strong> soundcloudpage</a></li>
+    <li class="grid-item"><a href="#" title="Steam"><strong class="icon icon-social icon-steam">Steam:</strong> steamusername</a></li>
+    <li class="grid-item"><a href="#" title="Tumblr"><strong class="icon icon-social icon-tumblr">Tumblr:</strong> tumblrpage</a></li>
+    <li class="grid-item"><a href="#" title="Twitter"><strong class="icon icon-social icon-tw">Twitter:</strong> @twittername</a></li>
+    <li class="grid-item"><a href="#" title="Vimeo"><strong class="icon icon-social icon-vimeo">Vimeo:</strong> vimeoprofile</a></li>
+    <li class="grid-item"><a href="#" title="Xbox Live"><strong class="icon icon-social icon-xbl">Xbox Live:</strong> xblname</a></li>
+    <li class="grid-item"><a href="#" title="Yahoo"><strong class="icon icon-social icon-yahoo">Yahoo:</strong> yahoosomething</a></li>
+    <li class="grid-item"><a href="#" title="YouTube"><strong class="icon icon-social icon-yt">YouTube:</strong> youtubepage</a></li>
+  </ul>
 {% endblock %}

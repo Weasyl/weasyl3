@@ -1,51 +1,56 @@
 {% extends "layout.jinja2" %}
 
 {% block title %}{{ user.profile.username }}’s {% block user_page_title %}{% endblock %}{% endblock %}
+
+{% block body_open %}
+  {% if user.banner %}
+    <div class="user-banner"><img src="{{ user.banner['display_url'] }}" alt="" /></div>
+  {% endif %}
+
+  <section id="main" role="main" class="col">
+{% endblock %}
+
 {% block body %}
-
-{% if user.banner %}
-<div class="user-banner"><img src="{{ user.banner['display_url'] }}" alt="" /></div>
-{% endif %}
-
-<header class="user-header">
-  {{ f.user_avatar(user, 'user-avatar') }}
-  <div class="user-basic page-title-bar col">
-    <h1 class="title user-username">
-      {% block user_title %}{{ f.user_link(user) }}{% endblock %}
-    </h1>
-    {% block user_header %}{% endblock %}
-  </div><!-- .user-basic -->
-  <nav class="col-side">
-    <ul class="nav-list grid user-nav">
+  <header class="user-header col-layout-header">
+    <div class="col-layout-corner user-avatar">{{ f.user_avatar(user, 'user-avatar') }}</div>
+    <div class="user-info col-layout-header-main">
+      <h1 class="col-layout-title text-grad">
+        {% block user_title %}{{ f.user_link(user) }}{% endblock %}
+      </h1>
+      <h2 class="user-title type-alt">{{ user.profile.full_name }}</h2>
+      <ul class="action-list">
+        <li><a href="#" class="action"><span class="icon icon-action-star"></span> Follow</a></li>
+        <li><a href="#" class="action"><span class="icon icon-action-heart"></span> Friend</a></li>
+        <li><a href="#" class="action"><span class="icon icon-action-note"></span> Message</a></li>
+        <li><a href="#" class="action"><span class="icon icon-action-cancel"></span> Ignore</a></li>
+      </ul>
+    </div>
+    <nav class="user-nav">
       {% macro sidebar_link(name, title=None) %}
-      <li class="grid-item {% if sidebar == name %}active{% endif %}">
         <a class="action" href="{{ request.path_for(user, *([name] if name else [])) }}">
           {{ title or caller() }}
         </a>
-      </li>
       {% endmacro %}
       {{ sidebar_link(None, 'Profile') }}
       {{ sidebar_link('works', 'Works') }}
       {{ sidebar_link('journal', 'Journal') }}
       {% call sidebar_link('commissions') %}
-      Commissions <span class="dot bg-positive">(open)</span>
+        Commissions <span class="dot bg-positive">(open)</span>
       {% endcall %}
       {{ sidebar_link('collections', 'Collections') }}
       {{ sidebar_link('characters', 'Characters') }}
       {{ sidebar_link('favorites', 'Favorites') }}
       {{ sidebar_link('shouts', 'Shouts') }}
-    </ul>
-  </nav><!-- .user-col-nav -->
-</header><!-- .user-header -->
+    </nav>
+  </header><!-- .user-header -->
 
-<div class="col-main-wrap"><!-- float layout helper -->
-  <div class="content user-content col-main content-group">
-    {% block user_body %}{% endblock %}
+  <div class="col-layout-main-wrap"><!-- float layout helper -->
+    <div class="content user-content col-layout-main">
+      {% block user_body %}{% endblock %}
+    </div>
   </div>
-</div>
 
-<div class="content-2 col-side-after content-group">
-  {% block user_sidebar %}{% endblock %}
-</div><!-- .user-supplement -->
-
+  <div class="col-layout-secondary content-2">
+    {% block user_sidebar %}{% endblock %}
+  </div><!-- .col-layout-secondary -->
 {% endblock %}
