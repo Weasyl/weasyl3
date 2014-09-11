@@ -68,7 +68,7 @@
     <figcaption class="info">
       <h4 class="title text-grad">{{ submission.title }}</h4>
       {% if with_user -%}
-      <p class="byline">{{ by_user(submission.owner) }}</p>
+      <p class="byline"><span class="type-alt">by</span> {{ submission.owner.profile.username }}</p>
       {%- endif %}
     </figcaption>
     {%- endif %}
