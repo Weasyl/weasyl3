@@ -113,6 +113,10 @@
           </ul>
         </div>
       </form>
+      {% else %}
+      <div class="comment-new-box guest">
+        <a href="/signin" class="toggle" data-toggle-target="#login-modal">Sign in</a> or <a href="/register"><span class="max-s" aria-hidden="true">Join</span><span class="min-s">make a new account</span></a> to share your thoughts
+      </div>
       {% endif %}
 
       <ol class="comment-tree">
@@ -121,6 +125,14 @@
     </div><!-- .toggle-target -->
 
   </section><!-- .sub-comments -->
+
+  {#
+    we might want to extend .sub-related to the full screen width if less
+    than n comments on page, for visual balance. 0 <= n <= 3? 4?
+    
+    I've provided the class 'full-width' to add to .sub-related if we decide
+    to do this  ~a
+  #}
 
   <section class="sub-related">
     <h3 class="title secondary text-grad layout-block">Similar artwork</h3>

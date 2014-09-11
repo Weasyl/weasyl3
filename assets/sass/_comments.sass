@@ -9,6 +9,10 @@
         margin-right: $line/2
     .attribution, time
         font-size: $milli
+.comment-new-box
+    &.guest
+        padding: $line $line/2
+        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($copy-alt, 0.97) 5px, transparentize($copy-alt, 0.97) 10px)
 .comment-content
     padding: $line/2 0
     margin: 0
@@ -65,7 +69,8 @@
         .avatar
             max-width: $line*2.5
     .comment-box, .comment-new-container
-        margin-left: $line*3
+        .avatar + &
+            margin-left: $line*3
     .comment-box
         // max-width: $reading-width
         padding: $line*3/4 $line/2
@@ -110,6 +115,8 @@
         +transition
         &.highlight
             background: $bg-alt-lighter
+        &.guest
+            padding: $line*2 $line
     .comment-content, .comment-new-entry
         clear: none
     .comment-new-entry
@@ -172,7 +179,8 @@
         .username
             font-size: $kilo
     .comment-box, .comment-new-container
-        margin-left: $line*6
+        .avatar + &
+            margin-left: $line*6
     .comment-box
         padding: $line*3/4 $line
         &:before, &:after
