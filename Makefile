@@ -47,6 +47,10 @@ weasyl/static: node_modules $(ASSETS) Gruntfile.js
 .PHONY: assets
 assets: weasyl/static
 
+.PHONY: watch
+watch: node_modules
+	$</.bin/grunt watch
+
 # Run local server
 .PHONY: run
 run: ve weasyl.egg-info assets
