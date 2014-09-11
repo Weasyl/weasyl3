@@ -16,13 +16,15 @@
       <span class="if-valid" aria-hidden="true"><span class="icon icon-valid"></span> &#8220;<span id="valid-user"></span>&#8221; is available</span>
       <span class="if-invalid" aria-hidden="true"><span class="icon icon-invalid"></span> This username is already taken. Please try another</span>
     </p>
-    
+
     {{ _form['password'].serialize(label_class='side') | safe }}
     <p id="pw-help" class="form-help side content-block">
       <span class="help">Eight characters or more. More is better!</span>
       <span class="if-valid" aria-hidden="true"><span class="icon icon-valid"></span> Meets our requirements</span>
       <span class="if-invalid" aria-hidden="true"><span class="icon icon-invalid"></span> We need at least eight characters here</span>
     </p>
+
+    {{ _form['password_confirm'].serialize(label_class='side content-block') | safe }}
 
     {% call f.render_field(_form['email'], field_type='email') %}
     {% endcall %}
