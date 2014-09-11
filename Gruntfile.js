@@ -60,15 +60,15 @@ module.exports = function (grunt) {
         watch: {
             images: {
                 files: ['assets/images/*.{jpg,png,svg}'],
-                tasks: ['filerev:images', 'usemin', 'filerev:css', 'filerev_assets'],
+                tasks: ['filerev:images', 'usemin', 'filerev', 'filerev_assets'],
             },
             js: {
                 files: ['assets/js/{scripts,modernizr}.js'],
-                tasks: ['uglify', 'filerev:js', 'filerev_assets'],
+                tasks: ['uglify', 'filerev', 'filerev_assets'],
             },
             sass: {
                 files: ['assets/sass/*.sass'],
-                tasks: ['sass', 'filerev:images', 'usemin', 'filerev:css', 'filerev_assets'],
+                tasks: ['sass', 'filerev:images', 'filerev:js', 'usemin', 'filerev:css', 'filerev_assets'],
             },
         },
     });
