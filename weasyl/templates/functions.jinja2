@@ -17,7 +17,7 @@
 {% endmacro %}
 
 {% macro render_field(field) -%}
-{{ field.serialize(extra_html=caller()) | safe }}
+{{ field.serialize(extra_html=caller(), **kwargs) | safe }}
 {%- endmacro %}
 
 {% macro form_errors(errors) %}

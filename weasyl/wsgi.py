@@ -150,6 +150,9 @@ def load_assets():
 def make_asset_path_finder():
     assets = load_assets()
     def asset_path(request, asset):
+        nonlocal assets
+        if request.is_debug_on:
+            assets = load_assets()
         return url.static_path('weasyl:' + assets[asset], request)
     return asset_path
 
