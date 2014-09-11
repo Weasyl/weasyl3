@@ -1,6 +1,6 @@
 <label class="active-label {{ label_class }}">
   <span>{{ _(field.description) }}</span>
-  <input type="text" name="{{ field.name }}" value="{{ cstruct }}"
+  <input type="{{ field_type | default('text') }}" name="{{ field.name }}" value="{{ cstruct }}"
          id="{{ field.oid }}" class="text-input {{ field.widget.css_class or '' }}"
          tabindex="{{ field.schema.tabindex | default(1) }}"
          {%- if field.required %} required="required" aria-required="true"{% endif %}
