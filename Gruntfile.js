@@ -56,12 +56,28 @@ module.exports = function (grunt) {
         usemin: {
             css: ['assets/css/site.css'],
         },
+
+        watch: {
+            images: {
+                files: ['assets/images/*.{jpg,png,svg}'],
+                tasks: ['filerev:images', 'usemin', 'filerev:css', 'filerev_assets'],
+            },
+            js: {
+                files: ['assets/js/{scripts,modernizr}.js'],
+                tasks: ['uglify', 'filerev:js', 'filerev_assets'],
+            },
+            sass: {
+                files: ['assets/sass/*.sass'],
+                tasks: ['sass', 'filerev:images', 'usemin', 'filerev:css', 'filerev_assets'],
+            },
+        },
     });
 
     grunt.loadNpmTasks('grunt-filerev');
     grunt.loadNpmTasks('grunt-filerev-assets');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-usemin');
 
     grunt.registerTask('default', [
