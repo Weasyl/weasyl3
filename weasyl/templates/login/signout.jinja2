@@ -3,11 +3,11 @@
 {% block title %}Sign Out{% endblock %}
 {% block body %}
 <div class="content">
-  <div class="title-wrap small-width">
-    <h3 class="title primary">Sign Out</h3>
-  </div>
-  <form action="" method="post" class="login-form standard-form small-width">
-    <p>Are you sure you want to sign out?</p>
+  <header class="primary-title-wrap">
+    <h3 class="title primary text-grad">Sign Out</h3>
+  </header>
+  <form action="" method="post" class="text-align-center">
+    <p class="content-block">Are you sure you want to sign out?</p>
     {{ _form['csrf_token'].serialize() | safe }}
     <button type="submit" name="signout" class="action disclose" tabindex="1">Sign out</button>
   </form>
