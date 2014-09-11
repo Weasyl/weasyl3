@@ -1072,8 +1072,6 @@ img
 .sub-nav-next
     float: right
 
-.sub-attribution, .sub-about
-    width: auto
 .sub-attribution
     text-align: center
     .avatar
@@ -1145,11 +1143,15 @@ img
 
 
 @media all and (min-width: $break-m3)
+    .sub-attribution, .sub-about
+        width: auto
+        vertical-align: middle
     .sub-attribution
         .avatar
             max-width: $line*5
             float: left
             margin-right: $line
+            margin-bottom: 0
         .username, time
             display: block
             margin-left: $line*6
