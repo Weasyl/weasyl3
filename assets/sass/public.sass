@@ -156,13 +156,13 @@ img
     text-align: center
     &.bg-positive
         background-color: transparentize($color-positive, 0.6)
-        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($color-positive, 0.9) 5px, transparentize($color-positive, 0.9) 10px)
+        +stripes(transparent, transparentize($color-positive, 0.9))
     &.bg-neutral
         background-color: transparentize($color-neutral, 0.6)
-        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($color-neutral, 0.9) 5px, transparentize($color-neutral, 0.9) 10px)
+        +stripes(transparent, transparentize($color-neutral, 0.9))
     &.bg-negative
         background-color: transparentize($color-negative, 0.6)
-        background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, transparentize($color-negative, 0.9) 5px, transparentize($color-negative, 0.9) 10px)
+        +stripes(transparent, transparentize($color-negative, 0.9))
 
 
 @media all and (max-width: $break-m - 1px)

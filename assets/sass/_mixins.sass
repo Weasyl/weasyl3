@@ -36,6 +36,10 @@
     background-image: -moz-linear-gradient($params)
     background-image: linear-gradient($params)
 
+=stripes($color1, $color2)
+    background-image: -webkit-repeating-linear-gradient(135deg, $color1 0, $color1 5px, $color2 5px, $color2 10px)
+    background-image: repeating-linear-gradient(135deg, $color1 0, $color1 5px, $color2 5px, $color2 10px)
+
 // box-sizing: border-box
 
 =box-sizing
