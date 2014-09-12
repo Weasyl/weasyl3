@@ -26,7 +26,7 @@
 
     {{ _form['password_confirm'].serialize(label_class='side content-block') | safe }}
 
-    {% call f.render_field(_form['email'], field_type='email') %}
+    {% call f.render_field(_form['email'], field_type='email', label_class='side') %}
     {% endcall %}
     <p id="email-help" class="form-help side content-block">
       <span class="help">We won't spam you or share your email with others. <a href="#" target="_blank">Our privacy policy</a></span>

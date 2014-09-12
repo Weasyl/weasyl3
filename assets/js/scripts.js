@@ -786,39 +786,41 @@
 
 
     // sticky notification utilities
-    function getTopOffset(el) {
-        var y = 0;
-        while ( el ) {
-            y += el.offsetTop - el.scrollTop + el.clientTop;
-            el = el.offsetParent;
-        }
-        return y;
-    }
+    // remove once position: sticky is supported 'enough'
     (function() {
-        var el = document.getElementsByClassName('sticky')[0];
-        if (!el) {
+        var el = document.getElementsByClassName('sticky')[0],
+            mainCol = document.getElementsByClassName('col-layout-main')[0],
+            footer = document.getElementsByClassName('page-footer')[0],
+            refPos, elHeight, footerPos;
+
+        if (!el || !mainCol || !footer)
             return;
+
+        function checkSticky() {
+            refPos = mainCol.getBoundingClientRect().top;
+            footerPos = footer.getBoundingClientRect().top;
+
+            if (refPos <= 0) {
+                el.classList.add('stuck');
+            } else {
+                el.classList.remove('stuck');
+            }
+            if (footerPos < elHeight) {
+                el.classList.add('blocked');
+            } else {
+                el.classList.remove('blocked');
+            }
         }
-        var mainCol = document.getElementsByClassName('col-layout-main')[0],
-            elPos, elHeight, scrollPos, footerPos;
 
         function setup() {
-            elPos = getTopOffset(el);
             elHeight = el.offsetHeight;
             mainCol.style.minHeight = elHeight + 'px';
-            footerPos = getTopOffset(document.getElementsByClassName('page-footer')[0]);
+            checkSticky();
         }
 
         window.addEventListener('load', setup);
         window.addEventListener('resize:end', setup, false);
-        // if there's a better way to do this, let me know
-        setInterval(setup, 1000);
-
-        document.addEventListener('scroll', function() {
-            scrollPos = window.pageYOffset;
-            el.classList.toggle('stuck', scrollPos > elPos);
-            el.classList.toggle('blocked', scrollPos > footerPos - elHeight);
-        });
+        document.addEventListener('scroll', checkSticky);
     })();
 
 

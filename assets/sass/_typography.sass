@@ -51,15 +51,15 @@ a, button
     padding-right: 0.15em // gradient coverage for larger characters, e.g. italic 'f'
     color: $title
     .webkit-background-clip &
-        background-image: -webkit-linear-gradient(left, $title-grad-1 -8%, $title-grad-2 70%, $title-grad-3 140%)
-        background-image: linear-gradient(left, $title-grad-1 -8%, $title-grad-2 70%, $title-grad-3 140%)
+        background-image: -webkit-linear-gradient(left, $title-grad-1 -10%, $title-grad-2 70%, $title-grad-3 150%)
+        background-image: linear-gradient(left, $title-grad-1 -10%, $title-grad-2 70%, $title-grad-3 150%)
         +prefix-w(background-clip, text)
         +prefix-w(text-fill-color, transparent)
     .content &
         color: $title-alt
         .webkit-background-clip &
-            background-image: -webkit-linear-gradient(left, $title-alt-grad-1 -20%, $title-alt-grad-2 75%, $title-alt-grad-3 120%)
-            background-image: linear-gradient(left, $title-alt-grad-1 -20%, $title-alt-grad-2 75%, $title-alt-grad-3 120%)
+            background-image: -webkit-linear-gradient(left, $title-alt-grad-1 -25%, $title-alt-grad-2 75%, $title-alt-grad-3 140%)
+            background-image: linear-gradient(left, $title-alt-grad-1 -25%, $title-alt-grad-2 75%, $title-alt-grad-3 140%)
 
 .action
     display: inline-block
