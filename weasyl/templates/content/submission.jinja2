@@ -97,7 +97,7 @@
         <div class="comment-new-container">
           <div class="comment-new-box">
             <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
-            <div class="resizing-textarea reading-width comment-new-entry">
+            <div class="resizing-textarea comment-new-entry">
               <div class="resize-ref" aria-hidden="true"></div>
               {{ _comment_form['comment'].serialize() | safe }}
             </div>
@@ -114,7 +114,7 @@
         </div>
       </form>
       {% else %}
-      <div class="comment-new-box guest">
+      <div class="comment-new-box guest layout-block">
         <a href="/signin" class="toggle" data-toggle-target="#login-modal">Sign in</a> or <a href="/register"><span class="max-s" aria-hidden="true">Join</span><span class="min-s">make a new account</span></a> to share your thoughts
       </div>
       {% endif %}
