@@ -70,7 +70,7 @@ class Register(CSRFSchema):
     year_born = c.SchemaNode(c.Int(), error_name='Year', widget=years_widget)
     month_born = c.SchemaNode(c.Int(), error_name='Month', widget=months_widget)
     day_born = c.SchemaNode(
-        c.Int(), description='Date of birth', error_name='Day',
+        c.Int(), description='', error_name='Day',
         widget=days_widget)
 
 
