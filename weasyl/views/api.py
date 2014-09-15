@@ -1,6 +1,5 @@
 import logging
 
-import pkg_resources
 from pyramid.view import view_config
 
 import libweasyl
@@ -25,7 +24,7 @@ def whoami(request):
         }
 
 
-extra_info = {
+package_info = {
     'weasyl': weasyl,
     'libweasyl': libweasyl,
 }
@@ -35,10 +34,11 @@ extra_info = {
 @view_config(name='version.json', context=APIv2Resource, renderer='json', api='true')
 def json_version(request):
     ret = {}
-    for dist in pkg_resources.working_set:
-        ret[dist.key] = info = {'version': dist.version}
-        if dist.key in extra_info:
-            info['short_hash'] = extra_info[dist.key].__sha__.lstrip('g')
+    for name, package in package_info.items():
+        ret[name] = {
+            'version': package.__version__,
+            'short_hash': package.__sha__.lstrip('g'),
+        }
     return ret
 
 
