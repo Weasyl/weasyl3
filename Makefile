@@ -68,6 +68,8 @@ clean:
 distclean: clean
 	rm -rf ve
 	rm -rf weasyl.egg-info
+	rm -rf node_modules
+	git clean -fdx weasyl/static
 
 # Phony target to run flake8 pre-commit
 .PHONY: check
