@@ -1,3 +1,4 @@
+import json
 import logging
 
 import colander as c
@@ -68,6 +69,21 @@ class User(c.SchemaType):
         if user is None:
             raise c.Invalid(node, _('"${val}" is not a valid username', mapping=dict(val=cstruct)))
         return user
+
+
+class JSON(c.SchemaType):
+    def serialize(self, node, appstruct):
+        if appstruct is c.null:
+            return appstruct
+        return json.dumps(appstruct)
+
+    def deserialize(self, node, cstruct):
+        if cstruct is c.null:
+            return cstruct
+        try:
+            return json.loads(cstruct)
+        except ValueError as e:
+            raise c.Invalid(node, _('"${val}" is not valid JSON', mapping=dict(val=cstruct))) from e
 
 
 def form_renderer(schema, key, *, success, button, **kwargs):
