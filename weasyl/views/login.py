@@ -21,17 +21,16 @@ class Signin(CSRFSchema):
     user = c.SchemaNode(User(), description='Username')
     password = c.SchemaNode(c.String(), description='Password', widget=w.PasswordWidget())
 
-
-def login_form_validator(node, value):
-    try:
-        try_login(**value)
-    except LoginFailed as e:
-        raise c.Invalid(node, e.args[0]) from e
+    def validator(self, form, values):
+        try:
+            try_login(**values)
+        except LoginFailed as e:
+            raise c.Invalid(form, e.args[0]) from e
 
 
 @view_config(name='signin', context=RootResource, renderer='login/signin.jinja2', permission='signin', api='false')
 class SigninView(FormView):
-    schema = Signin(validator=login_form_validator)
+    schema = Signin()
     buttons = 'signin',
 
     def signin_success(self, appstruct):
