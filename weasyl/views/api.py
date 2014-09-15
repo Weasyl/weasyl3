@@ -1,10 +1,22 @@
+import json
 import logging
 
+import colander as c
+import deform.widget as w
+from oauthlib.oauth2 import FatalClientError, OAuth2Error
+from pyramid_deform import CSRFSchema
+from pyramid.security import remember
 from pyramid.view import view_config
+from pyramid import httpexceptions
 
+from libweasyl.exceptions import LoginFailed
+from libweasyl.models.api import OAuthConsumer
+from libweasyl.oauth import get_consumers_for_user, revoke_consumers_for_user, server
 import libweasyl
 import weasyl
-from ..resources import APIv2Resource
+from .forms import JSON, User, form_renderer
+from ..login import try_login
+from ..resources import APIv2Resource, OAuth2Resource
 
 
 log = logging.getLogger(__name__)
@@ -51,3 +63,68 @@ def text_version(request):
         else:
             ret.append('%s: %s' % (name, info['version']))
     return '\n'.join(sorted(ret))
+
+
+class AuthorizeForm(CSRFSchema):
+    user = c.SchemaNode(User(), missing=None)
+    password = c.SchemaNode(c.String(), missing='')
+    not_me = c.SchemaNode(c.Boolean())
+    remember_me = c.SchemaNode(c.Boolean())
+    credentials = c.SchemaNode(JSON())
+
+    def validator(self, form, values):
+        request = self.bindings['request']
+        if values['user'] is None:
+            if values['not_me']:
+                raise c.Invalid(form, 'A login is required if "not me" is selected')
+            elif not request.current_user:
+                raise c.Invalid(form, 'A login is required')
+        else:
+            try:
+                try_login(user=values['user'], password=values['password'])
+            except LoginFailed as e:
+                raise c.Invalid(form, e.args[0]) from e
+
+
+def authorize_success(context, request, values):
+    credentials = values['credentials']
+    scopes = credentials.pop('scopes')
+    credentials['userid'] = (values['user'] or request.current_user).userid
+    headers, body, status = server.create_authorization_response(
+        request.path, request.method, request.GET, request.headers, scopes, credentials)
+    if status // 100 not in {4, 5} and not request.current_user and values['remember_me']:
+        headers.update(remember(request, values['user'].userid))
+    log.debug('authorization success %r %r %r', headers, body, status)
+    return httpexceptions.status_map[status](
+        headers=headers, body=body, location=headers.pop('Location', None))
+
+
+@view_config(name='authorize', context=OAuth2Resource, renderer='oauth2/authorize.jinja2', api='true')
+@form_renderer(AuthorizeForm, 'authorize', success=authorize_success, button='authorize',
+               name='authorize', context=OAuth2Resource, renderer='oauth2/authorize.jinja2', api='true')
+def oauth2_authorize(context, request, forms):
+    try:
+        scopes, credentials = server.validate_authorization_request(
+            request.path, request.method, request.GET, request.headers)
+    except FatalClientError:
+        return httpexceptions.HTTPUnprocessableEntity()
+    except OAuth2Error as e:
+        return httpexceptions.HTTPFound(e.in_uri(e.redirect_uri))
+    ret = forms.copy()
+    client = OAuthConsumer.query.get(credentials['client_id'])
+    del credentials['request']
+    credentials['scopes'] = scopes
+    ret.update({
+        'credentials': credentials,
+        'client': client,
+    })
+    return ret
+
+
+@view_config(name='token', context=OAuth2Resource, api='true', request_method='POST')
+def oauth2_token(request):
+    headers, body, status = server.create_token_response(
+        request.path, request.method, request.POST, request.headers)
+    log.debug('token success %r %r %r', headers, body, status)
+    return httpexceptions.status_map[status](
+        headers=headers, body=body, location=headers.pop('Location', None))

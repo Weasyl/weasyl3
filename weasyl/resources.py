@@ -120,7 +120,12 @@ class UserResource(MethodDispatchResource):
     segment_submissions = SubmissionsResource
 
 
+class OAuth2Resource(MethodDispatchResource):
+    pass
+
+
 class APIv2Resource(MethodDispatchResource):
+    segment_oauth2 = OAuth2Resource
     segment_submissions = SubmissionsResource
     segment_users = UsersResource
 

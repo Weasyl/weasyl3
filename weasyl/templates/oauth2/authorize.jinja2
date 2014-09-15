@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+{% import 'functions.jinja2' as f with context %}
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
+
+  <title>Authorize Application | Weasyl</title>
+
+  <style>
+    * {
+      -moz-box-sizing: border-box;
+           box-sizing: border-box;
+    }
+    footer, header, label, img, button {
+      display: block;
+    }
+    a {
+      outline: none;
+      text-decoration: none;
+    }
+    img {
+      max-width: 100%;
+      margin: 0 auto;
+      -ms-interpolation-mode: bicubic;
+    }
+    input, select {
+      vertical-align: middle;
+    }
+    input[type="checkbox"] {
+      padding: 0;
+    }
+    button {
+      border: none;
+      box-shadow: none;
+      outline: none;
+    }
+    ::-moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
+
+    /* style */
+    body {
+      padding: 0 20px;
+      font: 15px/20px 'Lucida Sans', 'Lucida Grande', Arial, Roboto, sans-serif;
+      color: #ebeae9;
+      background: #161d26 url('{{ 'assets/images/authorize-bg.jpg' | asset_path }}') no-repeat 50% 0;
+      background: url('{{ 'assets/images/noise.png' | asset_path }}') repeat 0 0, #161d26 url('{{ 'assets/images/authorize-bg.jpg' | asset_path }}') no-repeat 50% 0;
+      background-size: auto, 100% auto;
+    }
+    a, .a {
+      color: #17bed8;
+      cursor: pointer;
+    }
+    .logo {
+      display: block;
+      max-width: 100px;
+    }
+    form, header {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    form {
+      margin-bottom: 40px;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    label span {
+      display: block;
+      font: italic 14px Georgia, Palatino, serif;
+      color: #4d8993;
+    }
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 5px 10px;
+    }
+    input[type=checkbox] + span {
+      display: inline;
+    }
+
+    .login {
+      padding-bottom: 20px;
+      overflow: hidden;
+      max-height: 160px;
+      transition: max-height 0.2s ease, padding 0.2s ease, visibility 0s linear;
+    }
+    .user-field, .pass-field {
+      margin-bottom: 10px;
+    }
+    .submit {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      color: #ebeae9;
+      background: #13981f;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .submit:focus, .submit:hover {
+      background: #12b421;
+    }
+
+    .error {
+      background: #b41221;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+    }
+
+    .error p, .error ul {
+      margin: 0;
+    }
+
+    .avatar {
+      display: inline-block;
+      vertical-align: middle;
+      max-width: 40px;
+      margin-right: 10px;
+    }
+
+    #not-me {
+      visibility: hidden;
+      position: absolute;
+      left: -100%;
+    }
+    #not-me:not(:checked) + .login {
+      max-height: 0;
+      visibility: hidden;
+      padding-bottom: 0;
+      transition: max-height 0.2s ease, padding 0.2s ease, visibility 0s linear 0.2s;
+    }
+    .not-me-label {
+      display: inline;
+      font-size: 12px;
+    }
+
+    @media all and (min-width: 600px) {
+      body {
+        padding: 0 40px;
+      }
+      header {
+        margin-top: 80px;
+        margin-bottom: 60px;
+      }
+      .logo {
+        max-width: 150px;
+        margin: 0 auto;
+      }
+      .user {
+        margin-bottom: 40px;
+      }
+      .login {
+        padding-bottom: 40px;
+      }
+      .login .text-input {
+        width: 50%;
+        float: left;
+      }
+      .user-field {
+        padding-right: 10px;
+      }
+      .pass-field {
+        padding-left: 10px;
+      }
+      .remember {
+        clear: left;
+      }
+      .actions {
+        text-align: center;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <header>
+    <a href="/" class="logo"><img src="{{ 'assets/images/logo-mark-light.svg' | asset_path }}" alt="Weasyl logo" /></a>
+  </header>
+
+  <form method="POST" action="">
+    {{ _authorize_form['csrf_token'].serialize() | safe }}
+    {% if request.current_user %}
+    <p class="user">
+      {{ f.user_avatar(request.current_user) }}
+      Welcome, {{ f.user_link(request.current_user) }}
+      <label for="not-me" class="not-me-label a">(Not {{ request.current_user.profile.username }}?)</label>
+    </p>
+    {% else %}
+    <p>Please log in to continue.</p>
+    {% endif %}
+    {% if _authorize_errors %}
+    <div class="error">
+      {{ f.form_errors(_authorize_errors) }}
+    </div>
+    {% endif %}
+    {% if request.current_user %}
+    <input type="checkbox" id="not-me" name="not_me" value="true" />
+    {% endif %}
+
+    <div class="login">
+      <label class="text-input user-field">
+        <span>Username</span>
+        <input type="text" name="user" placeholder="Username" />
+      </label>
+      <label class="text-input pass-field">
+        <span>Password</span>
+        <input type="password" name="password" placeholder="Password" />
+      </label>
+      {% if not request.current_user and not mobile %}
+      <label class="remember">
+        <input type="checkbox" name="remember_me" value="true">
+        <span>Remember me</span>
+      </label>
+      {% endif %}
+    </div>
+
+    <p>Please confirm that the application
+      <strong>{{ client.description }}</strong> (by
+      {{ f.user_link(client.owner) }}) should be authorized to make requests on
+      your behalf.</p>
+
+    <p>Note that this means that <strong>{{ client.description }}</strong> can
+      perform <em>almost any action</em> as if you were logged in. Do
+      not authorize this application if you do not trust it. However, this
+      application will <em>never</em> be able to see or change your
+      password.</p>
+
+    <input type="hidden" name="credentials" value="{{ credentials | json }}">
+    <div class="actions">
+      <button class="submit" name="authorize">Authorize</button>
+    </div>
+  </form>
+
+</body>
+</html>
