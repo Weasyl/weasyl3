@@ -161,6 +161,7 @@ def make_app(global_config, **settings):
     settings['deform_jinja2.template_search_path'] = 'weasyl:widgets'
     settings['jinja2.filters'] = """
         asset_path = weasyl.filters.asset_path_filter
+        json = weasyl.filters.json_filter
         markdown = weasyl.filters.markdown_filter
         relative_date = weasyl.filters.relative_date
     """
