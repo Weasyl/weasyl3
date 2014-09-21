@@ -22,6 +22,17 @@ the things that are necessary to develop on it:
 - memcached (not always required, but some site features do require it)
 
 
+Weasyl root CA certificate
+--------------------------
+
+Some of the below instructions require fetching from
+<https://deploy.i.weasyl.com/>, which has a certificate signed by the Weasyl
+root CA. This certificate is available at
+<https://projects.weasyl.com/bin/uploads/ad/74/41/ad744132f16717f4c9f99ed91bce502a447286c3966d39b6ea855472ca790137.der>
+and will probably have to be installed for some of these steps to not fail with
+a certificate error.
+
+
 Quickstart
 ----------
 
@@ -31,13 +42,16 @@ The easiest way to get Weasyl 3 running is to use `Vagrant`_ with
   vagrant up
 
 Vagrant will fetch the base box, and then provision the VM with all of the
-dependencies listed above. To start the server running, one then simply runs::
+dependencies listed above. To start the server running, one then runs::
 
   vagrant ssh
 
 Then, from inside the VM::
 
   cd weasyl3
+  cp etc/development.ini.example etc/development.ini
+  # change weasyl.static_root to point to /home/vagrant/weasyl3/weasyl/static
+  $EDITOR etc/development.ini
   make run PYVENV=pyvenv-3.4
 
 Weasyl will then start running on <https://lo3.weasyl.com:28443/>.
@@ -57,6 +71,40 @@ The signing key for the packages is available at
 
 ImageMagick is also available from Weasyl's apt repository, but the package
 name is ``imagemagick-6.8.9``.
+
+
+Non-Vagrant installation
+------------------------
+
+If one is more inclined to use one's system instead of a VM, first install all
+of the dependencies listed above. Then, if it has not already been done, create
+a postgres role for one's current user::
+
+  sudo -u postgres createuser -drs $(whoami)
+
+A database can then be created::
+
+  createdb -O $(whoami) weasyl
+
+And then the database can be populated::
+
+  curl https://deploy.i.weasyl.com/weasyl-latest.sql.xz | xzcat | psql weasyl
+
+The default ``development.ini`` file is mostly sufficient, but one line must be
+edited::
+
+  cp etc/development.ini.example etc/development.ini
+  # change weasyl.static_root to point to $(pwd)/weasyl/static
+  $EDITOR etc/development.ini
+
+If ``pyvenv`` is on ``$PATH``, all that's required is::
+
+  make run
+
+Otherwise, ``PYVENV`` must be specified to ``make``. For example, if
+``pyvenv-3.4`` is on ``$PATH`` instead::
+
+  make run PYVENV=pyvenv-3.4
 
 
 .. _nodesource: https://github.com/nodesource/distributions
