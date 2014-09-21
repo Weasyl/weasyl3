@@ -7,10 +7,10 @@ the things that are necessary to develop on it:
 - git (``git`` executable)
 - python 3.4 or greater (``pyvenv`` or ``pyvenv-3.4`` executable;
   ``python3.4-venv`` package for debian-esque systems)
-- sass 3.4 or greater (``sass`` executable; ``ruby-sass`` package for
+- sass 3.2 or greater (``sass`` executable; ``ruby-sass`` package for
   debian-esque systems)
-- node 0.10.32 or greater and npm 1.4.28 or greater (``npm`` executable;
-  ``npm`` package from `nodesource`_ on debian-esque systems)
+- node 0.10.5 or greater and npm (``npm`` executable; ``npm`` package from
+  `nodesource`_ on debian-esque systems)
 - postgresql 9.1 or greater, including development headers and HSTORE
   (``postgresql-contrib-9.1`` and ``libpq-dev`` packages on debian-esque
   systems)
