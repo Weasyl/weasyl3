@@ -9,6 +9,7 @@ __pycache__
 /node_modules
 /.sass-cache
 /log.txt
+/.vagrant
 
 # os crud #
 .DS_Store
