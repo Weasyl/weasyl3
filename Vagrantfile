@@ -137,6 +137,9 @@ SCRIPT
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "weasyl-debian76"
   config.vm.box_url = "https://deploy.i.weasyl.com/weasyl-debian76.box"
+  config.vm.box_download_insecure = true
+  config.vm.box_download_checksum = "58c6db2da40bc22bd03347f12af4c8ba06a7e1f73192d3202bae1071ef948cf4"
+  config.vm.box_download_checksum_type = "sha256"
   config.vm.provision :shell, :privileged => true, :inline => $priv_script
   config.vm.provision :shell, :privileged => false, :inline => $unpriv_script
   config.vm.network :forwarded_port, host: 28443, guest: 8443
