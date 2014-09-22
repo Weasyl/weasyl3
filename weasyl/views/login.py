@@ -79,8 +79,7 @@ class RegisterView(FormView):
     buttons = 'register',
 
     def register_success(self, appstruct):
-        return httpexceptions.HTTPSeeOther(
-            '/', headers=remember(self.request, appstruct['user'].userid))
+        return httpexceptions.HTTPSeeOther('/')
 
 
 def login_forms(request):
