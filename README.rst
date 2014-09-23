@@ -90,12 +90,30 @@ And then the database can be populated::
 
   curl https://deploy.i.weasyl.com/weasyl-latest.sql.xz | xzcat | psql weasyl
 
+It's safe to ignore any errors about a missing ``weasyl`` role.
+
 The default ``development.ini`` file is mostly sufficient, but one line must be
 edited::
 
   cp etc/development.ini.example etc/development.ini
   # change weasyl.static_root to point to $(pwd)/weasyl/static
   $EDITOR etc/development.ini
+
+Finally, nginx must be placed in front of weasyl, with a self-signed
+SSL certificate::
+
+  mkdir ssl
+  openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
+      -keyout ssl/weasyl3.key.pem -out ssl/weasyl3.req.pem
+  openssl x509 -req -days 3650 -in /tmp/weasyl3.req.pem \
+      -signkey ssl/weasyl3.key.pem -out ssl/weasyl3.crt.pem
+  # /etc/nginx/sites-available might be in a different location on your system
+  sudo cp etc/nginx.conf /etc/nginx/sites-available/weasyl3
+  # fill in the paths to point to various places under $(pwd)
+  sudo $EDITOR /etc/nginx/sites-available/weasyl3
+  sudo ln -s /etc/nginx/sites-available/weasyl3 /etc/nginx/sites-enabled
+  # this will vary depending on your OS
+  sudo service nginx reload
 
 If ``pyvenv`` is on ``$PATH``, all that's required is::
 
@@ -105,6 +123,8 @@ Otherwise, ``PYVENV`` must be specified to ``make``. For example, if
 ``pyvenv-3.4`` is on ``$PATH`` instead::
 
   make run PYVENV=pyvenv-3.4
+
+Now, Weasyl 3 should be running on <https://lo3.weasyl.com:8443/>.
 
 
 .. _nodesource: https://github.com/nodesource/distributions

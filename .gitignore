@@ -10,6 +10,7 @@ __pycache__
 /.sass-cache
 /log.txt
 /.vagrant
+/ssl
 
 # os crud #
 .DS_Store
