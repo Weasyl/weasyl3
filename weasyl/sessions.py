@@ -108,12 +108,13 @@ class WeasylSession(collections.MutableMapping):
             return
         if self._session_obj is None:
             self._session_obj = Session(sessionid=make_session_id())
+            request.db.add(self._session_obj)
             response.set_cookie(self._cookie_name, value=self._session_obj.sessionid, httponly=True)
         additional_data = self._dict.copy()
         for k in self._static_fields:
             setattr(self._session_obj, k, additional_data.pop(k, None))
         self._session_obj.additional_data = additional_data
-        request.db.add(self._session_obj)
+        request.db.merge(self._session_obj)
         request.db.flush()
 
 
