@@ -46,27 +46,30 @@ class ShareVisualForm(BaseShareForm):
                 folder=values['folder'], tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
-        values['submission'] = sub
+        values['submission_obj'] = sub
 
 
 def share_visual_success(context, request, appstruct):
     log.debug('share visual success: %r', appstruct)
-    return httpexceptions.HTTPSeeOther(appstruct['submission'].canonical_path(request))
+    return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(request))
 
 
-@view_config(name='visual', context=ShareResource, renderer='sharing/visual.jinja2')
+@view_config(name='visual', context=ShareResource, renderer='sharing/share.jinja2')
 @forms.form_renderer(ShareVisualForm, 'share', success=share_visual_success, button='post',
-                     name='visual', context=ShareResource, renderer='sharing/visual.jinja2')
+                     name='visual', context=ShareResource, renderer='sharing/share.jinja2')
 def share_visual(context, request, forms):
-    return forms
+    ret = forms.copy()
+    ret['category'] = 'visual'
+    return ret
 
 
-class ShareLiteraryForm(BaseShareForm):
+class BaseShareLiteraryMultimediaForm(BaseShareForm):
     submission = c.SchemaNode(
         deform.FileData(), description='Submission file', missing=None, widget=forms.upload_widget)
     cover = c.SchemaNode(deform.FileData(), description='Cover image', missing=None, widget=forms.upload_widget)
     embed_link = c.SchemaNode(c.String(), description='Embed link', missing=None)
-    subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(2))
+
+    _category = None
 
     def validator(self, form, values):
         request = form.bindings['request']
@@ -75,20 +78,46 @@ class ShareLiteraryForm(BaseShareForm):
                 submission_data=maybe_read(values, 'submission'), thumbnail_data=maybe_read(values, 'thumbnail'),
                 cover_data=maybe_read(values, 'cover'), embed_link=values['embed_link'], owner=request.current_user,
                 title=values['title'], rating=values['rating'], description=values['description'],
-                category='literary', subtype=values['subcategory'].id, folder=values['folder'],
+                category=self._category, subtype=values['subcategory'].id, folder=values['folder'],
                 tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
-        values['submission'] = sub
+        values['submission_obj'] = sub
+
+
+class ShareLiteraryForm(BaseShareLiteraryMultimediaForm):
+    subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(2))
+    _category = 'literary'
 
 
 def share_literary_success(context, request, appstruct):
     log.debug('share literary success: %r', appstruct)
-    return httpexceptions.HTTPSeeOther(appstruct['submission'].canonical_path(request))
+    return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(request))
 
 
-@view_config(name='literary', context=ShareResource, renderer='sharing/literary.jinja2')
+@view_config(name='literary', context=ShareResource, renderer='sharing/share.jinja2')
 @forms.form_renderer(ShareLiteraryForm, 'share', success=share_literary_success, button='post',
-                     name='literary', context=ShareResource, renderer='sharing/literary.jinja2')
+                     name='literary', context=ShareResource, renderer='sharing/share.jinja2')
 def share_literary(context, request, forms):
-    return forms
+    ret = forms.copy()
+    ret['category'] = 'literary'
+    return ret
+
+
+class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
+    subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(3))
+    _category = 'multimedia'
+
+
+def share_multimedia_success(context, request, appstruct):
+    log.debug('share multimedia success: %r', appstruct)
+    return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(request))
+
+
+@view_config(name='multimedia', context=ShareResource, renderer='sharing/share.jinja2')
+@forms.form_renderer(ShareMultimediaForm, 'share', success=share_multimedia_success, button='post',
+                     name='multimedia', context=ShareResource, renderer='sharing/share.jinja2')
+def share_multimedia(context, request, forms):
+    ret = forms.copy()
+    ret['category'] = 'multimedia'
+    return ret
