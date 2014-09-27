@@ -1,0 +1,25 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Share Literary Works{% endblock %}
+{% block body %}
+<div class="content">
+  <header class="primary-title-wrap">
+    <h2 class="title primary text-grad">Share literary works</h2>
+  </header>
+  <form action="" method="post" enctype="multipart/form-data">
+    {{ f.form_errors(_share_errors) }}
+    {{ _share_form['csrf_token'].serialize() | safe }}
+    {{ _share_form['submission'].serialize() | safe }}
+    {{ _share_form['embed_link'].serialize() | safe }}
+    {{ _share_form['cover'].serialize() | safe }}
+    {{ _share_form['thumbnail'].serialize() | safe }}
+    {{ _share_form['title'].serialize() | safe }}
+    {{ _share_form['folder'].serialize() | safe }}
+    {{ _share_form['rating'].serialize() | safe }}
+    {{ _share_form['subcategory'].serialize() | safe }}
+    {{ _share_form['description'].serialize() | safe }}
+    {{ _share_form['tags'].serialize() | safe }}
+    <button name="post">Submit</button>
+  </form>
+</div><!-- .content -->
+{% endblock %}
