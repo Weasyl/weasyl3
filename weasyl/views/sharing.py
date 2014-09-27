@@ -10,7 +10,7 @@ from pyramid import httpexceptions
 from libweasyl.exceptions import ExpectedWeasylError
 from libweasyl.models.content import Submission
 from ..resources import ShareResource
-from .forms import Folder, Rating, folder_widget, form_renderer, rating_widget, upload_widget
+from . import forms
 
 
 log = logging.getLogger(__name__)
@@ -24,11 +24,12 @@ def maybe_read(appstruct, key):
 
 
 class ShareVisualForm(CSRFSchema):
-    submission = c.SchemaNode(deform.FileData(), description='Submission file', widget=upload_widget)
-    thumbnail = c.SchemaNode(deform.FileData(), description='Thumbnail', missing=None, widget=upload_widget)
+    submission = c.SchemaNode(deform.FileData(), description='Submission file', widget=forms.upload_widget)
+    thumbnail = c.SchemaNode(deform.FileData(), description='Thumbnail', missing=None, widget=forms.upload_widget)
     title = c.SchemaNode(c.String(), description='Title')
-    folder = c.SchemaNode(Folder(), description='Folder', widget=folder_widget)
-    rating = c.SchemaNode(Rating(), description='Rating', widget=rating_widget)
+    folder = c.SchemaNode(forms.Folder(), description='Folder', widget=forms.folder_widget)
+    rating = c.SchemaNode(forms.Rating(), description='Rating', widget=forms.rating_widget)
+    subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(1))
     description = c.SchemaNode(c.String(), description='Description', widget=w.TextAreaWidget())
     tags = c.SchemaNode(c.String(), description='Tags')
 
@@ -38,8 +39,8 @@ class ShareVisualForm(CSRFSchema):
             sub = Submission.create(
                 submission_data=values['submission']['fp'].read(), thumbnail_data=maybe_read(values, 'thumbnail'),
                 owner=request.current_user, title=values['title'], rating=values['rating'],
-                description=values['description'], category='visual', subtype=1111, folder=values['folder'],
-                tags=values['tags'].split())
+                description=values['description'], category='visual', subtype=values['subcategory'].id,
+                folder=values['folder'], tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
         values['submission'] = sub
@@ -51,7 +52,7 @@ def share_visual_success(context, request, appstruct):
 
 
 @view_config(name='visual', context=ShareResource, renderer='sharing/visual.jinja2')
-@form_renderer(ShareVisualForm, 'share', success=share_visual_success, button='post',
-               name='visual', context=ShareResource, renderer='sharing/visual.jinja2')
+@forms.form_renderer(ShareVisualForm, 'share', success=share_visual_success, button='post',
+                     name='visual', context=ShareResource, renderer='sharing/visual.jinja2')
 def share_visual(context, request, forms):
     return forms

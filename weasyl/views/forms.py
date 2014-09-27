@@ -10,6 +10,7 @@ from pyramid_deform import FormView as _FormView, CSRFSchema
 from pyramid.view import view_config
 from translationstring import TranslationStringFactory
 
+from libweasyl.constants import SUBCATEGORIES
 from libweasyl.files import fanout, makedirs_exist_ok
 from libweasyl.legacy import login_name
 from libweasyl.models.content import Folder as _Folder
@@ -123,6 +124,31 @@ class Rating(c.SchemaType):
 def rating_widget(node, kw):
     age = kw['request'].current_user.info.age
     return w.SelectWidget(values=[(str(r.code), r.name_with_age) for r in ratings.get_ratings_for_age(age)])
+
+
+class Subcategory(c.SchemaType):
+    def serialize(self, node, appstruct):
+        if appstruct is c.null:
+            return appstruct
+        return str(appstruct.id)
+
+    def deserialize(self, node, cstruct):
+        if cstruct is c.null:
+            return cstruct
+        try:
+            id = int(cstruct)
+        except ValueError:
+            raise c.Invalid(node, _('"${val}" is not a valid subcategory', mapping=dict(val=cstruct)))
+        subcategory = SUBCATEGORIES.get(id)
+        if subcategory is None:
+            raise c.Invalid(node, _('"${val}" is not a valid subcategory', mapping=dict(val=cstruct)))
+        return subcategory
+
+
+def subcategory_widget(category):
+    subcategories = [(str(k), v.title.title()) for k, v in SUBCATEGORIES.items() if k // 1000 == category]
+    subcategories.sort(key=lambda t: t[1])
+    return w.SelectWidget(values=subcategories)
 
 
 class JSON(c.SchemaType):
