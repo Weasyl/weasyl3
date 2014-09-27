@@ -14,11 +14,11 @@
 
   {% if submission.folder %}
   <a href="#" class="sub-nav-prev action disclose-pre">
-    <span class="min-s">Previous</span><span class="min-l"> in &#8220;Landscapes&#8221;</span>
+    <span class="min-s">Previous</span><span class="min-l"> in &#8220;{{ submission.folder.title }}&#8221;</span>
     <img src="http://lorempixel.com/300/200" alt="" class="thumb min-m" />
   </a>
   <a href="#" class="sub-nav-next action disclose">
-    <span class="min-s">Next</span><span class="min-l"> in &#8220;Landscapes&#8221;</span>
+    <span class="min-s">Next</span><span class="min-l"> in &#8220;{{ submission.folder.title }}&#8221;</span>
     <img src="http://lorempixel.com/100/300" alt="" class="thumb min-m" />
   </a>
   {% endif %}
@@ -129,7 +129,7 @@
   {#
     we might want to extend .sub-related to the full screen width if less
     than n comments on page, for visual balance. 0 <= n <= 3? 4?
-    
+
     I've provided the class 'full-width' to add to .sub-related if we decide
     to do this  ~a
   #}
