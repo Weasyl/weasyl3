@@ -194,8 +194,7 @@ def form_renderer(schema, key, *, success, button, **kwargs):
 
 class CommentForm(CSRFSchema):
     comment = c.SchemaNode(
-        c.String(), description="Comment", widget=w.TextAreaWidget(
-            css_class='comment-entry', placeholder="Share your thoughts\u2026"))
+        c.String(), description="Comment", widget=w.TextAreaWidget(placeholder="Share your thoughts\u2026"))
 
 
 def chunks(stream, chunk_size=8192):
