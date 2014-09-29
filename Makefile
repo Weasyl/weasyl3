@@ -44,7 +44,7 @@ libweasyl:
 
 .PHONY: install-libweasyl
 install-libweasyl: ve weasyl.egg-info libweasyl
-	$</bin/pip install -Ue libweasyl
+	$</bin/pip install -i $(PYPI) $(USE_WHEEL) -Ue libweasyl
 
 .PHONY: host-install-libweasyl
 host-install-libweasyl: .vagrant
