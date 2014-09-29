@@ -36,8 +36,9 @@ a certificate error.
 Quickstart
 ----------
 
-The easiest way to get Weasyl 3 running is to use `Vagrant`_ with
-`VirtualBox`_. From inside the ``weasyl3`` directory, simply run::
+The easiest way to get Weasyl 3 running is to use `Vagrant`_ (1.6 or greater)
+with `VirtualBox`_ (4.3.16 or greater). From inside the ``weasyl3`` directory,
+simply run::
 
   make setup-vagrant
 
