@@ -62,7 +62,7 @@ apt-mark hold grub-pc
 apt-get -y upgrade
 
 apt-get -y install \
-    python3.4-dev python3.4-venv imagemagick-6.8.9 libreadline-dev \
+    python3.4-dev python3.4-venv python-virtualenv imagemagick-6.8.9 libreadline-dev \
     git-core postgresql postgresql-contrib-9.1 libpq-dev memcached nginx \
     libxml2-dev libxslt-dev pkg-config npm ruby-sass openssh-client openssh-server
 
