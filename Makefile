@@ -40,6 +40,7 @@ weasyl.egg-info: setup.py ve
 
 libweasyl:
 	git clone gitlab@gitlab.i.weasyl.com:weasyl3/libweasyl.git
+	ln -s ../ve libweasyl
 
 .PHONY: install-libweasyl
 install-libweasyl: ve weasyl.egg-info libweasyl
