@@ -131,6 +131,9 @@ SCRIPT
 $unpriv_script = <<SCRIPT
 
 ln -s /vagrant ~/weasyl3
+cd ~/weasyl3
+sed -e 's,^weasyl.static_root = /path/to/your/weasyl-old/checkout$,weasyl.static_root = /home/vagrant/weasyl3/weasyl/static,' <etc/development.ini.example >etc/development.ini
+make install-libweasyl PYVENV=pyvenv-3.4
 
 SCRIPT
 

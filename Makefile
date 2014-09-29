@@ -33,8 +33,37 @@ ve: etc/requirements.txt
 
 # Installs weasyl package in develop mode
 weasyl.egg-info: setup.py ve
-	ve/bin/pip install $(EDITABLE) .
+	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) $(EDITABLE) .
 	touch $@
+
+# Vagrant/libweasyl setup
+
+libweasyl:
+	git clone gitlab@gitlab.i.weasyl.com:weasyl3/libweasyl.git
+
+.PHONY: install-libweasyl
+install-libweasyl: ve weasyl.egg-info libweasyl
+	$</bin/pip install -Ue libweasyl
+
+.PHONY: host-install-libweasyl
+host-install-libweasyl: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make install-libweasyl'
+
+.vagrant:
+	vagrant up
+
+.PHONY: setup-vagrant
+setup-vagrant: libweasyl .vagrant
+
+.PHONY: upgrade-db
+upgrade-db: libweasyl
+	cd $< && make upgrade-db
+
+.PHONY: host-upgrade-db
+host-upgrade-db: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make upgrade-db'
+
+# Asset pipeline
 
 node_modules: package.json
 	npm install
@@ -55,6 +84,10 @@ watch: node_modules
 .PHONY: run
 run: ve weasyl.egg-info assets
 	$</bin/pserve --app-name main --server-name main etc/development.ini
+
+.PHONY: host-run
+host-run: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make run'
 
 .PHONY: shell
 shell: ve weasyl.egg-info
