@@ -64,6 +64,14 @@ upgrade-db: libweasyl
 host-upgrade-db: .vagrant
 	vagrant ssh -c 'cd weasyl3 && make upgrade-db'
 
+.PHONY: test
+test: libweasyl
+	cd $< && make tox
+
+.PHONY: host-test
+host-test: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make test'
+
 # Asset pipeline
 
 node_modules: package.json
