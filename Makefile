@@ -102,6 +102,10 @@ host-run: .vagrant
 shell: ve weasyl.egg-info
 	$</bin/pshell etc/development.ini
 
+.PHONY: host-shell
+host-shell: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make shell'
+
 .PHONY: clean
 clean:
 	find weasyl -type f -name '*.py[co]' -delete
