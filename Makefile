@@ -23,7 +23,7 @@ ASSETS := $(shell find assets -type f)
 #
 
 # Catch-all
-all: ve assets
+all: ve weasyl.egg-info assets
 
 # Creates python environment
 ve: etc/requirements.txt
