@@ -2,7 +2,7 @@ from distutils.command.build import build as _build
 from distutils.core import Command
 import subprocess
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from pip.req import parse_requirements
 
 
@@ -34,7 +34,9 @@ class build(_build):
 
 setup(
     name='weasyl',
-    packages=find_packages(),
+    packages=[
+        'weasyl', 'weasyl.panels', 'weasyl.views',
+    ],
     package_data={
         'weasyl': [
             'static/*/*', 'templates/*.jinja2', 'templates/*/*.jinja2',
