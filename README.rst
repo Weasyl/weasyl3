@@ -1,6 +1,8 @@
 Welcome to Weasyl 3!
 ====================
 
+.. highlight:: console
+
 Weasyl 3 is the latest and greatest iteration of the Weasyl project. Here are
 the things that are necessary to develop on it:
 
@@ -40,13 +42,13 @@ The easiest way to get Weasyl 3 running is to use `Vagrant`_ (1.6 or greater)
 with `VirtualBox`_ (4.3.16 or greater). From inside the ``weasyl3`` directory,
 simply run::
 
-  make setup-vagrant
+  $ make setup-vagrant
 
 After libweasyl is cloned, Vagrant will fetch the base box, and then provision
 the VM with all of the dependencies listed above. To start the server running,
 one then runs::
 
-  make host-run
+  $ make host-run
 
 Weasyl will then start running on <https://lo3.weasyl.com:28443/>.
 
@@ -74,53 +76,53 @@ If one is more inclined to use one's system instead of a VM, first install all
 of the dependencies listed above. Then, if it has not already been done, create
 a postgres role for one's current user::
 
-  sudo -u postgres createuser -drs $(whoami)
+  $ sudo -u postgres createuser -drs $(whoami)
 
 A database can then be created::
 
-  createdb -O $(whoami) weasyl
+  $ createdb -O $(whoami) weasyl
 
 And then the database can be populated::
 
-  curl https://deploy.i.weasyl.com/weasyl-latest.sql.xz | xzcat | psql weasyl
+  $ curl https://deploy.i.weasyl.com/weasyl-latest.sql.xz | xzcat | psql weasyl
 
 It's safe to ignore any errors about a missing ``weasyl`` role.
 
 The default ``development.ini`` file is mostly sufficient, but one line must be
 edited::
 
-  cp etc/development.ini.example etc/development.ini
+  $ cp etc/development.ini.example etc/development.ini
   # change weasyl.static_root to point to $(pwd)/weasyl/static
-  $EDITOR etc/development.ini
+  $ $EDITOR etc/development.ini
 
 Finally, nginx must be placed in front of weasyl, with a self-signed
 SSL certificate::
 
-  mkdir ssl
-  openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
-      -keyout ssl/weasyl3.key.pem -out ssl/weasyl3.req.pem
-  openssl x509 -req -days 3650 -in /tmp/weasyl3.req.pem \
-      -signkey ssl/weasyl3.key.pem -out ssl/weasyl3.crt.pem
+  $ mkdir ssl
+  $ openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
+        -keyout ssl/weasyl3.key.pem -out ssl/weasyl3.req.pem
+  $ openssl x509 -req -days 3650 -in /tmp/weasyl3.req.pem \
+        -signkey ssl/weasyl3.key.pem -out ssl/weasyl3.crt.pem
   # /etc/nginx/sites-available might be in a different location on your system
-  sudo cp etc/nginx.conf /etc/nginx/sites-available/weasyl3
+  $ sudo cp etc/nginx.conf /etc/nginx/sites-available/weasyl3
   # fill in the paths to point to various places under $(pwd)
-  sudo $EDITOR /etc/nginx/sites-available/weasyl3
-  sudo ln -s /etc/nginx/sites-available/weasyl3 /etc/nginx/sites-enabled
+  $ sudo $EDITOR /etc/nginx/sites-available/weasyl3
+  $ sudo ln -s /etc/nginx/sites-available/weasyl3 /etc/nginx/sites-enabled
   # this will vary depending on your OS
-  sudo service nginx reload
+  $ sudo service nginx reload
 
 Optionally, but recommended, install a local copy of libweasyl::
 
-  make install-libweasyl
+  $ make install-libweasyl
 
 If ``pyvenv`` is on ``$PATH``, all that's required is::
 
-  make run
+  $ make run
 
 Otherwise, ``PYVENV`` must be specified to ``make``. For example, if
 ``pyvenv-3.4`` is on ``$PATH`` instead::
 
-  make run PYVENV=pyvenv-3.4
+  $ make run PYVENV=pyvenv-3.4
 
 Now, Weasyl 3 should be running on <https://lo3.weasyl.com:8443/>.
 
