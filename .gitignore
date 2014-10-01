@@ -12,6 +12,7 @@ __pycache__
 /.vagrant
 /ssl
 /libweasyl
+/.stamp-*
 
 # os crud #
 .DS_Store
