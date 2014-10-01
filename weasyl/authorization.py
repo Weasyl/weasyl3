@@ -27,6 +27,9 @@ def groupfinder(userid, request):
 
     The only additional groups returned by this function correspond to staff
     roles. That is: ``g:director``, ``g:admin``, ``g:mod``, and ``g:tech``.
+
+    :param userid: An integer--a userid Weasyl knows about.
+    :param request: The current pyramid request. *(unused)*
     """
     return staff.groups.get(userid, [])
 
@@ -47,6 +50,12 @@ class DelegatedAuthorizationPolicy:
         be unary callables which take the list of principals as their only
         argument. If the method doesn't exist on the resource, the default
         behavior is to deny access.
+
+        :param context: The resource arrived at after completing traversal,
+            presumably.
+        :param principals: A list of principals associated with the
+            authenticated user.
+        :param permission: A string representing the permission to be checked.
         """
         permits_meth = getattr(context, 'permits_' + permission, None)
         if permits_meth is not None:

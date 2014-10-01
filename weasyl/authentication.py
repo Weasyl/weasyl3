@@ -56,6 +56,8 @@ class APIKeyAuthenticationPolicy(CallbackAuthenticationPolicy):
         ``None``. If the API key provided was invalid (i.e. doesn't map to a
         user), an ``HTTPUnauthorized`` exception will be raised. Otherwise, the
         API key's owner's userid is returned.
+
+        :param request: The current pyramid request.
         """
         api_token = request.headers.get('X-Weasyl-API-Key')
         if api_token is None:
@@ -112,6 +114,8 @@ class OAuth2AuthenticationPolicy(CallbackAuthenticationPolicy):
         ``None``. If the bearer token provided was invalid (because e.g. the
         bearer token was invalid), an ``HTTPUnauthorized`` exception will be
         raised. Otherwise, the bearer token's owner's userid is returned.
+
+        :param request: The current pyramid request.
         """
         authorization = request.headers.get('Authorization')
         if authorization is None:
