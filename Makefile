@@ -33,7 +33,7 @@ ve: etc/requirements.txt
 
 # Installs weasyl package in develop mode
 weasyl.egg-info: setup.py ve
-	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) $(EDITABLE) .
+	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) $(EDITABLE) '.[development]'
 	touch $@
 
 # Vagrant/libweasyl setup
@@ -71,6 +71,14 @@ test: libweasyl
 .PHONY: host-test
 host-test: .vagrant
 	vagrant ssh -c 'cd weasyl3 && make test'
+
+.PHONY: docs
+docs: libweasyl weasyl.egg-info
+	cd docs && make html SPHINXBUILD=../ve/bin/sphinx-build
+
+.PHONY: host-docs
+host-docs: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make docs'
 
 # Asset pipeline
 

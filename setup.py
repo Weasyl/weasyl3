@@ -46,6 +46,17 @@ setup(
         'version_module_paths': ['weasyl/_version.py'],
     },
     install_requires=reqs,
+    extras_require={
+        'development': [
+            'coverage',
+            'flake8',
+            'pytest',
+            'sphinxcontrib-httpdomain',
+            'sphinxcontrib-zopeext',
+            'sphinx',
+            'vcversioner',
+        ],
+    },
     entry_points={
         'paste.app_factory': [
             'main=weasyl.wsgi:make_app',
