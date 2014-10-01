@@ -15,6 +15,7 @@ API
    authentication
    authorization
    filters
+   login
    media
    middleware
    panel_dogpile

@@ -271,4 +271,5 @@ texinfo_documents = [
 intersphinx_mapping = {
     'libweasyl': ('../libweasyl/', '../../libweasyl/docs/build/html/objects.inv'),
     'pyramid': ('http://docs.pylonsproject.org/projects/pyramid/en/latest/', None),
+    'python': ('https://docs.python.org/3.4/', None),
 }
