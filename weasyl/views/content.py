@@ -24,7 +24,9 @@ def comment_success(context, request, appstruct):
     log.debug('comment success: %r', appstruct)
     if request.is_api_request:
         return render_to_response('json', {'status': 'ok'}, request=request)
-    return httpexceptions.HTTPSeeOther('/')
+    #TODO: Hacky?
+    redirect_url = appstruct["comment_obj"]._target_sub.canonical_path(request)
+    return httpexceptions.HTTPSeeOther(redirect_url)
 
 
 @also_api_view(name='view', context=SubmissionResource,

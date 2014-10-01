@@ -9,8 +9,10 @@ from pyramid_deform import FormView as _FormView, CSRFSchema
 from pyramid.view import view_config
 from translationstring import TranslationStringFactory
 
+from libweasyl.exceptions import ExpectedWeasylError
 from libweasyl.legacy import login_name
 from libweasyl.models.users import Login
+from libweasyl.models.content import Comment
 from .decorators import wraps_respecting_view_config
 
 
@@ -116,3 +118,14 @@ class CommentForm(CSRFSchema):
     comment = c.SchemaNode(
         c.String(), description="Comment", widget=w.TextAreaWidget(
             css_class='comment-entry', placeholder="Share your thoughts\u2026"))
+
+    def validator(self, form, values):
+        request = form.bindings['request']
+        #TODO: Is there a more elegant way to get this?
+        target_sub = request.context.submission
+        try:
+            com = Comment.create(
+                poster=request.current_user, content=values['comment'], target_sub=target_sub)
+        except ExpectedWeasylError as e:
+            raise c.Invalid(form, e.args[0]) from e
+        values['comment_obj'] = com
