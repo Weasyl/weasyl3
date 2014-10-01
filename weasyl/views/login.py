@@ -23,7 +23,7 @@ class Signin(CSRFSchema):
 
     def validator(self, form, values):
         try:
-            try_login(**values)
+            try_login(user=values['user'], password=values['password'])
         except LoginFailed as e:
             raise c.Invalid(form, e.args[0]) from e
 
