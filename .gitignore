@@ -11,6 +11,7 @@ __pycache__
 /log.txt
 /.vagrant
 /ssl
+/libweasyl
 
 # os crud #
 .DS_Store

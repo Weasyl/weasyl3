@@ -1,6 +1,6 @@
 [app:main]
 use = egg:weasyl
-#filter-with = sentry
+filter-with = https
 
 pyramid.reload_templates = true
 pyramid.debug_authorization = false
@@ -15,6 +15,7 @@ pyramid.includes =
 debugtoolbar.intercept_exc = debug
 debugtoolbar.intercept_redirect = true
 debugtoolbar.dogpile.region_key = weasyl.cache_region
+debugtoolbar.hosts = 0.0.0.0/0
 
 sqlalchemy.url = postgresql:///weasyl
 
@@ -22,6 +23,11 @@ cache.backend = dogpile.cache.memcached
 cache.arguments.url = 127.0.0.1:11211
 
 weasyl.static_root = /path/to/your/weasyl-old/checkout
+
+[filter:https]
+use = egg:PasteDeploy#prefix
+scheme = https
+#filter-with = sentry
 
 #[filter:sentry]
 #use = egg:weasyl#sentry

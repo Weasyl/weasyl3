@@ -36,23 +36,17 @@ a certificate error.
 Quickstart
 ----------
 
-The easiest way to get Weasyl 3 running is to use `Vagrant`_ with
-`VirtualBox`_. From inside the ``weasyl3`` directory, simply run::
+The easiest way to get Weasyl 3 running is to use `Vagrant`_ (1.6 or greater)
+with `VirtualBox`_ (4.3.16 or greater). From inside the ``weasyl3`` directory,
+simply run::
 
-  vagrant up
+  make setup-vagrant
 
-Vagrant will fetch the base box, and then provision the VM with all of the
-dependencies listed above. To start the server running, one then runs::
+After libweasyl is cloned, Vagrant will fetch the base box, and then provision
+the VM with all of the dependencies listed above. To start the server running,
+one then runs::
 
-  vagrant ssh
-
-Then, from inside the VM::
-
-  cd weasyl3
-  cp etc/development.ini.example etc/development.ini
-  # change weasyl.static_root to point to /home/vagrant/weasyl3/weasyl/static
-  $EDITOR etc/development.ini
-  make run PYVENV=pyvenv-3.4
+  make host-run
 
 Weasyl will then start running on <https://lo3.weasyl.com:28443/>.
 
@@ -114,6 +108,10 @@ SSL certificate::
   sudo ln -s /etc/nginx/sites-available/weasyl3 /etc/nginx/sites-enabled
   # this will vary depending on your OS
   sudo service nginx reload
+
+Optionally, but recommended, install a local copy of libweasyl::
+
+  make install-libweasyl
 
 If ``pyvenv`` is on ``$PATH``, all that's required is::
 
