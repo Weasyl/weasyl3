@@ -93,7 +93,7 @@ def _lineage(resource):
     represented by ``resource.__parent__``.  If *that* resource has a
     ``__parent__`` attribute, return that resource's parent, and so on,
     until the resource being inspected either has no ``__parent__``
-    attribute or which has a ``__parent__`` attribute of ``None``.
+    attribute or which has a ``__parent__`` attribute of :py:data:`None`.
     For example, if the resource tree is::
 
       thing1 = Thing()

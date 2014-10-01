@@ -43,7 +43,7 @@ class APIKeyAuthenticationPolicy(CallbackAuthenticationPolicy):
         Set the principal locator callback for this authentication policy.
 
         :param callback: A callback passed the userid and request, expected to
-            return ``None`` if the userid doesn't exist or a sequence of
+            return :py:data:`None` if the userid doesn't exist or a sequence of
             principals if the user does exist.
         """
         self.callback = callback
@@ -53,10 +53,10 @@ class APIKeyAuthenticationPolicy(CallbackAuthenticationPolicy):
         Find the owner of the :http:header:`X-Weasyl-API-Key`.
 
         If there was no :http:header:`X-Weasyl-API-Key` header set, this will
-        return ``None``. If the API key provided was invalid (i.e. doesn't map
-        to a user), an :py:class:`~pyramid.httpexceptions.HTTPUnauthorized`
-        exception will be raised. Otherwise, the API key's owner's userid is
-        returned.
+        return :py:data:`None`. If the API key provided was invalid (i.e.
+        doesn't map to a user), an
+        :py:class:`~pyramid.httpexceptions.HTTPUnauthorized` exception will be
+        raised. Otherwise, the API key's owner's userid is returned.
 
         :param request: The current pyramid
             :py:class:`~pyramid.request.Request`.
@@ -108,7 +108,7 @@ class OAuth2AuthenticationPolicy(CallbackAuthenticationPolicy):
         Set the principal locator callback for this authentication policy.
 
         :param callback: A callback passed the userid and request, expected to
-            return ``None`` if the userid doesn't exist or a sequence of
+            return :py:data:`None` if the userid doesn't exist or a sequence of
             principals if the user does exist.
         """
         self.callback = callback
@@ -118,8 +118,8 @@ class OAuth2AuthenticationPolicy(CallbackAuthenticationPolicy):
         Find the owner of the OAuth2 bearer token.
 
         If there was no :http:header:`Authorization` header set, this will
-        return ``None``. If the bearer token provided was invalid (because e.g.
-        the bearer token was invalid), an
+        return :py:data:`None`. If the bearer token provided was invalid
+        (because e.g. the bearer token was invalid), an
         :py:class:`~pyramid.httpexceptions.HTTPUnauthorized` exception will be
         raised. Otherwise, the bearer token's owner's userid is returned.
 
