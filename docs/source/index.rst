@@ -22,6 +22,12 @@ API
    resources
    sessions
    staff
+   views/content
+   views/decorators
+   views/forms
+   views/legacy
+   views/login
+   views/users
    wsgi
 
 
