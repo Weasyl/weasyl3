@@ -1,5 +1,6 @@
 import logging
 
+import arrow
 import colander as c
 import deform.widget as w
 from pyramid_deform import CSRFSchema
@@ -10,7 +11,6 @@ from pyramid import httpexceptions
 from libweasyl.exceptions import LoginFailed
 from ..login import try_login
 from ..resources import RootResource
-from .. import dates
 from .forms import Form, FormView, User
 
 
@@ -49,7 +49,7 @@ class SignoutView(FormView):
 
 @c.deferred
 def years_widget(node, kw):
-    year = dates.now().year
+    year = arrow.get().year
     return w.SelectWidget(values=[(str(y), str(y)) for y in range(year - 13, year - 113, -1)])
 
 
