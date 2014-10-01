@@ -54,9 +54,9 @@ Weasyl will then start running on <https://lo3.weasyl.com:28443/>.
 Fetching packages from weasyl
 -----------------------------
 
-Weasyl publishes packages for python 3.4 and nginx 1.6.0 for Debian 7 systems,
-if one is more inclined to install the packages onto a local Debian 7 system
-instead of into a VM::
+Weasyl publishes packages for python 3.4, nginx 1.6.0, and libxml2 2.9.0 for
+Debian 7 systems, if one is more inclined to install the packages onto a local
+Debian 7 system instead of into a VM::
 
   deb http://apt.i.weasyl.com/repos/apt/debian wheezy main
 
