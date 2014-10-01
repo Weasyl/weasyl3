@@ -130,7 +130,7 @@ class Subcategory(c.SchemaType):
     def serialize(self, node, appstruct):
         if appstruct is c.null:
             return appstruct
-        return str(appstruct.id)
+        return str(appstruct.value)
 
     def deserialize(self, node, cstruct):
         if cstruct is c.null:

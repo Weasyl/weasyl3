@@ -42,7 +42,7 @@ class ShareVisualForm(BaseShareForm):
             sub = Submission.create(
                 submission_data=values['submission']['fp'].read(), thumbnail_data=maybe_read(values, 'thumbnail'),
                 owner=request.current_user, title=values['title'], rating=values['rating'],
-                description=values['description'], category='visual', subtype=values['subcategory'].id,
+                description=values['description'], category='visual', subtype=values['subcategory'].value,
                 folder=values['folder'], tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
@@ -78,7 +78,7 @@ class BaseShareLiteraryMultimediaForm(BaseShareForm):
                 submission_data=maybe_read(values, 'submission'), thumbnail_data=maybe_read(values, 'thumbnail'),
                 cover_data=maybe_read(values, 'cover'), embed_link=values['embed_link'], owner=request.current_user,
                 title=values['title'], rating=values['rating'], description=values['description'],
-                category=self._category, subtype=values['subcategory'].id, folder=values['folder'],
+                category=self._category, subtype=values['subcategory'].value, folder=values['folder'],
                 tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
