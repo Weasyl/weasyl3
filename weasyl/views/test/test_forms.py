@@ -104,6 +104,24 @@ def test_form_renderer_error_on_second_form(testapp):
     assert j['_b_errors']
 
 
+def test_form_renderer_success_on_first_form(testapp):
+    """
+    Submitting a valid form to the first form declared triggers the success
+    callback for the first form.
+    """
+    j = testapp.post('/form-a', {'a': '1', 'a_button': 'yes'}).json
+    assert j == {'a_success': {'a': 1}}
+
+
+def test_form_renderer_success_on_second_form(testapp):
+    """
+    Submitting a valid form to the second form declared triggers the success
+    callback for the second form.
+    """
+    j = testapp.post('/form-b', {'b': '2', 'b_button': 'yes'}).json
+    assert j == {'b_success': {'b': 2}}
+
+
 def test_form_renderer_error_on_first_form_with_both_submitted(testapp):
     """
     If the data for both forms is contained in the POST request and the data is
@@ -136,24 +154,18 @@ def test_form_renderer_error_on_second_form_with_both_submitted(testapp):
     assert j['_b_errors']
 
 
-def test_form_renderer_no_errors_on_posting_first_to_second_endpoint(testapp):
+@pytest.mark.parametrize('input_valid', [True, False])
+@pytest.mark.parametrize(('endpoint', 'form'), [
+    ('/form-a', 'b'),
+    ('/form-b', 'a'),
+])
+def test_form_renderer_no_errors_on_posting_to_wrong_endpoint(testapp, input_valid, endpoint, form):
     """
-    If the wrong form is submitted to an endpoint (i.e. the first form to the
-    second endpoint), it isn't validated.
+    If the wrong form is submitted to an endpoint, it isn't validated, whether
+    or not the input to the form was valid.
     """
-    j = testapp.post('/form-b', {'a': 'not-an-int', 'a_button': 'yes'}).json
-    assert j['_a_form']
-    assert j['_a_errors'] is None
-    assert j['_b_form']
-    assert j['_b_errors'] is None
-
-
-def test_form_renderer_no_errors_on_posting_second_to_first_endpoint(testapp):
-    """
-    If the wrong form is submitted to an endpoint (i.e. the second form to the
-    first endpoint), it isn't validated.
-    """
-    j = testapp.post('/form-a', {'b': 'not-an-int', 'b_button': 'yes'}).json
+    data = '1' if input_valid else 'not-an-int'
+    j = testapp.post(endpoint, {form: data, form + '_button': 'yes'}).json
     assert j['_a_form']
     assert j['_a_errors'] is None
     assert j['_b_form']
