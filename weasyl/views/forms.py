@@ -89,15 +89,23 @@ class JSON(c.SchemaType):
 def form_renderer(schema, key, *, success, button, **kwargs):
     form_key = '_%s_form' % (key,)
     errors_key = '_%s_errors' % (key,)
+
+    def select_form(func):
+        def wrapper(context, request):
+            request._selected_form = key
+            return func(context, request)
+        return wrapper
+
     def deco(func):
-        @view_config(_depth=1, request_method='POST', **kwargs)
+        @view_config(_depth=1, request_method='POST', decorator=select_form, **kwargs)
         @wraps_respecting_view_config(func)
         def wrapper(context, request, forms=()):
             forms = dict(forms)
             form = forms[form_key] = Form(schema().bind(request=request))
             forms[errors_key] = None
+            selected_form = getattr(request, '_selected_form', None)
 
-            if button in request.POST:
+            if selected_form == key and button in request.POST:
                 controls = request.POST.items()
                 try:
                     validated = form.validate(controls)
