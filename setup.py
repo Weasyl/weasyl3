@@ -57,6 +57,7 @@ setup(
             'sphinxcontrib-zopeext',
             'sphinx',
             'vcversioner',
+            'webtest',
         ],
     },
     entry_points={
