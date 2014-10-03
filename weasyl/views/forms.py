@@ -207,10 +207,26 @@ def form_renderer(schema, key, *, success, button, **kwargs):
     """
     A decorator for handling incidental forms on a page.
 
+    :param schema: A :py:class:`colander.Schema` class, and *not* an instance
+        of the class. *schema* will be called by :py:func:`.form_renderer`.
+    :param key: A :py:class:`str` for naming the form object and errors within
+        the *forms* dict.
+    :param success: A callable which receives three arguments: *context*,
+        *request*, and *appstruct*. *context* is the pyramid :term:`context`;
+        *request* is the pyramid :term:`request`; and *appstruct* is the
+        decoded, validated form data. This callable will be called on
+        success---that is, when the endpoint specified by *kwargs* receives a
+        :http:method:`POST` request with data that successfully validates
+        against *schema*.
+    :param button: A :py:class:`str` for naming the form's submit button. Form
+        data will only be processed if this key is present in the form data.
+    :param kwargs: Additional arguments which will be passed through to the
+        pyramid :term:`view configuration`.
+
     :py:func:`.form_renderer` is unlike :py:class:`.FormView` in that
     :py:class:`.FormView` is intended for a page containing a single form,
     where the entire point of the page is displaying that form. An "incidental
-    form" is, for example, the "add a comment" form on a submission page--not
+    form" is, for example, the "add a comment" form on a submission page---not
     the primary focus of the page, but it still needs to be validated and
     refilled like a :py:class:`.FormView` form. Additionally, a view function
     can have multiple :py:func:`.form_renderer` decorations attached to it for
@@ -250,8 +266,30 @@ def form_renderer(schema, key, *, success, button, **kwargs):
     ``/form-b``. If this doesn't make sense yet, consider reviewing the pyramid
     documentation on :term:`traversal` and :term:`view configuration`.
 
-    Anyway, the :term:`view callable` ``index`` will be called in the following
-    circumstances:
+    ``index`` is, for the most part, a standard :term:`view callable`, taking
+    the *context* and *request* parameters. The third parameter, *forms*, is
+    passed by :py:func:`.form_renderer`. *forms* will be a :py:class:`dict`
+    containing :py:class:`.Form` objects and sometimes form errors. The keys in
+    *forms* are derived from the *key* parameter to :py:func:`.form_renderer`.
+    For example, if *key* is ``spam``, the :py:class:`.Form` object will be
+    named ``_spam_form``, and the errors will be stored under the key
+    ``_spam_errors``. The error key will always exist in *forms*; if there were
+    no errors, it will be :py:data:`None`. Otherwise, if there were errors, it
+    will be equal to the result of calling :py:func:`.determine_errors` on the
+    :py:class:`deform.ValidationFailure` raised during validation.
+
+    In the scenario listed above, *forms* will always contain the keys
+    ``_form_a_form``, ``_form_a_errors``, ``_form_b_form``, and
+    ``_form_b_errors``. In most cases, it's desirable to return the *forms*
+    :py:class:`dict` from the :term:`view callable` (modulo adding keys like
+    above), so that the form and errors are passed through to the template.
+
+    As an aside, the reason that the keys in *forms* start with an underscore
+    is that the default JSON renderer for Weasyl omits keys from the root
+    object which start with an underscore---see
+    :py:class:`~weasyl.wsgi.NoLeadingUnderscoresJSON`.
+
+    ``index`` will be called in the following circumstances:
 
     - A :http:method:`GET` to ``/``, because of the first ``@view_config``.
 
