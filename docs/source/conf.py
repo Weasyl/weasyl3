@@ -272,4 +272,7 @@ intersphinx_mapping = {
     'libweasyl': ('../libweasyl/', '../../libweasyl/docs/build/html/objects.inv'),
     'pyramid': ('http://docs.pylonsproject.org/projects/pyramid/en/latest/', None),
     'python': ('https://docs.python.org/3.4/', None),
+    'deform': ('http://deform.readthedocs.org/en/latest/', None),
+    'pyramiddeform': ('http://pyramid-deform.readthedocs.org/en/latest/', None),
+    'colander': ('http://docs.pylonsproject.org/projects/colander/en/latest/', None),
 }
