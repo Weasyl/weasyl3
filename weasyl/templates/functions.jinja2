@@ -77,7 +77,7 @@
 {% endmacro %}
 
 {% macro show_comment(comment, ownerid) %}
-<li class="comment">
+<li class="comment" id="cid{{ comment.commentid }}">
   {{ user_avatar(comment.poster) }}
   {% set user_class = 'owner' if comment.userid == ownerid else 'staff' if comment.poster.is_staff else '' %}
   <article class="comment-box {{ user_class }}">
@@ -96,7 +96,7 @@
     <ul class="comment-actions action-list">
       <li><a href="#" class="action small">Reply</a></li>
       <li><a href="#" class="action small">Report</a></li>
-      <li><a href="#" class="action small">#</a></li>
+      <li><a href="#cid{{ comment.commentid }}" class="action small">#</a></li>
     </ul>
   </article>
   {% if comment.subcomments %}
