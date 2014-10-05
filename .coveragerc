@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = weasyl
+omit =
+    weasyl/test/*
+    weasyl/views/test/*

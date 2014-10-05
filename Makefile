@@ -66,7 +66,8 @@ host-upgrade-db: .vagrant
 
 .PHONY: test
 test: libweasyl .stamp-ve
-	ve/bin/py.test weasyl
+	ve/bin/coverage run ve/bin/py.test weasyl
+	ve/bin/coverage report -m
 	cd $< && make tox
 
 .PHONY: host-test
