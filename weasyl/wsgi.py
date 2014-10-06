@@ -7,7 +7,6 @@ from pyramid_authstack import AuthenticationStackPolicy
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
-from pyramid.security import authenticated_userid
 from pyramid import httpexceptions, url
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import engine_from_config
@@ -52,7 +51,7 @@ def format_datetime(request, dt):
 
 
 def current_user(request):
-    userid = authenticated_userid(request)
+    userid = request.authenticated_userid
     if userid is None:
         return None
     return Login.query.get(userid)
