@@ -56,6 +56,7 @@ setup(
             'sphinxcontrib-httpdomain',
             'sphinxcontrib-zopeext',
             'sphinx',
+            'testfixtures',
             'vcversioner',
             'webtest',
         ],
