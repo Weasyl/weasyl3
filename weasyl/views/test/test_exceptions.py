@@ -1,6 +1,5 @@
 import sys
 
-from pyramid.response import Response
 from pyramid.testing import DummyRequest
 from pyramid import httpexceptions
 import pytest
@@ -111,17 +110,16 @@ def test_http_exception_catchall_response_status():
     """
     http_exception_catchall sets the response's status code appropriately.
     """
-    resp = Response()
-    exceptions.http_exception_catchall(httpexceptions.HTTPGone(), DummyRequest(response=resp))
-    assert resp.status == '410 Gone'
+    req = DummyRequest()
+    exceptions.http_exception_catchall(httpexceptions.HTTPGone(), req)
+    assert req.response.status == '410 Gone'
 
 
 def test_http_exception_catchall_context():
     """
     http_exception_catchall returns context describing the exception.
     """
-    resp = Response()
-    result = exceptions.http_exception_catchall(httpexceptions.HTTPGone(), DummyRequest(response=resp))
+    result = exceptions.http_exception_catchall(httpexceptions.HTTPGone(), DummyRequest())
     assert result.keys() == {'error', 'event_id', 'request_id', '_http_code', 'code', 'description', 'message'}
     assert result['error']
     assert result['event_id'] is None
