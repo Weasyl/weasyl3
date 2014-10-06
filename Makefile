@@ -65,15 +65,22 @@ host-upgrade-db: .vagrant
 	vagrant ssh -c 'cd weasyl3 && make upgrade-db'
 
 .PHONY: test
-test: libweasyl .stamp-ve .stamp-egg-info
+test: .stamp-ve .stamp-egg-info
 	ve/bin/coverage run ve/bin/py.test weasyl
 	ve/bin/coverage report -m
 	ve/bin/coverage html
-	cd $< && make tox
 
 .PHONY: host-test
 host-test: .vagrant
 	vagrant ssh -c 'cd weasyl3 && make test'
+
+.PHONY: test-all
+test-all: libweasyl test
+	cd $< && make tox
+
+.PHONY: host-test-all
+host-test-all: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make test-all'
 
 .PHONY: docs
 docs: libweasyl .stamp-egg-info
