@@ -20,7 +20,7 @@ def exception_catchall(exc, request):
         event_id, = request.environ['sentry.log_error'](request.exc_info, request_id=request_id)
     else:
         if not expected:
-            log.exception(
+            log.error(
                 'an error occurred, but sentry was not configured to capture it',
                 exc_info=request.exc_info)
         request_id = event_id = None
