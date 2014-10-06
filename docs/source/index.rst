@@ -15,6 +15,7 @@ API
    authentication
    authorization
    filters
+   hacks
    login
    media
    middleware

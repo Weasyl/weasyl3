@@ -1,3 +1,22 @@
+"""
+A collection of ugly hacks.
+
+Currently this is limited to two hacks to make pyramid behave slightly
+differently:
+
+- ``~`` is no longer escaped when building URLs. `RFC 2396`_ allows it, and
+  there are arguments for escaped tildes, but the unescaped version has become
+  the canonical URL for Weasyl user pages.
+- Calling :py:meth:`~pyramid.request.Request.resource_path` can take
+  :py:data:`None` as the resource. It's unclear why this was removed in later
+  versions of pyramid, as it's a useful feature. Specifically, it means 'from
+  the application root'.
+
+Yes, it is technically monkeypatching.
+
+.. _RFC 2396: https://www.ietf.org/rfc/rfc2396.txt
+"""
+
 import functools
 
 from pyramid.traversal import quote_path_segment
@@ -58,6 +77,11 @@ def _lineage(resource):
 
 
 def install():
+    """
+    Install the ugly hacks.
+
+    There is currently no way to reverse the process.
+    """
     # ugly hack to make ~ not escaped in URLs
     url._join_elements = _join_elements
 
