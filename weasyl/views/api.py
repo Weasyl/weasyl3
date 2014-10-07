@@ -56,10 +56,7 @@ def json_version(request):
 def text_version(request):
     ret = []
     for name, info in json_version(request).items():
-        if 'short_hash' in info:
-            ret.append('%s: %s (%s)' % (name, info['version'], info['short_hash']))
-        else:
-            ret.append('%s: %s' % (name, info['version']))
+        ret.append('%s: %s (%s)' % (name, info['version'], info['short_hash']))
     return '\n'.join(sorted(ret))
 
 
