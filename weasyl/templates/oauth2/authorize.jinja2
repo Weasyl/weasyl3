@@ -181,7 +181,7 @@
   </header>
 
   <form method="POST" action="">
-    {{ _authorize_form['csrf_token'].serialize() | safe }}
+    {{ _form['csrf_token'].serialize() | safe }}
     {% if request.current_user %}
     <p class="user">
       {{ f.user_avatar(request.current_user) }}
@@ -191,9 +191,9 @@
     {% else %}
     <p>Please log in to continue.</p>
     {% endif %}
-    {% if _authorize_errors %}
+    {% if _errors %}
     <div class="error">
-      {{ f.form_errors(_authorize_errors) }}
+      {{ f.form_errors(_errors) }}
     </div>
     {% endif %}
     {% if request.current_user %}

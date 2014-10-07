@@ -14,7 +14,7 @@ from libweasyl.models.api import OAuthConsumer
 from libweasyl.oauth import get_consumers_for_user, revoke_consumers_for_user, server
 import libweasyl
 import weasyl
-from .forms import JSON, User, form_renderer
+from .forms import FormView, JSON, User
 from ..login import try_login
 from ..resources import APIv2Resource, OAuth2Resource
 
@@ -86,39 +86,40 @@ class AuthorizeForm(CSRFSchema):
                 raise c.Invalid(form, e.args[0]) from e
 
 
-def authorize_success(context, request, values):
-    credentials = values['credentials']
-    scopes = credentials.pop('scopes')
-    credentials['userid'] = (values['user'] or request.current_user).userid
-    headers, body, status = server.create_authorization_response(
-        request.path, request.method, request.GET, request.headers, scopes, credentials)
-    if status // 100 not in {4, 5} and not request.current_user and values['remember_me']:
-        headers.update(remember(request, values['user'].userid))
-    log.debug('authorization success %r %r %r', headers, body, status)
-    return httpexceptions.status_map[status](
-        headers=headers, body=body, location=headers.pop('Location', None))
-
-
 @view_config(name='authorize', context=OAuth2Resource, renderer='oauth2/authorize.jinja2', api='true')
-@form_renderer(AuthorizeForm, 'authorize', success=authorize_success, button='authorize',
-               name='authorize', context=OAuth2Resource, renderer='oauth2/authorize.jinja2', api='true')
-def oauth2_authorize(context, request, forms):
-    try:
-        scopes, credentials = server.validate_authorization_request(
-            request.path, request.method, request.GET, request.headers)
-    except FatalClientError:
-        return httpexceptions.HTTPUnprocessableEntity()
-    except OAuth2Error as e:
-        return httpexceptions.HTTPFound(e.in_uri(e.redirect_uri))
-    ret = forms.copy()
-    client = OAuthConsumer.query.get(credentials['client_id'])
-    del credentials['request']
-    credentials['scopes'] = scopes
-    ret.update({
-        'credentials': credentials,
-        'client': client,
-    })
-    return ret
+class OAuth2AuthorizeView(FormView):
+    schema = AuthorizeForm()
+    buttons = 'authorize',
+
+    def extra_fields(self):
+        request = self.request
+        try:
+            scopes, credentials = server.validate_authorization_request(
+                request.path, request.method, request.GET, request.headers)
+        except FatalClientError:
+            raise httpexceptions.HTTPUnprocessableEntity()
+        except OAuth2Error as e:
+            raise httpexceptions.HTTPFound(e.in_uri(e.redirect_uri))
+        client = OAuthConsumer.query.get(credentials['client_id'])
+        del credentials['request']
+        credentials['scopes'] = scopes
+        return {
+            'credentials': credentials,
+            'client': client,
+        }
+
+    def authorize_success(self, values):
+        request = self.request
+        credentials = values['credentials']
+        scopes = credentials.pop('scopes')
+        credentials['userid'] = (values['user'] or request.current_user).userid
+        headers, body, status = server.create_authorization_response(
+            request.path, request.method, request.GET, request.headers, scopes, credentials)
+        if status // 100 not in {4, 5} and not request.current_user and values['remember_me']:
+            headers.update(remember(request, values['user'].userid))
+        log.debug('authorization success %r %r %r', headers, body, status)
+        return httpexceptions.status_map[status](
+            headers=headers, body=body, location=headers.pop('Location', None))
 
 
 @view_config(name='token', context=OAuth2Resource, api='true', request_method='POST')
