@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.panels.dogpile
    :members:
-   :undoc-members:

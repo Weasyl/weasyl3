@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.predicates
    :members:
-   :undoc-members:

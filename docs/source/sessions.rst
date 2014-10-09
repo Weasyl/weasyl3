@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.sessions
    :members:
-   :undoc-members:

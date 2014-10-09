@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.media
    :members:
-   :undoc-members:

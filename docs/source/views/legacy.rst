@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.views.legacy
    :members:
-   :undoc-members:

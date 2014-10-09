@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.login
    :members:
-   :undoc-members:

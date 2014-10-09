@@ -3,4 +3,3 @@
 
 .. automodule:: weasyl.middleware
    :members:
-   :undoc-members:
