@@ -41,6 +41,8 @@ def exception_catchall(exc, request):
 @also_api_view(context=httpexceptions.HTTPException, template='errors/generic.jinja2')
 def http_exception_catchall(exc, request):
     request.response.status = exc.code
+    if isinstance(exc, httpexceptions.HTTPUnauthorized):
+        request.response.headers['WWW-Authenticate'] = 'Bearer realm="Weasyl", Weasyl-API-Key realm="Weasyl"'
     return {
         'error': True,
         'event_id': None,

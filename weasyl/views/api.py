@@ -22,16 +22,12 @@ log = logging.getLogger(__name__)
 
 @view_config(name='whoami', context=APIv2Resource, renderer='json', api='true')
 def whoami(request):
-    if request.current_user:
-        return {
-            'login': request.current_user.login_name,
-            'userid': request.current_user.userid,
-        }
-    else:
-        return {
-            'login': None,
-            'userid': 0,
-        }
+    if not request.current_user:
+        return httpexceptions.HTTPUnauthorized()
+    return {
+        'login': request.current_user.login_name,
+        'userid': request.current_user.userid,
+    }
 
 
 package_info = {
@@ -69,16 +65,20 @@ class AuthorizeForm(CSRFSchema):
 
     def validator(self, form, values):
         request = self.bindings['request']
-        if values['user'] is None:
-            if values['not_me']:
-                raise c.Invalid(form, 'A login is required if "not me" is selected')
-            elif not request.current_user:
-                raise c.Invalid(form, 'A login is required')
+        values['validated_user'] = request.current_user
+        if values['user'] is not None:
+            if request.current_user is None or values['not_me']:
+                try:
+                    try_login(user=values['user'], password=values['password'])
+                except LoginFailed as e:
+                    raise c.Invalid(form, e.args[0]) from e
+                else:
+                    values['validated_user'] = values['user']
         else:
-            try:
-                try_login(user=values['user'], password=values['password'])
-            except LoginFailed as e:
-                raise c.Invalid(form, e.args[0]) from e
+            if values['not_me']:
+                raise c.Invalid(form, 'A login is required if "not me" is selected.')
+            elif request.current_user is None:
+                raise c.Invalid(form, 'A login is required.')
 
 
 @view_config(name='authorize', context=OAuth2Resource, renderer='oauth2/authorize.jinja2', api='true')
@@ -107,10 +107,10 @@ class OAuth2AuthorizeView(FormView):
         request = self.request
         credentials = values['credentials']
         scopes = credentials.pop('scopes')
-        credentials['userid'] = (values['user'] or request.current_user).userid
+        credentials['userid'] = values['validated_user'].userid
         headers, body, status = server.create_authorization_response(
             request.path, request.method, request.GET, request.headers, scopes, credentials)
-        if status // 100 not in {4, 5} and not request.current_user and values['remember_me']:
+        if status // 100 not in {4, 5} and request.current_user is None and values['remember_me']:
             headers.update(remember(request, values['user'].userid))
         log.debug('authorization success %r %r %r', headers, body, status)
         return httpexceptions.status_map[status](
