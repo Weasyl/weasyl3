@@ -156,6 +156,6 @@ def make_app(global_config, **settings):
     config.set_authentication_policy(auth_stack)
     config.set_authorization_policy(authorization.DelegatedAuthorizationPolicy())
 
-    config.scan('weasyl.views')
+    config.scan('weasyl.views', ignore='weasyl.views.test')
 
     return config.make_wsgi_app()
