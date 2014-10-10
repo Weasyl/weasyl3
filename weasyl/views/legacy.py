@@ -20,7 +20,11 @@ def configure_urls(config):
     redirect('staffnotes/{name}', '~{name}', 'staff-notes')
 
     redirect('view/{id}', 'submissions', '{id}', 'view')
-    redirect('submission/{id}', 'submissions', '{id}', 'view')
+    redirect('view/{id}/{slug}', 'submissions', '{id}', 'view', '{slug}')
     redirect('submission/tag-history/{id}', 'submissions', '{id}', 'tag-history')
+    redirect('submission/{id}', 'submissions', '{id}', 'view')
+    redirect('submission/{id}/{slug}', 'submissions', '{id}', 'view', '{slug}')
     redirect('character/{id}', 'characters', '{id}', 'view')
+    redirect('character/{id}/{slug}', 'characters', '{id}', 'view', '{slug}')
     redirect('journal/{id}', 'journals', '{id}', 'view')
+    redirect('journal/{id}/{slug}', 'journals', '{id}', 'view', '{slug}')

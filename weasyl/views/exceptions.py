@@ -3,7 +3,7 @@ import logging
 from pyramid import httpexceptions
 
 from libweasyl.exceptions import ExpectedWeasylError
-from ..sessions import make_session_id
+from libweasyl.security import generate_key
 from .decorators import also_api_view
 
 
@@ -16,11 +16,11 @@ def exception_catchall(exc, request):
     exc_type = type(exc)
     request.response.status = exc_type.code if expected else 500
     if not expected and 'sentry.log_error' in request.environ:
-        request_id = make_session_id(8)
+        request_id = generate_key(8)
         event_id, = request.environ['sentry.log_error'](request.exc_info, request_id=request_id)
     else:
         if not expected:
-            log.exception(
+            log.error(
                 'an error occurred, but sentry was not configured to capture it',
                 exc_info=request.exc_info)
         request_id = event_id = None

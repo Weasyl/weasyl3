@@ -1,7 +1,5 @@
-import base64
 import collections
 import logging
-import os
 import time
 
 from pyramid.interfaces import ISession, ISessionFactory
@@ -9,14 +7,10 @@ from sqlalchemy.orm import contains_eager
 from zope.interface import implementer, provider
 
 from libweasyl.models.users import Login, Session
+from libweasyl.security import generate_key
 
 
 log = logging.getLogger(__name__)
-
-
-def make_session_id(length=64):
-    raw_length = length // 4 * 3
-    return base64.b64encode(os.urandom(raw_length)).decode()
 
 
 @implementer(ISession)
@@ -76,7 +70,7 @@ class WeasylSession(collections.MutableMapping):
         return ret
 
     def new_csrf_token(self):
-        ret = self['csrf_token'] = make_session_id()
+        ret = self['csrf_token'] = generate_key(64)
         return ret
 
     def changed(self):
@@ -107,8 +101,7 @@ class WeasylSession(collections.MutableMapping):
         if not self._changed:
             return
         if self._session_obj is None:
-            self._session_obj = Session(sessionid=make_session_id())
-            request.db.add(self._session_obj)
+            self._session_obj = Session(sessionid=generate_key(64))
             response.set_cookie(self._cookie_name, value=self._session_obj.sessionid, httponly=True)
         additional_data = self._dict.copy()
         for k in self._static_fields:

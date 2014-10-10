@@ -23,17 +23,17 @@ ASSETS := $(shell find assets -type f)
 #
 
 # Catch-all
-all: ve assets
+all: .stamp-ve .stamp-egg-info assets
 
 # Creates python environment
-ve: etc/requirements.txt
-	test -e $@ || { $(PYVENV) $@; $@/bin/pip install -U pip setuptools; }
-	$@/bin/pip install -i $(PYPI) -r $< $(USE_WHEEL)
+.stamp-ve: etc/requirements.txt
+	test -e ve || { $(PYVENV) ve; ve/bin/pip install -U pip setuptools; }
+	ve/bin/pip install -i $(PYPI) -r $< $(USE_WHEEL)
 	touch $@
 
 # Installs weasyl package in develop mode
-weasyl.egg-info: setup.py ve
-	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) $(EDITABLE) .
+.stamp-egg-info: setup.py .stamp-ve
+	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) $(EDITABLE) '.[development]'
 	touch $@
 
 # Vagrant/libweasyl setup
@@ -43,8 +43,8 @@ libweasyl:
 	ln -s ../ve libweasyl
 
 .PHONY: install-libweasyl
-install-libweasyl: ve weasyl.egg-info libweasyl
-	$</bin/pip install -i $(PYPI) $(USE_WHEEL) -Ue libweasyl
+install-libweasyl: .stamp-ve .stamp-egg-info libweasyl
+	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) -Ue libweasyl
 
 .PHONY: host-install-libweasyl
 host-install-libweasyl: .vagrant
@@ -64,35 +64,58 @@ upgrade-db: libweasyl
 host-upgrade-db: .vagrant
 	vagrant ssh -c 'cd weasyl3 && make upgrade-db'
 
+.PHONY: test
+test: libweasyl .stamp-ve .stamp-egg-info
+	ve/bin/coverage run ve/bin/py.test weasyl
+	ve/bin/coverage report -m
+	cd $< && make tox
+
+.PHONY: host-test
+host-test: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make test'
+
+.PHONY: docs
+docs: libweasyl .stamp-egg-info
+	cd libweasyl && make docs
+	cd docs && make html SPHINXBUILD=../ve/bin/sphinx-build
+
+.PHONY: host-docs
+host-docs: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make docs'
+
 # Asset pipeline
 
-node_modules: package.json
+.stamp-node: package.json
 	npm install
-	touch node_modules
+	touch $@
 
-weasyl/static: node_modules $(ASSETS) Gruntfile.js
-	$</.bin/grunt
-	touch weasyl/static
+.stamp-weasyl-static: .stamp-node $(ASSETS) Gruntfile.js
+	node_modules/.bin/grunt
+	touch $@
 
 .PHONY: assets
-assets: weasyl/static
+assets: .stamp-weasyl-static
 
 .PHONY: watch
-watch: node_modules
-	$</.bin/grunt watch
+watch: .stamp-node
+	node_modules/.bin/grunt watch
 
 # Run local server
 .PHONY: run
-run: ve weasyl.egg-info assets
-	$</bin/pserve --app-name main --server-name main etc/development.ini
+run: .stamp-ve .stamp-egg-info assets
+	ve/bin/pserve --app-name main --server-name main etc/development.ini
 
 .PHONY: host-run
 host-run: .vagrant
 	vagrant ssh -c 'cd weasyl3 && make run'
 
 .PHONY: shell
-shell: ve weasyl.egg-info
-	$</bin/pshell etc/development.ini
+shell: .stamp-ve .stamp-egg-info
+	ve/bin/pshell etc/development.ini
+
+.PHONY: host-shell
+host-shell: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make shell'
 
 .PHONY: clean
 clean:
@@ -103,19 +126,20 @@ distclean: clean
 	rm -rf ve
 	rm -rf weasyl.egg-info
 	rm -rf node_modules
+	rm -rf .stamp-*
 	git clean -fdx weasyl/static
 
 # Phony target to run flake8 pre-commit
 .PHONY: check
-check:
+check: .stamp-egg-info
 	git diff HEAD | ve/bin/flake8 --config setup.cfg --statistics --diff
 
 # Phony target to run flake8 on everything
 .PHONY: check-all
-check-all:
+check-all: .stamp-egg-info
 	ve/bin/flake8 --config setup.cfg --statistics
 
 # Phony target to run flake8 on the last commit
 .PHONY: check-commit
-check-commit:
+check-commit: .stamp-egg-info
 	git show | ve/bin/flake8 --config setup.cfg --statistics --diff
