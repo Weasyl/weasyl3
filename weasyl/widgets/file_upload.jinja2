@@ -1,0 +1,28 @@
+<div class="deform-file-upload">
+  <input type="hidden" name="__start__" value="{{ field.name }}:mapping">
+  {% if cstruct.get('uid') %}
+  <div class="deform-replaces">
+    <input type="hidden" name="uid" value="{{ cstruct['uid'] }}"
+           id="{{ field.oid }}-uid">
+    <span id="{{ field.oid }}-filename">
+    {{ cstruct.get('filename') }}
+    </span>
+  </div>
+  {% else %}
+  <input type="hidden" name="uid" id="{{ field.oid }}-uid">
+  {% endif %}
+  <input type="file" name="upload"
+         {% if field.widget.size %}
+         size="{{ field.widget.size }}"
+         {% endif %}
+         {% if field.widget.css_class %}
+         class="file-input {{ field.widget.css_class }}"
+         {% else %}
+         class="file-input"
+         {% endif %}
+         id="{{ field.oid }}"
+         data-upload-url="/share/upload">
+
+  <input type="hidden" name="__end__" value="{{ field.name }}:mapping">
+  {{ extra_html }}
+</div>

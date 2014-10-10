@@ -15,6 +15,7 @@ from libweasyl.files import fanout, makedirs_exist_ok
 from libweasyl.legacy import login_name
 from libweasyl.models.content import Folder as _Folder
 from libweasyl.models.users import Login
+from libweasyl.security import generate_key
 from libweasyl import ratings
 from .decorators import wraps_respecting_view_config
 
@@ -498,7 +499,12 @@ class DiskFileUploadTempStore(object):
         return os.path.exists(os.path.join(self._fanned(name), name + '.meta'))
 
 
+class SecureRandomFileUploadWidget(w.FileUploadWidget):
+    def random_id(self):
+        return generate_key(16)
+
+
 @c.deferred
 def upload_widget(node, kw):
     tmpstore = DiskFileUploadTempStore(kw['request'])
-    return w.FileUploadWidget(tmpstore)
+    return SecureRandomFileUploadWidget(tmpstore)

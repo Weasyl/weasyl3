@@ -9,6 +9,7 @@ from pyramid import httpexceptions
 
 from libweasyl.exceptions import ExpectedWeasylError
 from libweasyl.models.content import Submission
+from libweasyl.security import generate_key
 from ..resources import ShareResource
 from . import forms
 
@@ -118,3 +119,19 @@ class ShareMultimediaView(forms.FormView):
 
     def extra_fields(self):
         return {'category': 'multimedia'}
+
+
+@view_config(name='upload', context=ShareResource, renderer='json', request_method='PUT')
+def upload_file(request):
+    store = forms.DiskFileUploadTempStore(request)
+    key = generate_key(16)
+    body = request.body_file_seekable
+    data = {
+        'fp': body,
+        'filename': request.GET.get('name'),
+        'mimetype': request.GET.get('type'),
+        'size': request.content_length,
+        'uid': key,
+    }
+    store[key] = data
+    return {'uid': key}

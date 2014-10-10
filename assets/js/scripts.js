@@ -823,6 +823,38 @@
         document.addEventListener('scroll', checkSticky);
     })();
 
+    function uploadFromElement(el, progressCallback, completedCallback) {
+        var file = el.files[0];
+        var url = el.getAttribute('data-upload-url');
+        url += '?name=' + encodeURIComponent(file.name);
+        url += '&type=' + encodeURIComponent(file.type);
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function (e) {
+            progressCallback(e.loaded / e.total);
+        }, false);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 1) {
+                xhr.send(file);
+            } else if (xhr.readyState == 4) {
+                completedCallback(xhr);
+            }
+        };
+        xhr.responseType = 'json';
+        xhr.open('PUT', url, true);
+    }
+
+    forEach.call(document.getElementsByClassName('deform-file-upload'), function (el) {
+        var input = el.getElementsByClassName('file-input')[0];
+        input.addEventListener('change', function (ev) {
+            uploadFromElement(input, function (p) {
+                console.log(p);
+            }, function (xhr) {
+                var uidElement = document.getElementById(input.id + '-uid');
+                uidElement.value = xhr.response.uid;
+                input.remove();
+            });
+        }, false);
+    });
 
     // show password fields
     forEach.call(document.getElementsByClassName('show-password'), function(el) {
