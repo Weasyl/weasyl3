@@ -68,11 +68,20 @@ class SubmissionResource:
             return False
         if 'friends-only' in self.submission.settings:
             userid = userid_from_principals(principals)
-            return userid and self.submission.owner.is_friends_with(userid)
+            if userid is None:
+                return False
+            elif self.submission.owner.userid == userid:
+                return True
+            elif self.submission.owner.is_friends_with(userid):
+                return True
+            else:
+                return False
         return True
 
     def permits_comment(self, principals):
         # XXX: this needs more checks
+        if 'hidden' in self.submission.settings:
+            return False
         if not self.permits_view(principals):
             return False
         return Authenticated in principals

@@ -168,7 +168,7 @@ class FormView(_FormView):
         :param form: An instance of :py:attr:`.form_class`.
         :returns: A :py:class:`dict`.
         """
-        ret = {self.form_key: form}
+        ret = {self.form_key: form, self.errors_key: None}
         ret.update(self.extra_fields())
         return ret
 
