@@ -128,3 +128,13 @@ def test_http_exception_catchall_context():
     assert result['code'] == 'Gone'
     assert result['description'] is None
     assert result['message']
+
+
+def test_http_exception_catchall_authenticate_header():
+    """
+    http_exception_catchall sets an appropriate WWW-Authenticate header when a
+    401 is returned.
+    """
+    req = DummyRequest()
+    result = exceptions.http_exception_catchall(httpexceptions.HTTPUnauthorized(), req)
+    assert req.response.headers['WWW-Authenticate'] == 'Bearer realm="Weasyl", Weasyl-API-Key realm="Weasyl"'
