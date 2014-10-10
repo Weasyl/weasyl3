@@ -49,18 +49,17 @@ class ShareVisualForm(BaseShareForm):
         values['submission_obj'] = sub
 
 
-def share_visual_success(context, request, appstruct):
-    log.debug('share visual success: %r', appstruct)
-    return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(request))
-
-
 @view_config(name='visual', context=ShareResource, renderer='sharing/share.jinja2')
-@forms.form_renderer(ShareVisualForm, 'share', success=share_visual_success, button='post',
-                     name='visual', context=ShareResource, renderer='sharing/share.jinja2')
-def share_visual(context, request, forms):
-    ret = forms.copy()
-    ret['category'] = 'visual'
-    return ret
+class ShareVisualView(forms.FormView):
+    schema = ShareVisualForm()
+    buttons = 'post',
+
+    def post_success(self, appstruct):
+        log.debug('share visual success: %r', appstruct)
+        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
+
+    def extra_fields(self):
+        return {'category': 'visual'}
 
 
 class BaseShareLiteraryMultimediaForm(BaseShareForm):
@@ -90,18 +89,17 @@ class ShareLiteraryForm(BaseShareLiteraryMultimediaForm):
     _category = 'literary'
 
 
-def share_literary_success(context, request, appstruct):
-    log.debug('share literary success: %r', appstruct)
-    return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(request))
-
-
 @view_config(name='literary', context=ShareResource, renderer='sharing/share.jinja2')
-@forms.form_renderer(ShareLiteraryForm, 'share', success=share_literary_success, button='post',
-                     name='literary', context=ShareResource, renderer='sharing/share.jinja2')
-def share_literary(context, request, forms):
-    ret = forms.copy()
-    ret['category'] = 'literary'
-    return ret
+class ShareLiteraryView(forms.FormView):
+    schema = ShareLiteraryForm()
+    buttons = 'post',
+
+    def post_success(self, appstruct):
+        log.debug('share literary success: %r', appstruct)
+        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
+
+    def extra_fields(self):
+        return {'category': 'literary'}
 
 
 class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
@@ -109,15 +107,14 @@ class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
     _category = 'multimedia'
 
 
-def share_multimedia_success(context, request, appstruct):
-    log.debug('share multimedia success: %r', appstruct)
-    return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(request))
-
-
 @view_config(name='multimedia', context=ShareResource, renderer='sharing/share.jinja2')
-@forms.form_renderer(ShareMultimediaForm, 'share', success=share_multimedia_success, button='post',
-                     name='multimedia', context=ShareResource, renderer='sharing/share.jinja2')
-def share_multimedia(context, request, forms):
-    ret = forms.copy()
-    ret['category'] = 'multimedia'
-    return ret
+class ShareMultimediaView(forms.FormView):
+    schema = ShareMultimediaForm()
+    buttons = 'post',
+
+    def post_success(self, appstruct):
+        log.debug('share multimedia success: %r', appstruct)
+        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
+
+    def extra_fields(self):
+        return {'category': 'multimedia'}
