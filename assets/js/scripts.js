@@ -839,19 +839,27 @@
                 completedCallback(xhr);
             }
         };
-        xhr.responseType = 'json';
         xhr.open('PUT', url, true);
     }
 
     forEach.call(document.getElementsByClassName('deform-file-upload'), function (el) {
         var input = el.getElementsByClassName('file-input')[0];
+        if (!input.getAttribute('data-upload-url')) return;
+        var progress = document.getElementById(input.id + '-progress');
         input.addEventListener('change', function (ev) {
+            progress.innerText = 'upload starting';
             uploadFromElement(input, function (p) {
-                console.log(p);
+                progress.innerText = (p * 100).toFixed(2) + '%';
             }, function (xhr) {
+                if (xhr.status != 200) {
+                    progress.innerText = 'upload failed';
+                    return;
+                }
                 var uidElement = document.getElementById(input.id + '-uid');
-                uidElement.value = xhr.response.uid;
-                input.remove();
+                var response = JSON.parse(xhr.response);
+                uidElement.value = response.uid;
+                input.name = '';
+                progress.innerText = 'uploaded';
             });
         }, false);
     });
