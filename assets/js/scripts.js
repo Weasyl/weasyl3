@@ -860,9 +860,11 @@
 
         forEach.call(form.getElementsByTagName('button'), function (button) {
             button.addEventListener('click', function (ev) {
-                if (!uploadsInProgress) return;
+                if (!uploadsInProgress) {
+                    return;
+                }
                 attemptedFormSubmission = true;
-                alert("can't submit; still uploading");
+                alert('can\'t submit; still uploading');
                 ev.preventDefault();
                 lastButtonPressed = button;
             }, false);
@@ -870,15 +872,17 @@
 
         forEach.call(form.getElementsByClassName('deform-file-upload'), function (el) {
             var input = el.getElementsByClassName('file-input')[0];
-            if (!input.getAttribute('data-upload-url')) return;
+            if (!input.getAttribute('data-upload-url')) {
+                return;
+            }
             var progress = document.getElementById(input.id + '-progress');
-            input.addEventListener('change', function (ev) {
+            input.addEventListener('change', function () {
                 progress.innerText = 'upload starting';
                 ++uploadsInProgress;
                 uploadFromElement(input, function (p) {
                     progress.innerText = (p * 100).toFixed(2) + '%';
                 }, function (xhr) {
-                    var success = xhr.status == 200;
+                    var success = xhr.status === 200;
                     uploadCompleted(success);
                     if (!success) {
                         progress.innerText = 'upload failed';
