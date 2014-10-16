@@ -3,14 +3,16 @@
 {% block user_page_title %}profile{% endblock %}
 
 {% block user_body %}
-  <div class="user-latest">
-    <h3 class="title secondary layout-block toggle title-toggle-max-m disclose active" data-toggle-target="next">Latest</h3>
+  {% if submissions %}
+    <div class="user-latest">
+      <h3 class="title secondary layout-block toggle title-toggle-max-m disclose active" data-toggle-target="next">Latest</h3>
 
-    <div class="grid thumbs-grid info full layout-block toggle-target-max-m active">
-      {% for sub in submissions %}{{ f.submission_thumb(sub, with_caption=False) }}{% endfor %}
-      <div><a href="{{ request.path_for(user, 'works') }}" class="action disclose">Full works</a></div>
-    </div><!-- .thumbs-grid -->
-  </div><!-- .user-latest -->
+      <div class="grid thumbs-grid info full layout-block toggle-target-max-m active">
+        {% for sub in submissions %}{{ f.submission_thumb(sub, with_caption=False) }}{% endfor %}
+        <div><a href="{{ request.path_for(user, 'works') }}" class="action disclose">Full works</a></div>
+      </div><!-- .thumbs-grid -->
+    </div><!-- .user-latest -->
+  {% endif %}
 
   <div class="user-about">
     <h3 class="title secondary toggle disclose title-toggle-max-m" data-toggle-target="next">Profile</h3>
