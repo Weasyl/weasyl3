@@ -1,7 +1,12 @@
 (function() {
     'use strict';
 
-    var forEach = Array.prototype.forEach;
+    function forEach(list, callback) {
+        for (var i = 0, l = list.length; i < l; i++) {
+            callback(list[i]);
+        }
+    }
+
     var DOMTokenList;
 
     var classListSupported = document.documentElement.classList && (function () {
@@ -536,7 +541,7 @@
         if ( targetObject ) {
             targetObject.classList.toggle('active');
         } else if ( toggleTarget !== null ) {
-            forEach.call(document.querySelectorAll(toggleTarget), function(targetEl) {
+            forEach(document.querySelectorAll(toggleTarget), function (targetEl) {
                 targetEl.classList.toggle('active');
             });
         }
@@ -616,7 +621,7 @@
 
 
     // art zoom
-    forEach.call(document.getElementsByClassName('sub-zoom-toggle'), function(el) {
+    forEach(document.getElementsByClassName('sub-zoom-toggle'), function (el) {
         el.addEventListener('click', function(ev) {
             ev.preventDefault();
             el.classList.toggle('active');
@@ -675,7 +680,8 @@
             });
         }
     }
-    forEach.call(document.getElementsByClassName('resizing-textarea'), function(el) {
+
+    forEach(document.getElementsByClassName('resizing-textarea'), function (el) {
         textareas(el);
     });
 
@@ -693,7 +699,7 @@
         return toArray(context.querySelectorAll('input[type="checkbox"]:not(.checkbox-parent)'));
     }
     function updateCounts() {  // updates count elements with number of checked boxes in context
-        forEach.call(document.getElementsByClassName('checked-count'), function(el) {
+        forEach(document.getElementsByClassName('checked-count'), function (el) {
             var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context')));
 
             var count = checkboxes.reduce(function (count, checkbox) {
@@ -711,7 +717,7 @@
     }
     function changeCheckboxStates(context, action) {  // change all checkboxes in context with given action
         var checkboxes = getCheckboxes(context);
-        forEach.call(checkboxes, function(checkbox) {
+        forEach(checkboxes, function (checkbox) {
             if (action === 'on' && !checkbox.checked) {
                 checkbox.checked = true;
                 triggerChange(checkbox);
@@ -730,7 +736,7 @@
         thisLabel.classList.toggle('checked', el.checked);
     }
     // handle individual checkbox changes
-    forEach.call(document.querySelectorAll('input[type=checkbox], input[type=radio]'), function(el) {
+    forEach(document.querySelectorAll('input[type=checkbox], input[type=radio]'), function (el) {
         var isParent = el.classList.contains('checkbox-parent'),
             isChild = el.classList.contains('checkbox-child');
 
@@ -744,7 +750,7 @@
                     childBoxes = groupEl.getElementsByClassName('checkbox-child');
 
                 if ( isParent ) {
-                    forEach.call(childBoxes, function(childEl) {
+                    forEach(childBoxes, function (childEl) {
                         childEl.checked = el.checked;
                     });
                 } else if ( !el.checked ) {
@@ -753,7 +759,7 @@
                     parentBox.checked = true;
                 }
 
-                forEach.call([parentBox].concat(toArray(childBoxes)), function(thisBox) {
+                forEach([parentBox].concat(toArray(childBoxes)), function (thisBox) {
                     changeParentLabel(thisBox);
                 });
 
@@ -765,7 +771,7 @@
         });
     });
     // handle check/uncheck/invert all
-    forEach.call(document.querySelectorAll('.check-all, .uncheck-all, .invert-all'), function(el) {
+    forEach(document.querySelectorAll('.check-all, .uncheck-all, .invert-all'), function (el) {
         var context = document.querySelector(el.getAttribute('data-context'));
         if (context) {
             if (el.classList.contains('check-all')) {
@@ -826,7 +832,7 @@
 
 
     // show password fields
-    forEach.call(document.getElementsByClassName('show-password'), function(el) {
+    forEach(document.getElementsByClassName('show-password'), function (el) {
         var targetEls = document.querySelectorAll(el.getAttribute('data-target'));
 
         el.addEventListener('click', function(ev) {
@@ -834,17 +840,17 @@
 
             var isActive = el.classList.toggle('active');
 
-            for (var i = targetEls.length >>> 0; i--;) {
-                targetEls[i].type = isActive ? 'text' : 'password';
-            }
+            forEach(targetEls, function (targetEl) {
+                targetEl.type = isActive ? 'text' : 'password';
+            });
         });
     });
 
 
-    forEach.call(document.getElementsByClassName('mosaic'), wzlMosaic);
-    forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
+    forEach(document.getElementsByClassName('mosaic'), wzlMosaic);
+    forEach(document.getElementsByClassName('active-label'), wzlLabels);
 
-    forEach.call(document.getElementsByClassName('toggle'), function(el) {
+    forEach(document.getElementsByClassName('toggle'), function (el) {
         el.addEventListener('click', function(ev) {
             ev.preventDefault();
             wzlToggles(el);
