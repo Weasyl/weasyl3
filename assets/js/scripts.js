@@ -793,8 +793,9 @@
             footer = document.getElementsByClassName('page-footer')[0],
             refPos, elHeight, footerPos;
 
-        if (!el || !mainCol || !footer)
+        if (!el || !mainCol || !footer) {
             return;
+        }
 
         function checkSticky() {
             refPos = mainCol.getBoundingClientRect().top;
