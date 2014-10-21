@@ -121,84 +121,19 @@
     <h3 class="title secondary layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">Favorite works</h3>
     <div class="toggle-target-max-m layout-block">
       <div class="mosaic content-block">
-        <figure class="item" data-init-aspect="2.7"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/300/111" alt="" />
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="2.02"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/220/109" alt="" />
-          <div class="rating mature">Rated mature</div>
-          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="1.04"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/202/194" alt="" />
-          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="0.38"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/109/289" alt="" />
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="2.41"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/248/103" alt="" />
-          <div class="type"><div class="ribbon"><span class="icon icon-type-multi">Multimedia</span></div></div>
-          <div class="rating explicit">Rated explicit</div>
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="1.66"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/176/106" alt="" />
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="0.88"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/236/267" alt="" />
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="0.52"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/148/287" alt="" />
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="0.74"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/182/245" alt="" />
-          <div class="type"><div class="ribbon"><span class="icon icon-type-lit">Literature</span></div></div>
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
-        <figure class="item" data-init-aspect="1.27"><a href="submission.htm" class="thumb-container">
-          <img class="thumb" src="http://lorempixel.com/214/168" alt="" />
-          <figcaption class="info">
-            <h4 class="title text-grad">This Is the Title of the Thing</h4>
-            <p class="byline"><span class="type-alt">by</span> AbrahammerLincolnlog</p>
-          </figcaption>
-        </a></figure>
+        {% for submission in user.favorites %}
+          {{ f.submission_thumb(submission, 'item') }}
+        {% endfor %}
       </div><!-- .mosaic -->
-      <h4 class="title tertiary content-block"><a href="#" class="disclose">24 favorites total</a></h4>
+      <h4 class="title tertiary content-block">
+        <a href="#" class="disclose">
+          {% trans count=user.favorites|length %}
+            {{ count }} favorite total
+            {% pluralize %}
+            {{ count }} favorites total
+          {% endtrans %}
+        </a>
+      </h4>
     </div><!-- toggle target -->
   </div><!-- .user-favorites -->
 
@@ -206,39 +141,33 @@
     <h3 class="title secondary layout-block toggle title-toggle-max-m disclose" data-toggle-target="next">People</h3>
     <div class="user-people toggle-target-max-m layout-block">
       <ul class="user-avatar-list grid compressed">
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/200/200" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/199/199" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/198/198" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/197/197" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/196/196" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/195/195" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/194/194" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/193/193" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/192/192" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/191/191" alt="" /></a></li>
+        {% for u in following %}
+          <li class="grid-item">{{ f.user_avatar(u) }}</li>
+        {% endfor %}
       </ul>
-      <h4 class="title tertiary content-block"><a href="#" class="disclose">Following 40</a></h4>
+      <h4 class="title tertiary content-block"><a href="#" class="disclose">Following {{ following_count }}</a></h4>
 
       <ul class="user-avatar-list grid compressed">
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/190/190" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/189/189" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/188/188" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/187/187" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/186/186" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/185/185" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/184/184" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/183/183" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/182/182" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/181/181" alt="" /></a></li>
+        {% for u in followers %}
+          <li class="grid-item">{{ f.user_avatar(u) }}</li>
+        {% endfor %}
       </ul>
-      <h4 class="title tertiary content-block"><a href="#" class="disclose">109 following Usernameguy</a></h4>
+      <h4 class="title tertiary content-block"><a href="#" class="disclose">{{ follower_count }} following {{ user.profile.username }}</a></h4>
 
       <ul class="user-avatar-list grid compressed">
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/180/180" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/179/179" alt="" /></a></li>
-        <li class="grid-item"><a href="user.htm" class="avatar"><img src="http://lorempixel.com/178/178" alt="" /></a></li>
+        {% for u in user.friends[:10] %}
+          <li class="grid-item">{{ f.user_avatar(u) }}</li>
+        {% endfor %}
       </ul>
-      <h4 class="title tertiary"><a href="#" class="disclose">3 friends</a></h4>
+      <h4 class="title tertiary">
+        <a href="#" class="disclose">
+          {% trans count=user.friends|length %}
+            {{ count }} friend
+            {% pluralize %}
+            {{ count }} friends
+          {% endtrans %}
+        </a>
+      </h4>
     </div><!-- toggle target -->
   </div><!-- .user-community -->
 
