@@ -7,7 +7,7 @@
 PYVENV ?= pyvenv
 
 # URL of package index
-PYPI := https://pypi.weasyl.com/
+PYPI := https://pypi.weasyldev.com/
 
 # Whether to use wheels
 USE_WHEEL := --no-use-wheel

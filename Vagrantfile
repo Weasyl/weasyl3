@@ -52,10 +52,10 @@ update-ca-certificates
 echo >/etc/apt/sources.list.d/nodesource.list \
     'deb https://deb.nodesource.com/node wheezy main'
 echo >/etc/apt/sources.list.d/weasyl.list \
-    'deb http://apt.i.weasyl.com/repos/apt/debian wheezy main'
+    'deb http://apt.weasyldev.com/repos/apt/debian wheezy main'
 
 wget -O- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-wget -O- https://deploy.i.weasyl.com/weykent-key.asc | apt-key add -
+wget -O- https://deploy.weasyldev.com/weykent-key.asc | apt-key add -
 
 apt-get update
 apt-mark hold grub-pc
@@ -70,7 +70,7 @@ sudo -u postgres psql -c 'DROP DATABASE weasyl'
 sudo -u postgres psql -c 'DROP USER vagrant'
 sudo -u postgres createuser -drs vagrant
 sudo -u postgres createdb -E UTF8 -O vagrant weasyl
-wget -O- https://deploy.i.weasyl.com/weasyl-latest.sql.xz \
+wget -O- https://deploy.weasyldev.com/weasyl-latest.sql.xz \
     | xzcat | sudo -u vagrant psql weasyl
 
 openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
@@ -139,8 +139,7 @@ SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "weasyl-debian76"
-  config.vm.box_url = "https://deploy.i.weasyl.com/weasyl-debian76.box"
-  config.vm.box_download_insecure = true
+  config.vm.box_url = "https://deploy.weasyldev.com/weasyl-debian76.box"
   config.vm.box_download_checksum = "58c6db2da40bc22bd03347f12af4c8ba06a7e1f73192d3202bae1071ef948cf4"
   config.vm.box_download_checksum_type = "sha256"
   config.vm.provision :shell, :privileged => true, :inline => $priv_script
