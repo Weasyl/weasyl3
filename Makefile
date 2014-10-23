@@ -39,7 +39,7 @@ all: .stamp-ve .stamp-egg-info assets
 # Vagrant/libweasyl setup
 
 libweasyl:
-	git clone gitlab@git.weasylweb.com:weasyl3/libweasyl.git
+	git clone gitlab@git.weasyldev.com:weasyl3/libweasyl.git
 	ln -s ../ve libweasyl
 
 .PHONY: install-libweasyl
