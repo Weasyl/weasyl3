@@ -54,8 +54,8 @@ echo >/etc/apt/sources.list.d/nodesource.list \
 echo >/etc/apt/sources.list.d/weasyl.list \
     'deb http://apt.weasyldev.com/repos/apt/debian wheezy main'
 
-wget -O- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-wget -O- https://deploy.weasyldev.com/weykent-key.asc | apt-key add -
+curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+curl https://deploy.weasyldev.com/weykent-key.asc | apt-key add -
 
 apt-get update
 apt-mark hold grub-pc
@@ -70,7 +70,7 @@ sudo -u postgres psql -c 'DROP DATABASE weasyl'
 sudo -u postgres psql -c 'DROP USER vagrant'
 sudo -u postgres createuser -drs vagrant
 sudo -u postgres createdb -E UTF8 -O vagrant weasyl
-wget -O- https://deploy.weasyldev.com/weasyl-latest.sql.xz \
+curl https://deploy.weasyldev.com/weasyl-latest.sql.xz \
     | xzcat | sudo -u vagrant psql weasyl
 
 openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
