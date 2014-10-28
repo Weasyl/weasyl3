@@ -5,6 +5,7 @@ module.exports = function (grunt) {
                 files: {
                     'assets/js/site.js': [
                         'assets/js/modernizr.js',
+                        'assets/js/polyfills.js',
                         'assets/js/scripts.js',
                     ],
                 },
@@ -63,7 +64,7 @@ module.exports = function (grunt) {
                 tasks: ['filerev:images', 'usemin', 'filerev', 'filerev_assets'],
             },
             js: {
-                files: ['assets/js/{scripts,modernizr}.js'],
+                files: ['assets/js/{scripts,modernizr,polyfills}.js'],
                 tasks: ['uglify', 'filerev', 'filerev_assets'],
             },
             sass: {
