@@ -100,6 +100,10 @@ assets: .stamp-weasyl-static
 watch: .stamp-node
 	node_modules/.bin/grunt watch
 
+.PHONY: host-watch
+host-watch: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make watch'
+
 # Run local server
 .PHONY: run
 run: .stamp-ve .stamp-egg-info assets
