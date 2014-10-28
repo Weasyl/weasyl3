@@ -7,7 +7,7 @@
 PYVENV ?= pyvenv
 
 # URL of package index
-PYPI := https://pypi.weasyl.com/
+PYPI := https://pypi.weasyldev.com/
 
 # Whether to use wheels
 USE_WHEEL := --no-use-wheel
@@ -39,7 +39,7 @@ all: .stamp-ve .stamp-egg-info assets
 # Vagrant/libweasyl setup
 
 libweasyl:
-	git clone gitlab@gitlab.i.weasyl.com:weasyl3/libweasyl.git
+	git clone gitlab@git.weasyldev.com:weasyl3/libweasyl.git
 	ln -s ../ve libweasyl
 
 .PHONY: install-libweasyl
@@ -99,6 +99,10 @@ assets: .stamp-weasyl-static
 .PHONY: watch
 watch: .stamp-node
 	node_modules/.bin/grunt watch
+
+.PHONY: host-watch
+host-watch: .vagrant
+	vagrant ssh -c 'cd weasyl3 && make watch'
 
 # Run local server
 .PHONY: run
