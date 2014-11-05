@@ -181,6 +181,7 @@ var WZL = (function (window, document) {
     }());
 
 
+
     /////////////////////////////
     //  simple tabs/slideshow  //
     /////////////////////////////
@@ -319,6 +320,7 @@ var WZL = (function (window, document) {
     }());
 
 
+
     //////////////////////////////
     //  shared height elements  //
     //////////////////////////////
@@ -387,6 +389,333 @@ var WZL = (function (window, document) {
     }());
 
 
+
+    /////////////////////
+    //  mosaics/tiles  //
+    /////////////////////
+
+    var mosaics = (function () {
+        var initEls = document.getElementsByClassName('mosaic'),
+            defaults = {
+                blockSize: 96,
+                maxBlocksPerTile: 3,
+                ragged: false,
+                tileClass: 'item'
+            },
+            mosaicList = [];
+
+        function Mosaic(el, options) {
+            // personal properties
+            this.el = el;
+            this.grid = [];
+            this.tiles = [];
+            this.maxBlockSize = options.blockSize || defaults.blockSize;
+            this.maxBlocksPerTile = options.maxBlocksPerTile || defaults.maxBlocksPerTile;
+            this.ragged = options.ragged || defaults.ragged;
+            this.tileClass = options.tileClass || defaults.tileClass;
+
+            // calculated properties
+            this.blockSize = 0;
+            this.containerWidth = 0;
+            this.columns = 0;
+            this.calculateProps();
+
+            // process tiles
+            this.initTiles();
+
+            // calculate layout
+            this.layout();
+
+            // draw layout
+            this.draw();
+
+            el.classList.add('enabled');
+        }
+
+        // initializes an empty grid row or set of grid rows
+        Mosaic.prototype.addGridRow = function (row, endRow) {
+            endRow = endRow || row;
+            for (; row <= endRow; row++) {
+                this.grid[row] = [];
+                for (var i = 0; i < this.columns; i++) {
+                    this.grid[row].push(false);
+                }
+            }
+        };
+
+        // calculates derived container properties
+        Mosaic.prototype.calculateProps = function () {
+            // avoid infinite loop that happens when we can't get width
+            console.log('calculating container properties ...');
+            this.el.setAttribute('style', 'display: block !important;');
+            this.el.parentNode.setAttribute('style', 'display: block !important;');
+            this.containerWidth = this.el.offsetWidth;
+            this.el.removeAttribute('style');
+            this.el.parentNode.removeAttribute('style');
+
+            this.columns = Math.ceil(this.containerWidth / this.maxBlockSize);
+            this.blockSize = Math.floor(this.containerWidth / this.columns);
+            console.log('done calculating container properties');
+        };
+
+        // inventory and track tiles in this container
+        Mosaic.prototype.initTiles = function () {
+            console.log('initializing tiles ...');
+            var that = this;
+            Array.prototype.slice.call(that.el.getElementsByClassName(that.tileClass), 0)
+                .forEach(function (tile) {
+                    that.tiles.push(new Tile(tile, that.maxBlocksPerTile));
+                });
+            console.log('done initializing tiles');
+        };
+
+        // the good part
+        Mosaic.prototype.layout = function () {
+            console.log('calculating layout ...');
+            var that = this,
+                currentIndex = 0,
+                isLookahead = false,
+                cursorX = 0,
+                cursorY = 0,
+                thisTile, availableSpace, backupTile,
+                foundBackupTile = false;
+
+            // reset to a fresh slate
+            this.grid.length = 0;
+            this.addGridRow(0, this.maxBlocksPerTile - 1);
+            if (this.ragged) {
+                for (var i = 0; i < this.columns; i++) {
+                    if (Math.random() < 0.5) {
+                        this.grid[0][i] = true;
+                        if (Math.random() < 0.4) {
+                            this.grid[1][i] = true;
+                        }
+                    }
+                }
+            }
+
+            // helper: finds available space to the right of a given grid point
+            function findSpaceFromPoint(x, y) {
+                var availableSpace = 0,
+                    offsetX;
+
+                // reject if at end of row
+                if (x >= that.columns) {
+                    return [false, x];
+                }
+                // jump to next available space, or reject if none
+                while (that.grid[y][x]) {
+                    if (x >= that.columns) {
+                        return [false, x];
+                    }
+                    x++;
+                }
+
+                // count available spaces, then return
+                offsetX = x;
+                while (x < that.columns) {
+                    availableSpace++;
+                    x++;
+                    if (that.grid[y][x]) {
+                        break;
+                    }
+                }
+                return [availableSpace, offsetX];
+            }
+
+            // helper: reserves grid space for a given tile
+            function placeTile(tile) {
+                tile.posX = cursorX
+                tile.posY = cursorY
+                tile.placed = true;
+
+                for (var i = 0; i < tile.sizeX; i++) {
+                    for (var j = 0; j < tile.sizeY; j++) {
+                        that.grid[cursorY + j][cursorX + i] = true;
+                    }
+                }
+                cursorX += tile.sizeX;
+            }
+
+            // fit each tile
+            while (currentIndex < this.tiles.length) {
+                // if this is a lookahead, skip iterator mod
+                if (isLookahead) {
+                    isLookahead = false;
+                // otherwise, find earliest unplaced tile
+                } else {
+                    currentIndex = 0;
+                    for (var i = 0; i < this.tiles.length; i++) {
+                        if (!this.tiles[i].placed) {
+                            currentIndex = i;
+                            break;
+                        }
+                        currentIndex++;
+                    }
+                }
+                // extra check because we mess with iterator condition
+                if (currentIndex >= this.tiles.length) {
+                    break;
+                }
+
+                // some quick references
+                thisTile = this.tiles[currentIndex];
+                thisTile.sizeX = thisTile.maxSizeX;
+                thisTile.sizeY = thisTile.maxSizeY;
+
+                // get space available from current cursor point
+                availableSpace = findSpaceFromPoint(cursorX, cursorY);
+
+                // if we've reached the end of the row without a place, go to a new row
+                while (availableSpace[0] === false || availableSpace[0] <= 0) {
+                    cursorY++;
+                    cursorX = 0;
+                    this.addGridRow(cursorY + this.maxBlocksPerTile - 1);
+                    availableSpace = findSpaceFromPoint(cursorX, cursorY);
+                }
+                cursorX = availableSpace[1];
+
+                // shrink tile if needed
+                while (availableSpace[0] < thisTile.sizeX && thisTile.sizeX > 1 && thisTile.sizeY > 1) {
+                    if (thisTile.sizeX % 2 === 0 && thisTile.sizeY % 2 === 0) {
+                        thisTile.sizeX /= 2;
+                        thisTile.sizeY /= 2;
+                    } else {
+                        thisTile.sizeX -= 1;
+                        thisTile.sizeY -= 1;
+                    }
+                }
+                // place tile if we can
+                if (availableSpace[0] >= thisTile.sizeX) {
+                    placeTile(thisTile);
+                // fall back if we can't place this tile
+                } else {
+                    // search upcoming tiles for a possible candidate
+                    for (backupTile = currentIndex + 1; backupTile < this.tiles.length; backupTile++) {
+                        if (!this.tiles[backupTile].placed) {
+                            foundBackupTile = true;
+                            break;
+                        }
+                    }
+                    if (foundBackupTile) {
+                        foundBackupTile = false;
+                        isLookahead = true;
+                        currentIndex = backupTile;
+                        continue;
+                    }
+                    // if no other candidate found, make due
+                    // if we can, advance the x position and try again
+                    if (cursorX < this.columns) {
+                        cursorX++;
+                        continue;
+                    }
+                    // last resort, make a new row and try again
+                    cursorX = 0;
+                    cursorY++;
+                    this.addGridRow(cursorY + this.maxBlocksPerTile - 1);
+                    continue;
+                }
+            }
+            console.log('done calculating layout');
+        };
+
+        // translate grid data to css layout
+        Mosaic.prototype.draw = function () {
+            console.log('drawing css layout ...');
+            var that = this,
+                trimLength = 0;
+            
+            this.tiles.forEach(function (tile) {
+                tile.el.style.width = tile.sizeX * that.blockSize + 'px';
+                tile.el.style.height = tile.sizeY * that.blockSize + 'px';
+                tile.el.style.left = tile.posX * that.blockSize + 'px';
+                tile.el.style.top = tile.posY * that.blockSize + 'px';
+
+                // position info tooltip
+                tile.tooltip.style.width = that.blockSize * that.maxBlocksPerTile + 'px';
+                tile.tooltip.style.marginLeft = 0;
+                tile.tooltip.classList.remove('edge-left');
+                tile.tooltip.classList.remove('edge-right');
+                if (tile.posX < that.blockSize) {
+                    tile.tooltip.classList.add('edge-left');
+                } else if (that.containerWidth - tile.posX - tile.sizeX * that.blockSize < that.blockSize) {
+                    tile.tooltip.classList.add('edge-right');
+                } else {
+                    tile.tooltip.style.marginLeft = (-that.blockSize * that.maxBlocksPerTile / 2) + 'px';
+                }
+            });
+
+            // set height of container to avoid colliding with layout
+            for (var i = this.grid.length - 1; i >= 0; i--) {
+                if (this.grid[i].indexOf(true) !== -1) {
+                    break;
+                }
+                trimLength++;
+            }
+            this.el.style.height = ((this.grid.length - trimLength) * this.blockSize) + 'px';
+            console.log('done drawing css layout');
+        };
+
+        function Tile(el, maxSize) {
+            this.el = el;
+
+            // positioning properties
+            this.aspect = parseFloat(el.getAttribute('data-init-aspect'));
+            this.placed = false;
+            this.maxSizeX = maxSize;
+            this.maxSizeY = maxSize;
+            this.sizeX = maxSize;
+            this.sizeY = maxSize;
+            this.posX = 0;
+            this.posY = 0;
+
+            // children
+            this.image = el.querySelector('.thumb').getAttribute('src');
+            this.anchor = el.querySelector('a');
+            this.tooltip = el.querySelector('.info');
+
+            // set image as a bg to let the browser handle sizing
+            this.anchor.style.backgroundImage = 'url("' + this.image + '")';
+
+            // assign sizing
+            if (this.aspect < 1) {
+                this.maxSizeX = Math.ceil(maxSize * this.aspect);
+            } else if (this.aspect > 1) {
+                this.maxSizeY = Math.ceil(maxSize / this.aspect);
+            }
+        }
+
+
+        // public: add mosaic functionality to a container
+        function add(el, options) {
+            mosaicList.push(new Mosaic(el, options));
+        }
+
+        // public: return a list of all mosaics on page
+        function list() {
+            return mosaicList;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+                add(el, {
+                    ragged: el.classList.contains('ragged')
+                });
+            });
+            console.log(list());
+        }
+
+        return {
+            add: add,
+            list: list,
+            init: init
+        };
+    }());
+
+
+
+
     //////////////////////
     //  initialization  //
     //////////////////////
@@ -395,6 +724,7 @@ var WZL = (function (window, document) {
         toggles.init();
         tabs.init();
         sharedHeights.init();
+        mosaics.init();
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
     };
@@ -409,6 +739,7 @@ var WZL = (function (window, document) {
     //  crud to clean up  //
     ////////////////////////
 
+/*
     // helper function: nodelist to array
     function toArray(obj) {
         var array = [];
@@ -450,379 +781,6 @@ var WZL = (function (window, document) {
     })();
 
 
-    // weasyl mosaic thumbnail layout
-    function wzlMosaic(el) {
-        var maxBlockWidth = 96,
-            aspectRatios = [0.33, 0.66, 1, 1.5, 3],
-            grid = [],
-            tiles, tileCount, containerWidth, blockDim, columnCount, globalOffset;
-
-        el.classList.add('enabled');
-
-        // create a new grid row of empty cells at specified y position
-        function newGridRow(row) {
-            grid[row] = [];
-            for ( var i = 0; i < columnCount; i++ ) {
-                grid[row].push(0);
-            }
-            console.log('created new grid row at ' + row);
-        }
-
-        // set up container properties
-        function setupContainer() {
-            console.log('setting up container...');
-            globalOffset = 0;
-
-            el.setAttribute('style', 'display: block !important;');  // infinite loop if no width to go on
-            el.parentNode.setAttribute('style', 'display: block !important;');
-            containerWidth = el.offsetWidth;
-            el.removeAttribute('style');
-            el.parentNode.removeAttribute('style');
-
-            console.log('container width: ' + containerWidth);
-            columnCount = Math.ceil(containerWidth / maxBlockWidth);
-            blockDim = Math.floor(containerWidth / columnCount);
-
-            // wipe existing grid (if any) and create three empy grid rows to work within
-            grid.length = 0;
-            console.log('wiped existing grid');
-            newGridRow(0); newGridRow(1); newGridRow(2);
-            console.log('created starter rows');
-
-            // ragged top - randomize layout of first two rows
-            if ( el.classList.contains('ragged') ) {
-                for (var d = 0; d < columnCount; d++) {
-                    if (Math.random() < 0.5) {
-                        grid[0][d] = 1;
-                        if (Math.random() < 0.4) {
-                            grid[1][d] = 1;
-                        }
-                    }
-                }
-                console.log('created ragged gaps');
-            }
-        }
-
-        // process tile properties
-        function setupTiles(offset) {
-            console.log('setting up tiles ...');
-            if ( !offset ) { offset = 0; }
-            tiles = toArray(el.getElementsByClassName('item'));
-            tileCount = tiles.length;
-            console.log(tileCount + ' tiles in set');
-
-            var offsetTiles = tiles.slice(offset);
-            for ( var i = 0; i < offsetTiles.length; i++ ) {
-                var thisTile = offsetTiles[i],
-                    aspectRatio = parseFloat(thisTile.getAttribute('data-init-aspect')),
-                    closestRatio = null,
-                    thumbImage = thisTile.querySelector('.thumb').getAttribute('src'),
-                    childA = thisTile.querySelector('a');
-                console.log('Processing the following tile:');
-                console.log(thisTile);
-
-                // set as background image in order to let the browser handle sizing
-                childA.style.backgroundImage = 'url("' + thumbImage + '")';
-                console.log('backgroundImage set');
-
-                // assign closest aspect
-                for ( var j = 0; j < aspectRatios.length; j++ ) {
-                    if (closestRatio === null || Math.abs(aspectRatios[j] - aspectRatio) < Math.abs(closestRatio - aspectRatio)) {
-                        closestRatio = aspectRatios[j];
-                    }
-                }
-                thisTile.setAttribute('data-snapped-aspect', closestRatio);
-                thisTile.setAttribute('data-placed', 0);
-                console.log('aspect ratio set: ' + closestRatio);
-
-                // assign cell dimensions and denote resizeability
-                if (closestRatio === 0.33) {
-                    thisTile.setAttribute('data-sizeX', 1);
-                    thisTile.setAttribute('data-sizeY', 3);
-                    thisTile.setAttribute('data-resizeable2', 0);
-                    thisTile.setAttribute('data-resizeable1', 0);
-                } else if (closestRatio === 0.66) {
-                    thisTile.setAttribute('data-sizeX', 2);
-                    thisTile.setAttribute('data-sizeY', 3);
-                    thisTile.setAttribute('data-resizeable2', 0);
-                    thisTile.setAttribute('data-resizeable1', 1);
-                    thisTile.setAttribute('data-size1X', 1);
-                    thisTile.setAttribute('data-size1Y', 2);
-                } else if (closestRatio === 1) {
-                    thisTile.setAttribute('data-sizeX', 3);
-                    thisTile.setAttribute('data-sizeY', 3);
-                    thisTile.setAttribute('data-resizeable2', 1);
-                    thisTile.setAttribute('data-size2X', 2);
-                    thisTile.setAttribute('data-size2Y', 2);
-                    thisTile.setAttribute('data-resizeable1', 1);
-                    thisTile.setAttribute('data-size1X', 1);
-                    thisTile.setAttribute('data-size1Y', 1);
-                } else if (closestRatio === 1.5) {
-                    thisTile.setAttribute('data-sizeX', 3);
-                    thisTile.setAttribute('data-sizeY', 2);
-                    thisTile.setAttribute('data-resizeable2', 1);
-                    thisTile.setAttribute('data-size2X', 2);
-                    thisTile.setAttribute('data-size2Y', 1);
-                    thisTile.setAttribute('data-resizeable1', 0);
-                } else if (closestRatio === 3) {
-                    thisTile.setAttribute('data-sizeX', 3);
-                    thisTile.setAttribute('data-sizeY', 1);
-                    thisTile.setAttribute('data-resizeable2', 0);
-                    thisTile.setAttribute('data-resizeable1', 0);
-                }
-                console.log('cell data applied to tile');
-            }
-        }
-
-        // the fun part
-        function mosaicLayout(isAppend) {
-            console.log('Fitting tiles ...');
-            var curTile = 0,
-                isLookahead = false,
-                posX = 0,
-                posY = 0;
-
-            // if appending to existing data, find starting row
-            if (isAppend) {
-                for ( var i = grid.length - 1; i >= 0; i-- ) {
-                    if ( grid[i].indexOf(0) !== -1) {
-                        posY = i;
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            // function to find empty spaces to the right of a given point
-            function findSpaceFromPoint(posX, posY) {
-                console.log('Finding space from ' + posX + ', ' + posY + ' ...');
-                if (posX >= columnCount) {
-                    return [false, posX];
-                }
-                var availableSpace = 0;
-
-                while ( grid[posY][posX] === 1 ) {
-                    if (posX >= columnCount) {
-                        return [false, posX];
-                    }
-                    posX++;
-                }
-                var shiftedX = posX;
-
-                while (posX < columnCount) {
-                    availableSpace++;
-                    posX++;
-                    if ( grid[posY][posX] === 1 ) {
-                        break;
-                    }
-                }
-
-                console.log('space available: ' + availableSpace);
-                return [availableSpace, shiftedX];
-            }
-
-            // function to place a tile into the grid
-            function placeTile(t) {
-                console.log('Placing tile into the grid ...');
-                tiles[t].setAttribute('data-tilePosX', posX);
-                tiles[t].setAttribute('data-tilePosY', posY);
-                tiles[t].setAttribute('data-placed', 1);
-
-                for (var i = 0; i < tileSizeX; i++) {
-                    for (var j = 0; j < tileSizeY; j++) {
-                        var fitX = posX + i,
-                            fitY = posY + j;
-                        grid[fitY][fitX] = 1;
-                    }
-                }
-
-                posX += tileSizeX;
-            }
-
-            // walk through and fit each tile
-            while (curTile < tileCount) {
-                console.log('fitting a tile ...');
-
-                if (isLookahead) {
-                    isLookahead = false;
-                } else {
-                    curTile = 0;
-                    for (var a = 0; a < tileCount; a++) {
-                        var aa = tiles[a].getAttribute('data-placed');
-                        if ( aa < 1 ) {
-                            curTile = a;
-                            break;
-                        }
-                        curTile++;
-                    }
-                }
-                // because we mess with the iterated var
-                if (curTile >= tileCount) {
-                    break;
-                }
-
-                var thisTile = tiles[curTile],
-                    tileSizeX = parseInt(thisTile.getAttribute('data-sizeX')),
-                    tileSizeY = parseInt(thisTile.getAttribute('data-sizeY'));
-
-                // get space available right now
-                console.log('tile dimensions: ' + tileSizeX + ', ' + tileSizeY);
-                var spaceAvail = findSpaceFromPoint(posX, posY);
-
-                // if reached end of row without finding space
-                while (spaceAvail[0] === false || spaceAvail[0] <= 0) {
-                    posY++;
-                    posX = 0;
-                    newGridRow(posY + 2);
-                    spaceAvail = findSpaceFromPoint(posX, posY);
-                }
-                posX = spaceAvail[1];
-
-                // can this fit?
-                if ( tileSizeX <= spaceAvail[0] ) {
-                    console.log('found space');
-                    placeTile(curTile);
-                } else if ( spaceAvail[0] >= 2 && thisTile.getAttribute('data-resizeable2') == 1 ) {
-                    console.log('shrank tile to 2 units wide');
-                    tileSizeX = parseInt(thisTile.getAttribute('data-size2X'));
-                    tileSizeY = parseInt(thisTile.getAttribute('data-size2Y'));
-                    thisTile.setAttribute('data-sizeX', tileSizeX);
-                    thisTile.setAttribute('data-sizeY', tileSizeY);
-                    placeTile(curTile);
-                } else if ( spaceAvail[0] >= 1 && thisTile.getAttribute('data-resizeable1') == 1 ) {
-                    console.log('shrank tile to 1 unit wide');
-                    tileSizeX = parseInt(thisTile.getAttribute('data-size1X'));
-                    tileSizeY = parseInt(thisTile.getAttribute('data-size1Y'));
-                    thisTile.setAttribute('data-sizeX', tileSizeX);
-                    thisTile.setAttribute('data-sizeY', tileSizeY);
-                    placeTile(curTile);
-                } else {
-                    console.log('didn’t find space');
-                    var b = 0;
-                    var foundTile = false;
-                    for ( b = curTile + 1; b < tileCount; b++ ) {
-                        if ( tiles[b].getAttribute('data-placed') < 1 ) {
-                            foundTile = true;
-                            break;
-                        }
-                    }
-                    if (foundTile) {
-                        console.log('looking ahead ... ');
-                        foundTile = false;
-                        isLookahead = true;
-                        curTile = b;
-                        continue;
-                    }
-                    // if didn't find a suitable tile, do what we can with remaining space
-                    if (posX < columnCount) {
-                        console.log('advancing x position, trying again');
-                        posX++;
-                        continue;
-                    } else {
-                        console.log('making new row, trying again');
-                        posX = 0;
-                        posY++;
-                        newGridRow(posY + 2);
-                        continue;
-                    }
-                }
-            }
-        }
-
-        // place each tile into css layout
-        function drawTiles(offset) {
-            console.log('placing tiles into css layout ...');
-            if (!offset) {
-                offset = 0;
-            }
-
-            for ( var i = offset; i < tileCount; i++ ) {
-                var thisTile = tiles[i],
-                    thisInfo = thisTile.querySelector('.info'),
-                    thisWidth = parseInt(thisTile.getAttribute('data-sizeX')) * blockDim,
-                    thisHeight = parseInt(thisTile.getAttribute('data-sizeY')) * blockDim,
-                    thisPosX = parseInt(thisTile.getAttribute('data-tilePosX')) * blockDim,
-                    thisPosY = parseInt(thisTile.getAttribute('data-tilePosY')) * blockDim;
-                console.log(thisTile);
-
-                thisTile.style.width = thisWidth + 'px';
-                thisTile.style.height = thisHeight + 'px';
-                thisTile.style.left = thisPosX + 'px';
-                thisTile.style.top = thisPosY + 'px';
-                console.log('applied style attributes');
-
-                // position info tooltips
-                thisInfo.style.width = (blockDim * 3) + 'px';
-                thisInfo.style.marginLeft = 0;
-                thisInfo.classList.remove('edge-left');
-                thisInfo.classList.remove('edge-right');
-
-                if ( thisPosX < blockDim ) {
-                    thisInfo.classList.add('edge-left');
-                } else if ( containerWidth - thisPosX - thisWidth < blockDim ) {
-                    thisInfo.classList.add('edge-right');
-                } else {
-                    thisInfo.style.marginLeft = (-blockDim * 3/2) + 'px';
-                }
-                console.log('positioned info tooltip');
-
-                globalOffset++;
-            }
-
-            // trim grid
-            console.log('trimming excess grid rows ...');
-            var trimLength = 0;
-            for (var n = grid.length - 1; n >= 0; n--) {
-                if (grid[n].indexOf(1) !== -1) {
-                    break;
-                }
-
-                trimLength++;
-            }
-            console.log('grid trimmed');
-            // and set height of container
-            el.style.height = ((grid.length - trimLength) * blockDim) + 'px';
-            console.log('container height set');
-
-            // for (var k = 0; k < grid.length; k++) {
-            //     console.log(grid[k]);
-            // }
-        }
-
-        // light the fuse
-        console.log('starting initial run ...');
-        setupContainer();
-        setupTiles();
-        mosaicLayout();
-        drawTiles();
-
-        // recalculate on resize
-        window.addEventListener('resize:end', function() {
-            console.log('resize event detected, recalculating mosaic ...');
-            setupContainer();
-            setupTiles();
-            mosaicLayout();
-            drawTiles();
-        }, false);
-
-        // hover intent
-        var hoverDelay, hoverDebounce = false;
-        el.addEventListener('mouseenter', function() {
-            if ( !hoverDebounce ) {
-                hoverDebounce = true;
-                hoverDelay = setTimeout(function() {
-                    el.classList.add('hovered');
-                }, 940);
-            }
-        });
-        console.log('added mouseenter handler');
-        el.addEventListener('mouseleave', function() {
-            hoverDebounce = false;
-            clearTimeout(hoverDelay);
-            el.classList.remove('hovered');
-        });
-        console.log('added mouseleave handler');
-    }
 
     // active form labels
     function wzlLabels(el) {
@@ -846,6 +804,7 @@ var WZL = (function (window, document) {
             checkFilled();
         });
     }
+    Array.prototype.forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
 
 
     // art zoom
@@ -909,7 +868,7 @@ var WZL = (function (window, document) {
         }
     }
 
-    Array.prototype.forEach.call(document.getElementsByClassName('resizing-textarea'), function (el) {
+    forEach(document.getElementsByClassName('resizing-textarea'), function (el) {
         textareas(el);
     });
 
@@ -1073,13 +1032,10 @@ var WZL = (function (window, document) {
             });
         });
     });
+    
 
 
-    Array.prototype.forEach.call(document.getElementsByClassName('mosaic'), wzlMosaic);
-    Array.prototype.forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
-
-
-
+*/
 
 
 
@@ -1093,6 +1049,7 @@ var WZL = (function (window, document) {
         toggles: toggles,
         tabs: tabs,
         sharedHeights: sharedHeights,
+        mosaics: mosaics,
         init: init
     };
 
