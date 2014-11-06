@@ -430,6 +430,8 @@ var WZL = (function (window, document) {
             this.draw();
 
             el.classList.add('enabled');
+
+            // see bottom of file for window resize listener
         }
 
         // initializes an empty grid row or set of grid rows
@@ -446,7 +448,6 @@ var WZL = (function (window, document) {
         // calculates derived container properties
         Mosaic.prototype.calculateProps = function () {
             // avoid infinite loop that happens when we can't get width
-            console.log('calculating container properties ...');
             this.el.setAttribute('style', 'display: block !important;');
             this.el.parentNode.setAttribute('style', 'display: block !important;');
             this.containerWidth = this.el.offsetWidth;
@@ -455,23 +456,19 @@ var WZL = (function (window, document) {
 
             this.columns = Math.ceil(this.containerWidth / this.maxBlockSize);
             this.blockSize = Math.floor(this.containerWidth / this.columns);
-            console.log('done calculating container properties');
         };
 
         // inventory and track tiles in this container
         Mosaic.prototype.initTiles = function () {
-            console.log('initializing tiles ...');
             var that = this;
             Array.prototype.slice.call(that.el.getElementsByClassName(that.tileClass), 0)
                 .forEach(function (tile) {
                     that.tiles.push(new Tile(tile, that.maxBlocksPerTile));
                 });
-            console.log('done initializing tiles');
         };
 
         // the good part
         Mosaic.prototype.layout = function () {
-            console.log('calculating layout ...');
             var that = this,
                 currentIndex = 0,
                 isLookahead = false,
@@ -493,6 +490,9 @@ var WZL = (function (window, document) {
                     }
                 }
             }
+            this.tiles.forEach(function (tile) {
+                tile.placed = false;
+            });
 
             // helper: finds available space to the right of a given grid point
             function findSpaceFromPoint(x, y) {
@@ -616,12 +616,10 @@ var WZL = (function (window, document) {
                     continue;
                 }
             }
-            console.log('done calculating layout');
         };
 
         // translate grid data to css layout
         Mosaic.prototype.draw = function () {
-            console.log('drawing css layout ...');
             var that = this,
                 trimLength = 0;
             
@@ -653,7 +651,13 @@ var WZL = (function (window, document) {
                 trimLength++;
             }
             this.el.style.height = ((this.grid.length - trimLength) * this.blockSize) + 'px';
-            console.log('done drawing css layout');
+        };
+
+        // quick reference for refreshing the mosaic
+        Mosaic.prototype.refresh = function () {
+            this.calculateProps();
+            this.layout();
+            this.draw();
         };
 
         function Tile(el, maxSize) {
@@ -703,7 +707,6 @@ var WZL = (function (window, document) {
                     ragged: el.classList.contains('ragged')
                 });
             });
-            console.log(list());
         }
 
         return {
@@ -1038,6 +1041,16 @@ var WZL = (function (window, document) {
 */
 
 
+    ///////////////////////
+    //  window resizing  //
+    ///////////////////////
+
+    window.addEventListener('resize', debounce(function () {
+        mosaics.list().forEach(function (mosaic) {
+            mosaic.refresh();
+        });
+    }, 400));
+
 
 
 
@@ -1056,3 +1069,4 @@ var WZL = (function (window, document) {
 }(window, document));
 
 WZL.init();
+
