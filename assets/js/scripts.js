@@ -157,7 +157,7 @@ var WZL = (function (window, document) {
         };
 
         // public: make node or nodeList toggleable
-        function add(els) {
+        function create(els) {
             Array.prototype.slice.call(els, 0).forEach(function (el) {
                 toggleList.push(new Toggle(el));
             });
@@ -170,11 +170,11 @@ var WZL = (function (window, document) {
 
         // public: initialize by adding default elements
         function init() {
-            add(initEls);
+            create(initEls);
         }
 
         return {
-            add: add,
+            create: create,
             list: list,
             init: init
         };
@@ -290,7 +290,7 @@ var WZL = (function (window, document) {
         };
 
         // public: add tab functionality to element
-        function add(container, options) {
+        function create(container, options) {
             options.automated = options.automated || defaults.automated;
             options.tabSelector = options.tabSelector || defaults.tabSelector;
             options.paneSelector = options.paneSelector || defaults.paneSelector;
@@ -306,14 +306,14 @@ var WZL = (function (window, document) {
         // public: initialize by adding default elements
         function init() {
             Array.prototype.slice.call(initEls, 0).forEach(function (el) {
-                add(el, {
+                create(el, {
                     automated: el.classList.contains(defaults.automationClass)
                 });
             });
         }
 
         return {
-            add: add,
+            create: create,
             list: list,
             init: init
         };
@@ -357,7 +357,7 @@ var WZL = (function (window, document) {
         }
 
         // public: add a shared-height element
-        function add(el, group) {
+        function create(el, group) {
             if (!heightGroups[group]) {
                 heightGroups[group] = [];
             }
@@ -372,7 +372,7 @@ var WZL = (function (window, document) {
         // public: initialize with default elements
         function init() {
             Array.prototype.slice.call(initEls, 0).forEach(function (el) {
-                add(el, el.getAttribute('data-height-group'));
+                create(el, el.getAttribute('data-height-group'));
             });
             update();
         }
@@ -381,7 +381,7 @@ var WZL = (function (window, document) {
         window.addEventListener('resize', debouncedUpdate);
 
         return {
-            add: add,
+            create: create,
             list: list,
             update: update,
             init: init
@@ -435,7 +435,7 @@ var WZL = (function (window, document) {
         }
 
         // initializes an empty grid row or set of grid rows
-        Mosaic.prototype.addGridRow = function (row, endRow) {
+        Mosaic.prototype.createGridRow = function (row, endRow) {
             endRow = endRow || row;
             for (; row <= endRow; row++) {
                 this.grid[row] = [];
@@ -479,7 +479,7 @@ var WZL = (function (window, document) {
 
             // reset to a fresh slate
             this.grid.length = 0;
-            this.addGridRow(0, this.maxBlocksPerTile - 1);
+            this.createGridRow(0, this.maxBlocksPerTile - 1);
             if (this.ragged) {
                 for (var i = 0; i < this.columns; i++) {
                     if (Math.random() < 0.5) {
@@ -570,7 +570,7 @@ var WZL = (function (window, document) {
                 while (availableSpace[0] === false || availableSpace[0] <= 0) {
                     cursorY++;
                     cursorX = 0;
-                    this.addGridRow(cursorY + this.maxBlocksPerTile - 1);
+                    this.createGridRow(cursorY + this.maxBlocksPerTile - 1);
                     availableSpace = findSpaceFromPoint(cursorX, cursorY);
                 }
                 cursorX = availableSpace[1];
@@ -612,7 +612,7 @@ var WZL = (function (window, document) {
                     // last resort, make a new row and try again
                     cursorX = 0;
                     cursorY++;
-                    this.addGridRow(cursorY + this.maxBlocksPerTile - 1);
+                    this.createGridRow(cursorY + this.maxBlocksPerTile - 1);
                     continue;
                 }
             }
@@ -621,7 +621,8 @@ var WZL = (function (window, document) {
         // translate grid data to css layout
         Mosaic.prototype.draw = function () {
             var that = this,
-                trimLength = 0;
+                trimLength = 0,
+                halfMaxSize = Math.floor(that.maxBlocksPerTile / 2);
             
             this.tiles.forEach(function (tile) {
                 tile.el.style.width = tile.sizeX * that.blockSize + 'px';
@@ -629,15 +630,20 @@ var WZL = (function (window, document) {
                 tile.el.style.left = tile.posX * that.blockSize + 'px';
                 tile.el.style.top = tile.posY * that.blockSize + 'px';
 
-                // position info tooltip
+                // set up or reset info tooltip
                 tile.tooltip.style.width = that.blockSize * that.maxBlocksPerTile + 'px';
                 tile.tooltip.style.marginLeft = 0;
                 tile.tooltip.classList.remove('edge-left');
                 tile.tooltip.classList.remove('edge-right');
-                if (tile.posX < that.blockSize) {
+
+                // position info tooltip
+                // left edge
+                if (tile.posX <= halfMaxSize) {
                     tile.tooltip.classList.add('edge-left');
-                } else if (that.containerWidth - tile.posX - tile.sizeX * that.blockSize < that.blockSize) {
+                // right edge
+                } else if (tile.posX + tile.sizeX >= that.columns - halfMaxSize) {
                     tile.tooltip.classList.add('edge-right');
+                // somewhere in the middle
                 } else {
                     tile.tooltip.style.marginLeft = (-that.blockSize * that.maxBlocksPerTile / 2) + 'px';
                 }
@@ -691,7 +697,8 @@ var WZL = (function (window, document) {
 
 
         // public: add mosaic functionality to a container
-        function add(el, options) {
+        function create(el, options) {
+            options = options || {};
             mosaicList.push(new Mosaic(el, options));
         }
 
@@ -703,14 +710,14 @@ var WZL = (function (window, document) {
         // public: initialize with default elements
         function init() {
             Array.prototype.slice.call(initEls, 0).forEach(function (el) {
-                add(el, {
+                create(el, {
                     ragged: el.classList.contains('ragged')
                 });
             });
         }
 
         return {
-            add: add,
+            create: create,
             list: list,
             init: init
         };
