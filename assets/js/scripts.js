@@ -1040,7 +1040,6 @@ var WZL = (function (window, document) {
             stickyList = [];
 
         function Sticky(el, container, bottomBound) {
-            console.log('constructor called');
             this.el = el;
             this.container = container;
             this.bottomBound = bottomBound;
@@ -1052,13 +1051,11 @@ var WZL = (function (window, document) {
         // calculate necessary properties
         // this is also called in the window resize event section
         Sticky.prototype.setup = function () {
-            console.log('performing sticky element setup');
             this.elHeight = this.el.offsetHeight;
             this.container.style.minHeight = this.elHeight + 'px';
         };
 
         Sticky.prototype.refresh = function () {
-            console.log('performing sticky element refresh');
             var refPos = this.container.getBoundingClientRect().top,
                 bottomBoundPos = this.bottomBound ? this.bottomBound.getBoundingClientRect().top : null;
             if (refPos <= 0) {
@@ -1077,10 +1074,8 @@ var WZL = (function (window, document) {
 
         // public: make an element sticky
         function create(el, container, bottomBound) {
-            console.log('creating sticky element ...');
             var result = new Sticky(el, container, bottomBound);
             stickyList.push(result);
-            console.log('sticky element created');
             return result;
         }
 
@@ -1091,9 +1086,7 @@ var WZL = (function (window, document) {
 
         // public: initialize with default elements
         function init() {
-            console.log('initializing sticky stuff');
             forEach(initEls, function (el) {
-                console.log(el);
                 create(el, initContainer, initBottomBound);
             });
         }
@@ -1132,18 +1125,18 @@ var WZL = (function (window, document) {
 
 
     // art zoom
-    Array.prototype.forEach.call(document.getElementsByClassName('sub-zoom-toggle'), function (el) {
+    forEach(document.getElementsByClassName('sub-zoom-toggle'), function (el) {
+        var togglingEls = toArray(
+            document.querySelectorAll('.page-header, .page-footer, #main > *')
+        ).filter(function (candidate) {
+            return !candidate.classList.contains('sub-container');
+        });
         el.addEventListener('click', function(ev) {
             ev.preventDefault();
             el.classList.toggle('active');
-            document.querySelector('.page-header').classList.toggle('hide');
-            document.querySelector('.page-footer').classList.toggle('hide');
-            var artSiblings = document.getElementById('main').children;
-            for ( var i = 0; i < artSiblings.length; i++ ) {
-                if ( !artSiblings[i].classList.contains('sub-container') ) {
-                    artSiblings[i].classList.toggle('hide');
-                }
-            }
+            forEach(togglingEls, function (toggleThis) {
+                toggleThis.classList.toggle('hide');
+            });
             document.body.classList.toggle('zoomed');
         });
     });
@@ -1164,18 +1157,13 @@ var WZL = (function (window, document) {
     })();
 
 
-
     // show password fields
-    Array.prototype.forEach.call(document.getElementsByClassName('show-password'), function (el) {
+    forEach(document.getElementsByClassName('show-password'), function (el) {
         var targetEls = document.querySelectorAll(el.getAttribute('data-target'));
-
         el.addEventListener('click', function(ev) {
             ev.preventDefault();
-
-            var isActive = el.classList.toggle('active');
-
-            Array.prototype.forEach.call(targetEls, function (targetEl) {
-                targetEl.type = isActive ? 'text' : 'password';
+            forEach(targetEls, function (targetEl) {
+                targetEl.type = el.classList.toggle('active') ? 'text' : 'password';
             });
         });
     });
