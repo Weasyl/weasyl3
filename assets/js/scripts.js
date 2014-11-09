@@ -165,7 +165,7 @@ var WZL = (function (window, document) {
             if (targetString === 'parentparentnext') {
                 return [el.parentNode.parentNode.nextElementSibling];
             }
-            return Array.prototype.slice.call(document.querySelectorAll(targetString), 0);
+            return toArray(document.querySelectorAll(targetString));
         }
 
         // make toggle go
@@ -189,7 +189,7 @@ var WZL = (function (window, document) {
 
         // public: initialize by adding default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el);
             });
         }
@@ -232,8 +232,8 @@ var WZL = (function (window, document) {
 
             this.container = container;
             this.automated = options.automated;
-            this.tabs = Array.prototype.slice.call(container.querySelectorAll(options.tabSelector), 0);
-            this.panes = Array.prototype.slice.call(container.querySelectorAll(options.paneSelector), 0);
+            this.tabs = toArray(container.querySelectorAll(options.tabSelector));
+            this.panes = toArray(container.querySelectorAll(options.paneSelector));
             this.slideDuration = options.slideDuration;
 
             this.active = 0;
@@ -328,7 +328,7 @@ var WZL = (function (window, document) {
 
         // public: initialize by adding default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el, {
                     automated: el.classList.contains(defaults.automationClass)
                 });
@@ -395,7 +395,7 @@ var WZL = (function (window, document) {
 
         // public: initialize with default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el, el.getAttribute('data-height-group'));
             });
             update();
@@ -485,10 +485,9 @@ var WZL = (function (window, document) {
         // inventory and track tiles in this container
         Mosaic.prototype.initTiles = function () {
             var that = this;
-            Array.prototype.slice.call(that.el.getElementsByClassName(that.tileClass), 0)
-                .forEach(function (tile) {
-                    that.tiles.push(new Tile(tile, that.maxBlocksPerTile));
-                });
+            forEach(that.el.getElementsByClassName(that.tileClass), function (tile) {
+                that.tiles.push(new Tile(tile, that.maxBlocksPerTile));
+            });
         };
 
         // the good part
@@ -735,7 +734,7 @@ var WZL = (function (window, document) {
 
         // public: initialize with default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el, {
                     ragged: el.classList.contains('ragged')
                 });
@@ -815,7 +814,7 @@ var WZL = (function (window, document) {
 
         // public: initialize with default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el);
             });
         }
@@ -878,7 +877,7 @@ var WZL = (function (window, document) {
 
         // public: initialize with default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el);
             });
         }
@@ -907,24 +906,21 @@ var WZL = (function (window, document) {
 
         // returns checkboxes within given context that are valid for counting
         function getCheckboxes(context) {
-            return Array.prototype.slice.call(
-                context.querySelectorAll('input[type="checkbox"]'),
-                0
-            ).filter(function (el) {
+            return toArray(context.querySelectorAll('input[type="checkbox"]')).filter(function (el) {
                 return !el.classList.contains('checkbox-parent');
             });
         }
 
         // returns true if all elements in a given set are :checked
         function areAllChecked(els) {
-            return Array.prototype.slice.call(els, 0).every(function (el) {
+            return toArray(els).every(function (el) {
                 return el.checked;
             });
         }
 
         // counts the number of checked elements inside the context of a given count element
         function updateCounts() {
-            Array.prototype.slice.call(countEls, 0).forEach(function (el) {
+            forEach(countEls, function (el) {
                 var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context'))),
                     count = checkboxes.reduce(function (sum, el) {
                         return sum + el.checked;
@@ -947,7 +943,7 @@ var WZL = (function (window, document) {
             var that = this;
 
             this.container = el;
-            this.children = Array.prototype.slice.call(el.getElementsByClassName('checkbox-child'), 0);
+            this.children = toArray(el.getElementsByClassName('checkbox-child'));
             this.main = el.getElementsByClassName('checkbox-parent')[0];
 
             this.children.forEach(function (el) {
@@ -1002,13 +998,13 @@ var WZL = (function (window, document) {
 
         // public: initialize with default elements
         function init() {
-            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+            forEach(initEls, function (el) {
                 create(el);
             });
-            Array.prototype.slice.call(initHierarchies, 0).forEach(function (el) {
+            forEach(initHierarchies, function (el) {
                 createHierarchy(el);
             });
-            Array.prototype.slice.call(initDrivers, 0).forEach(function (el) {
+            forEach(initDrivers, function (el) {
                 var context = document.querySelector(el.getAttribute('data-context')),
                     state;
                 if (el.classList.contains('check-all')) {
