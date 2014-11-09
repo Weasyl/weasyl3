@@ -6,6 +6,18 @@ var WZL = (function (window, document) {
     //  helper functions  //
     ////////////////////////
 
+    // forEach shortcut, for use on nodelists
+    function forEach(list, fn) {
+        for (var idx = list.length - 1; idx >= 0; idx--) {
+            fn(list[idx], idx);
+        }
+    }
+
+    // copy an array, or convert a nodelist to an array
+    function toArray(list) {
+        return Array.prototype.slice.call(list, 0);
+    }
+
     // parent traversal helpers
     function getParents(el) {
         var result = [];
