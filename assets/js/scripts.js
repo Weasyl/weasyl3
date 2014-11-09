@@ -731,6 +731,7 @@ var WZL = (function (window, document) {
     }());
 
 
+
     //////////////////////////
     //  resizing textareas  //
     //////////////////////////
@@ -809,6 +810,69 @@ var WZL = (function (window, document) {
 
 
 
+    //////////////////////////
+    //  active form labels  //
+    //////////////////////////
+
+    // usage:
+    // <label class="active-label">
+    //      <span>label text</span>
+    //      <input />
+    // </label>
+
+    var activeLabels = (function () {
+        var initEls = document.getElementsByClassName('active-label'),
+            labelsList = [];
+
+        // public: make an label active
+        function create(el) {
+            var input = el.getElementsByTagName('input')[0] ||
+                el.getElementsByTagName('textarea')[0];
+
+            function checkFilled() {
+                if (input.value !== '') {
+                    el.classList.add('has-contents');
+                } else {
+                    el.classList.remove('has-contents');
+                }
+            }
+
+            checkFilled();
+            input.addEventListener('focus', function () {
+                el.classList.add('active');
+            });
+            input.addEventListener('blur', function () {
+                el.classList.remove('active');
+                checkFilled();
+            });
+
+            el.classList.add('enabled');
+
+            labelsList.push(el);
+            return el;
+        }
+
+        // public: list active labels on page
+        function list() {
+            return labelsList;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+                create(el);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        }
+    }());
+
+
+
 
     //////////////////////
     //  initialization  //
@@ -820,6 +884,7 @@ var WZL = (function (window, document) {
         sharedHeights.init();
         mosaics.init();
         textareas.init();
+        activeLabels.init();
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
     };
@@ -874,32 +939,6 @@ var WZL = (function (window, document) {
 
         window.addEventListener('resize', debounce, false);
     })();
-
-
-
-    // active form labels
-    function wzlLabels(el) {
-        var input = el.getElementsByTagName('input')[0] || el.getElementsByTagName('textarea')[0];
-        el.classList.add('enabled');
-        function checkFilled() {
-            if ( input.value !== '' ) {
-                el.classList.add('has-contents');
-            } else {
-                el.classList.remove('has-contents');
-            }
-        }
-        checkFilled();
-        window.addEventListener('load', checkFilled);
-
-        input.addEventListener('focus', function() {
-            el.classList.add('active');
-        });
-        input.addEventListener('blur', function() {
-            el.classList.remove('active');
-            checkFilled();
-        });
-    }
-    Array.prototype.forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
 
 
     // art zoom
@@ -1100,9 +1139,9 @@ var WZL = (function (window, document) {
 */
 
 
-    ///////////////////////
-    //  window resizing  //
-    ///////////////////////
+    ////////////////////////
+    //  events on window  //
+    ////////////////////////
 
     window.addEventListener('resize', debounce(function () {
         mosaics.list().forEach(function (mosaic) {
@@ -1123,6 +1162,7 @@ var WZL = (function (window, document) {
         sharedHeights: sharedHeights,
         mosaics: mosaics,
         textareas: textareas,
+        activeLabels: activeLabels,
         init: init
     };
 
