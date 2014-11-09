@@ -1,4 +1,4 @@
-var WZL = (function (window, document) {
+var WZL = (function () {
 
     'use strict';
 
@@ -7,15 +7,19 @@ var WZL = (function (window, document) {
     ////////////////////////
 
     // forEach shortcut, for use on nodelists
-    function forEach(list, fn) {
-        for (var idx = list.length - 1; idx >= 0; idx--) {
-            fn(list[idx], idx);
+    function forEach(arr, fn) {
+        for (var idx = arr.length - 1; idx >= 0; idx--) {
+            fn(arr[idx], idx);
         }
     }
 
     // copy an array, or convert a nodelist to an array
-    function toArray(list) {
-        return Array.prototype.slice.call(list, 0);
+    function toArray(arr) {
+        var result = [];
+        for (var i = arr.length - 1; i--;) {
+            result[i] = arr[i];
+        }
+        return result;
     }
 
     // parent traversal helpers
@@ -112,7 +116,7 @@ var WZL = (function (window, document) {
             }
             return result;
         };
-    };
+    }
 
     // trigger a change event on an element
     function triggerChange(el) {
@@ -134,7 +138,7 @@ var WZL = (function (window, document) {
     var toggles = (function () {
         // use this module on .toggle elements by default
         var initEls = document.getElementsByClassName('toggle'),
-            toggleList = [];
+            list = [];
 
         // individual toggle object; stores element and targets
         function Toggle(el) {
@@ -175,13 +179,8 @@ var WZL = (function (window, document) {
         // public: make node or nodeList toggleable
         function create(el) {
             var result = new Toggle(el);
-            toggleList.push(result);
+            list.push(result);
             return result;
-        }
-
-        // public: returns an array of all toggles on the page
-        function list() {
-            return toggleList;
         }
 
         // public: initialize by adding default elements
@@ -222,7 +221,7 @@ var WZL = (function (window, document) {
                 paneSelector: '.pane',
                 slideDuration: 4000
             },
-            tabsList = [];
+            list = [];
 
         function TabGroup(container, options) {
             var that = this;
@@ -314,13 +313,8 @@ var WZL = (function (window, document) {
             options.paneSelector = options.paneSelector || defaults.paneSelector;
             options.slideDuration = options.slideDuration || defaults.slideDuration;
             var result = new TabGroup(container, options);
-            tabsList.push(result);
+            list.push(result);
             return result;
-        }
-
-        // public: returns array of all tab groups on the page
-        function list() {
-            return tabsList;
         }
 
         // public: initialize by adding default elements
@@ -351,7 +345,7 @@ var WZL = (function (window, document) {
 
     var sharedHeights = (function () {
         var initEls = document.getElementsByClassName('shared-height'),
-            heightGroups = {};
+            list = {};
 
         // public: update all shared-height elements
         function update() {
@@ -365,9 +359,9 @@ var WZL = (function (window, document) {
                 el.style.minHeight = maxHeight + 'px';
             }
 
-            for (g in heightGroups) {
-                if (heightGroups.hasOwnProperty(g)) {
-                    thisGroup = heightGroups[g];
+            for (g in list) {
+                if (list.hasOwnProperty(g)) {
+                    thisGroup = list[g];
                     heights = [];
                     thisGroup.forEach(resetHeight);
                     maxHeight = Math.max.apply(null, heights);
@@ -378,16 +372,11 @@ var WZL = (function (window, document) {
 
         // public: add a shared-height element
         function create(el, group) {
-            if (!heightGroups[group]) {
-                heightGroups[group] = [];
+            if (!list[group]) {
+                list[group] = [];
             }
-            heightGroups[group].push(el);
+            list[group].push(el);
             return el;
-        }
-
-        // public: return heightGroups object
-        function list() {
-            return heightGroups;
         }
 
         // public: initialize with default elements
@@ -423,9 +412,11 @@ var WZL = (function (window, document) {
                 ragged: false,
                 tileClass: 'item'
             },
-            mosaicList = [];
+            list = [];
 
         function Mosaic(el, options) {
+            var that = this;
+
             // personal properties
             this.el = el;
             this.grid = [];
@@ -452,7 +443,9 @@ var WZL = (function (window, document) {
 
             el.classList.add('enabled');
 
-            // see bottom of file for window resize listener
+            window.addEventListener('resize', debounce(function () {
+                that.refresh();
+            }, 400));
         }
 
         // initializes an empty grid row or set of grid rows
@@ -545,8 +538,8 @@ var WZL = (function (window, document) {
 
             // helper: reserves grid space for a given tile
             function placeTile(tile) {
-                tile.posX = cursorX
-                tile.posY = cursorY
+                tile.posX = cursorX;
+                tile.posY = cursorY;
                 tile.placed = true;
 
                 for (var i = 0; i < tile.sizeX; i++) {
@@ -643,7 +636,7 @@ var WZL = (function (window, document) {
             var that = this,
                 trimLength = 0,
                 halfMaxSize = Math.floor(that.maxBlocksPerTile / 2);
-            
+
             this.tiles.forEach(function (tile) {
                 tile.el.style.width = tile.sizeX * that.blockSize + 'px';
                 tile.el.style.height = tile.sizeY * that.blockSize + 'px';
@@ -720,13 +713,8 @@ var WZL = (function (window, document) {
         function create(el, options) {
             options = options || {};
             var result = new Mosaic(el, options);
-            mosaicList.push(result);
+            list.push(result);
             return result;
-        }
-
-        // public: return a list of all mosaics on page
-        function list() {
-            return mosaicList;
         }
 
         // public: initialize with default elements
@@ -758,7 +746,7 @@ var WZL = (function (window, document) {
 
     var textareas = (function () {
         var initEls = document.getElementsByClassName('resizing-textarea'),
-            textareasList = [];
+            list = [];
 
         function Textarea(el) {
             this.el = el;
@@ -800,13 +788,8 @@ var WZL = (function (window, document) {
         // public: add a resizing textarea
         function create(el) {
             var result = new Textarea(el);
-            textareasList.push(result);
+            list.push(result);
             return result;
-        }
-
-        // public: list all resizing textareas on page
-        function list() {
-            return textareasList;
         }
 
         // public: initialize with default elements
@@ -837,7 +820,7 @@ var WZL = (function (window, document) {
 
     var activeLabels = (function () {
         var initEls = document.getElementsByClassName('active-label'),
-            labelsList = [];
+            list = [];
 
         // public: make an label active
         function create(el) {
@@ -863,13 +846,8 @@ var WZL = (function (window, document) {
 
             el.classList.add('enabled');
 
-            labelsList.push(el);
+            list.push(el);
             return el;
-        }
-
-        // public: list active labels on page
-        function list() {
-            return labelsList;
         }
 
         // public: initialize with default elements
@@ -1037,51 +1015,49 @@ var WZL = (function (window, document) {
         var initEls = document.getElementsByClassName('sticky'),
             initContainer = document.getElementsByClassName('col-layout-main')[0],
             initBottomBound = document.getElementsByClassName('page-footer')[0],
-            stickyList = [];
+            list = [];
+
 
         function Sticky(el, container, bottomBound) {
+            var that = this;
+
             this.el = el;
             this.container = container;
             this.bottomBound = bottomBound;
             this.elHeight = el.offsetHeight;
 
-            this.setup();
+            this.calculatProperties();
+
+            window.addEventListener('resize', debounce(function () {
+                that.calculatProperties();
+            }, 400));
+
+            document.addEventListener('scroll', throttle(function () {
+                that.checkSticky();
+            }, 24));
         }
 
         // calculate necessary properties
         // this is also called in the window resize event section
-        Sticky.prototype.setup = function () {
+        Sticky.prototype.calculatProperties = function () {
             this.elHeight = this.el.offsetHeight;
             this.container.style.minHeight = this.elHeight + 'px';
         };
 
-        Sticky.prototype.refresh = function () {
+        Sticky.prototype.checkSticky = function () {
             var refPos = this.container.getBoundingClientRect().top,
                 bottomBoundPos = this.bottomBound ? this.bottomBound.getBoundingClientRect().top : null;
-            if (refPos <= 0) {
-                this.el.classList.add('stuck');
-            } else {
-                this.el.classList.remove('stuck');
-            }
+            this.el.classList.toggle('stuck', refPos <= 0);
             if (bottomBoundPos) {
-                if (bottomBoundPos < this.elHeight) {
-                    this.el.classList.add('blocked');
-                } else {
-                    this.el.classList.remove('blocked');
-                }
+                this.el.classList.toggle('blocked', bottomBoundPos < this.elHeight);
             }
         };
 
         // public: make an element sticky
         function create(el, container, bottomBound) {
             var result = new Sticky(el, container, bottomBound);
-            stickyList.push(result);
+            list.push(result);
             return result;
-        }
-
-        // public: list all sticky elements on page
-        function list() {
-            return stickyList;
         }
 
         // public: initialize with default elements
@@ -1170,28 +1146,6 @@ var WZL = (function (window, document) {
 
 
 
-
-    /////////////////////////////////////
-    //  events on window and document  //
-    /////////////////////////////////////
-
-    window.addEventListener('resize', debounce(function () {
-        mosaics.list().forEach(function (mosaic) {
-            mosaic.refresh();
-        });
-        sticky.list().forEach(function (stickyEl) {
-            stickyEl.setup();
-        });
-    }, 400));
-
-    document.addEventListener('scroll', throttle(function () {
-        sticky.list().forEach(function (stickyEl) {
-            stickyEl.refresh();
-        });
-    }, 24));
-
-
-
     //////////////
     //  public  //
     //////////////
@@ -1208,6 +1162,6 @@ var WZL = (function (window, document) {
         init: init
     };
 
-}(window, document));
+}());
 
 WZL.init();
