@@ -157,10 +157,10 @@ var WZL = (function (window, document) {
         };
 
         // public: make node or nodeList toggleable
-        function create(els) {
-            Array.prototype.slice.call(els, 0).forEach(function (el) {
-                toggleList.push(new Toggle(el));
-            });
+        function create(el) {
+            var result = new Toggle(el);
+            toggleList.push(result);
+            return result;
         }
 
         // public: returns an array of all toggles on the page
@@ -170,7 +170,9 @@ var WZL = (function (window, document) {
 
         // public: initialize by adding default elements
         function init() {
-            create(initEls);
+            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+                create(el);
+            });
         }
 
         return {
@@ -295,7 +297,9 @@ var WZL = (function (window, document) {
             options.tabSelector = options.tabSelector || defaults.tabSelector;
             options.paneSelector = options.paneSelector || defaults.paneSelector;
             options.slideDuration = options.slideDuration || defaults.slideDuration;
-            tabsList.push(new TabGroup(container, options));
+            var result = new TabGroup(container, options);
+            tabsList.push(result);
+            return result;
         }
 
         // public: returns array of all tab groups on the page
@@ -362,6 +366,7 @@ var WZL = (function (window, document) {
                 heightGroups[group] = [];
             }
             heightGroups[group].push(el);
+            return el;
         }
 
         // public: return heightGroups object
@@ -395,7 +400,7 @@ var WZL = (function (window, document) {
     /////////////////////
 
     var mosaics = (function () {
-        var initEls = document.getElementsByClassName('mosaic'),
+        var initEls = document.getElementsByClassName('butts'),
             defaults = {
                 blockSize: 96,
                 maxBlocksPerTile: 3,
@@ -699,7 +704,9 @@ var WZL = (function (window, document) {
         // public: add mosaic functionality to a container
         function create(el, options) {
             options = options || {};
-            mosaicList.push(new Mosaic(el, options));
+            var result = new Mosaic(el, options);
+            mosaicList.push(result);
+            return result;
         }
 
         // public: return a list of all mosaics on page
