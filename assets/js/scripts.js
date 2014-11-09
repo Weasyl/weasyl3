@@ -40,14 +40,12 @@ var WZL = (function (window, document) {
     }
 
     // get a timestamp
-    function now() {
-        'use strict';
+    function getTimestamp() {
         return Date.now || new Date().getTime();
     }
 
     // throttle and debounce from underscore.js
     function throttle(func, wait, options) {
-        'use strict';
         var context, args, result,
             timeout = null,
             previous = 0;
@@ -55,7 +53,7 @@ var WZL = (function (window, document) {
             options = {};
         }
         var later = function () {
-            previous = options.leading === false ? 0 : now();
+            previous = options.leading === false ? 0 : getTimestamp();
             timeout = null;
             result = func.apply(context, args);
             if (!timeout) {
@@ -63,7 +61,7 @@ var WZL = (function (window, document) {
             }
         };
         return function () {
-            var now = now();
+            var now = getTimestamp();
             if (!previous && options.leading === false) {
                 previous = now;
             }
@@ -85,10 +83,9 @@ var WZL = (function (window, document) {
         };
     }
     function debounce(func, wait, immediate) {
-        'use strict';
         var timeout, args, context, timestamp, result;
         var later = function () {
-            var last = now() - timestamp;
+            var last = getTimestamp() - timestamp;
             if (last < wait && last > 0) {
                 timeout = setTimeout(later, wait - last);
             } else {
@@ -104,7 +101,7 @@ var WZL = (function (window, document) {
         return function () {
             context = this;
             args = arguments;
-            timestamp = now();
+            timestamp = getTimestamp();
             var callNow = immediate && !timeout;
             if (!timeout) {
                 timeout = setTimeout(later, wait);
@@ -1030,6 +1027,85 @@ var WZL = (function (window, document) {
 
 
 
+    ///////////////////////
+    //  sticky elements  //
+    ///////////////////////
+
+    // remove this once position: sticky is supported 'enough'
+
+    var sticky = (function () {
+        var initEls = document.getElementsByClassName('sticky'),
+            initContainer = document.getElementsByClassName('col-layout-main')[0],
+            initBottomBound = document.getElementsByClassName('page-footer')[0],
+            stickyList = [];
+
+        function Sticky(el, container, bottomBound) {
+            console.log('constructor called');
+            this.el = el;
+            this.container = container;
+            this.bottomBound = bottomBound;
+            this.elHeight = el.offsetHeight;
+
+            this.setup();
+        }
+
+        // calculate necessary properties
+        // this is also called in the window resize event section
+        Sticky.prototype.setup = function () {
+            console.log('performing sticky element setup');
+            this.elHeight = this.el.offsetHeight;
+            this.container.style.minHeight = this.elHeight + 'px';
+        };
+
+        Sticky.prototype.refresh = function () {
+            console.log('performing sticky element refresh');
+            var refPos = this.container.getBoundingClientRect().top,
+                bottomBoundPos = this.bottomBound ? this.bottomBound.getBoundingClientRect().top : null;
+            if (refPos <= 0) {
+                this.el.classList.add('stuck');
+            } else {
+                this.el.classList.remove('stuck');
+            }
+            if (bottomBoundPos) {
+                if (bottomBoundPos < this.elHeight) {
+                    this.el.classList.add('blocked');
+                } else {
+                    this.el.classList.remove('blocked');
+                }
+            }
+        };
+
+        // public: make an element sticky
+        function create(el, container, bottomBound) {
+            console.log('creating sticky element ...');
+            var result = new Sticky(el, container, bottomBound);
+            stickyList.push(result);
+            console.log('sticky element created');
+            return result;
+        }
+
+        // public: list all sticky elements on page
+        function list() {
+            return stickyList;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            console.log('initializing sticky stuff');
+            forEach(initEls, function (el) {
+                console.log(el);
+                create(el, initContainer, initBottomBound);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
+
+
 
     //////////////////////
     //  initialization  //
@@ -1043,60 +1119,16 @@ var WZL = (function (window, document) {
         textareas.init();
         activeLabels.init();
         checkboxes.init();
+        sticky.init();
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
     };
 
 
 
-
-
-
-
-    ////////////////////////
-    //  crud to clean up  //
-    ////////////////////////
-
-/*
-    // helper function: nodelist to array
-    function toArray(obj) {
-        var array = [];
-        for (var i = obj.length >>> 0; i--;) {
-            array[i] = obj[i];
-        }
-        return array;
-    }
-
-    // debounced window resize event
-    (function() {
-        if (!window.addEventListener || !document.createEvent) {
-            return;
-        }
-
-        var event = document.createEvent('Event');
-        event.initEvent('resize:end', false, false);
-
-        function dispatchResizeEndEvent() {
-            return window.dispatchEvent(event);
-        }
-
-        var initialOrientation = window.orientation;
-        var resizeDebounceTimeout = null;
-
-        function debounce() {
-            var currentOrientation = window.orientation;
-
-            if (currentOrientation !== initialOrientation) {
-                dispatchResizeEndEvent();
-                initialOrientation = currentOrientation;
-            } else {
-                clearTimeout(resizeDebounceTimeout);
-                resizeDebounceTimeout = setTimeout(dispatchResizeEndEvent, 100);
-            }
-        }
-
-        window.addEventListener('resize', debounce, false);
-    })();
+    ////////////////////////////
+    //  misc small functions  //
+    ////////////////////////////
 
 
     // art zoom
@@ -1132,45 +1164,6 @@ var WZL = (function (window, document) {
     })();
 
 
-    // sticky notification utilities
-    // remove once position: sticky is supported 'enough'
-    (function() {
-        var el = document.getElementsByClassName('sticky')[0],
-            mainCol = document.getElementsByClassName('col-layout-main')[0],
-            footer = document.getElementsByClassName('page-footer')[0],
-            refPos, elHeight, footerPos;
-
-        if (!el || !mainCol || !footer) {
-            return;
-        }
-
-        function checkSticky() {
-            refPos = mainCol.getBoundingClientRect().top;
-            footerPos = footer.getBoundingClientRect().top;
-
-            if (refPos <= 0) {
-                el.classList.add('stuck');
-            } else {
-                el.classList.remove('stuck');
-            }
-            if (footerPos < elHeight) {
-                el.classList.add('blocked');
-            } else {
-                el.classList.remove('blocked');
-            }
-        }
-
-        function setup() {
-            elHeight = el.offsetHeight;
-            mainCol.style.minHeight = elHeight + 'px';
-            checkSticky();
-        }
-
-        window.addEventListener('load', setup);
-        window.addEventListener('resize:end', setup, false);
-        document.addEventListener('scroll', checkSticky);
-    })();
-
 
     // show password fields
     Array.prototype.forEach.call(document.getElementsByClassName('show-password'), function (el) {
@@ -1186,22 +1179,28 @@ var WZL = (function (window, document) {
             });
         });
     });
-    
 
 
-*/
 
 
-    ////////////////////////
-    //  events on window  //
-    ////////////////////////
+    /////////////////////////////////////
+    //  events on window and document  //
+    /////////////////////////////////////
 
     window.addEventListener('resize', debounce(function () {
         mosaics.list().forEach(function (mosaic) {
             mosaic.refresh();
         });
+        sticky.list().forEach(function (stickyEl) {
+            stickyEl.setup();
+        });
     }, 400));
 
+    document.addEventListener('scroll', throttle(function () {
+        sticky.list().forEach(function (stickyEl) {
+            stickyEl.refresh();
+        });
+    }, 24));
 
 
 
@@ -1217,6 +1216,7 @@ var WZL = (function (window, document) {
         textareas: textareas,
         activeLabels: activeLabels,
         checkboxes: checkboxes,
+        sticky: sticky,
         init: init
     };
 
