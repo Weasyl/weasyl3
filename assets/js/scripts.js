@@ -400,7 +400,7 @@ var WZL = (function (window, document) {
     /////////////////////
 
     var mosaics = (function () {
-        var initEls = document.getElementsByClassName('butts'),
+        var initEls = document.getElementsByClassName('mosaic'),
             defaults = {
                 blockSize: 96,
                 maxBlocksPerTile: 3,
@@ -731,6 +731,83 @@ var WZL = (function (window, document) {
     }());
 
 
+    //////////////////////////
+    //  resizing textareas  //
+    //////////////////////////
+
+    // usage:
+    // <div class="resizing-textarea">
+    //      <textarea></textarea>
+    // </div>
+
+    var textareas = (function () {
+        var initEls = document.getElementsByClassName('resizing-textarea'),
+            textareasList = [];
+
+        function Textarea(el) {
+            this.el = el;
+            this.container = getParentsByClassName(el, 'comment-new-box')[0];
+            this.textarea = el.getElementsByTagName('textarea')[0];
+            this.ref = document.createElement('div');
+
+            // set up reference element
+            this.ref.classList.add('resize-ref');
+            this.el.appendChild(this.ref);
+
+            // initial update + update on change
+            this.update();
+            this.textarea.addEventListener('input', this.update.bind(this));
+
+            // comment entry focus viz
+            if (this.container) {
+                this.textarea.addEventListener('focus', this.highlight.bind(this));
+                this.textarea.addEventListener('blur', this.unhighlight.bind(this));
+            }
+        }
+
+        // updates this textarea size
+        Textarea.prototype.update = function () {
+            // append additional space and break so IE respects any trailing whitespace
+            this.ref.innerHTML = this.textarea.value.replace(/\n/g, '<br />') + ' <br />&#160;';
+        };
+
+        Textarea.prototype.highlight = function () {
+            this.container.classList.add('highlight');
+        };
+
+        Textarea.prototype.unhighlight = function () {
+            if (this.textarea.value.length === 0) {
+                this.container.classList.remove('highlight');
+            }
+        };
+
+        // public: add a resizing textarea
+        function create(el) {
+            var result = new Textarea(el);
+            textareasList.push(result);
+            return result;
+        }
+
+        // public: list all resizing textareas on page
+        function list() {
+            return textareasList;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+                create(el);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        }
+    }());
+
+
 
 
     //////////////////////
@@ -742,6 +819,7 @@ var WZL = (function (window, document) {
         tabs.init();
         sharedHeights.init();
         mosaics.init();
+        textareas.init();
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
     };
@@ -855,39 +933,6 @@ var WZL = (function (window, document) {
             });
         }
     })();
-
-
-    // resizing textareas
-    function textareas(parentEl) {
-        var el = parentEl.getElementsByTagName('textarea')[0],
-            ref = parentEl.getElementsByClassName('resize-ref')[0],
-            container = getParentsByClassName(el, 'comment-new-box')[0];
-
-        function doCopy() {
-            // copies textarea value to reference element
-            // appends additional <br /> so IE respects trailing whitespace
-            ref.innerHTML = el.value.replace(/\n/g, '<br />') + ' <br /> ';
-        }
-        doCopy();
-
-        el.addEventListener('input', doCopy, false);
-
-        // adds appropriate class to container element for focus visualization
-        if (container) {
-            el.addEventListener('focus', function() {
-                container.classList.add('highlight');
-            });
-            el.addEventListener('blur', function() {
-                if (el.value.length === 0) {
-                    container.classList.remove('highlight');
-                }
-            });
-        }
-    }
-
-    forEach(document.getElementsByClassName('resizing-textarea'), function (el) {
-        textareas(el);
-    });
 
 
     // checkbox/radio events
@@ -1077,6 +1122,7 @@ var WZL = (function (window, document) {
         tabs: tabs,
         sharedHeights: sharedHeights,
         mosaics: mosaics,
+        textareas: textareas,
         init: init
     };
 
