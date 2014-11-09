@@ -105,6 +105,13 @@ var WZL = (function (window, document) {
         };
     };
 
+    // trigger a change event on an element
+    function triggerChange(el) {
+        var event = document.createEvent('HTMLEvents');
+        event.initEvent('change', true, false);
+        el.dispatchEvent(event);
+    }
+
 
 
     ///////////////////////
@@ -805,7 +812,7 @@ var WZL = (function (window, document) {
             create: create,
             list: list,
             init: init
-        }
+        };
     }());
 
 
@@ -868,7 +875,149 @@ var WZL = (function (window, document) {
             create: create,
             list: list,
             init: init
+        };
+    }());
+
+
+
+    /////////////////////////////
+    //  checkbox/radio events  //
+    /////////////////////////////
+
+    // tracks checkboxes for counts, hierarchies, and active/inactive labels
+    // in addition, covers check/uncheck/invert all functions
+
+    var checkboxes = (function () {
+        var initEls = document.querySelectorAll('input[type=checkbox], input[type=radio]'),
+            initHierarchies = document.getElementsByClassName('checkbox-group'),
+            initDrivers = document.querySelectorAll('.check-all, .uncheck-all, .invert-all'),
+            countEls = document.getElementsByClassName('checked-count');
+
+        // returns checkboxes within given context that are valid for counting
+        function getCheckboxes(context) {
+            return Array.prototype.slice.call(
+                context.querySelectorAll('input[type="checkbox"]'),
+                0
+            ).filter(function (el) {
+                return !el.classList.contains('checkbox-parent');
+            });
         }
+
+        // returns true if all elements in a given set are :checked
+        function areAllChecked(els) {
+            return Array.prototype.slice.call(els, 0).every(function (el) {
+                return el.checked;
+            });
+        }
+
+        // counts the number of checked elements inside the context of a given count element
+        function updateCounts() {
+            Array.prototype.slice.call(countEls, 0).forEach(function (el) {
+                var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context'))),
+                    count = checkboxes.reduce(function (sum, el) {
+                        return sum + el.checked;
+                    }, 0);
+                el.textContent = count + ' of ' + checkboxes.length;
+            });
+        }
+
+        // things that should happen on generic checkbox click
+        function updateLabel(el) {
+            var label = getParentsByTagName(el, 'label')[0];
+            if (el.checked) {
+                label.classList.add('checked');
+            } else {
+                label.classList.remove('checked');
+            }
+        }
+
+        function CheckboxGroup(el) {
+            var that = this;
+
+            this.container = el;
+            this.children = Array.prototype.slice.call(el.getElementsByClassName('checkbox-child'), 0);
+            this.main = el.getElementsByClassName('checkbox-parent')[0];
+
+            this.children.forEach(function (el) {
+                el.addEventListener('change', function () {
+                    that.main.checked = areAllChecked(that.children);
+                    triggerChange(that.main);
+                });
+            });
+            this.main.addEventListener('click', function () {
+                var thisChecked = this.checked;
+                that.children.forEach(function (el) {
+                    el.checked = thisChecked;
+                    triggerChange(el);
+                });
+            });
+        }
+
+        // public: start tracking checkbox or radio button
+        function create(el) {
+            updateLabel(el);
+            el.addEventListener('change', function () {
+                updateLabel(this);
+                updateCounts();
+            });
+            return el;
+        }
+
+        // public: start tracking hierarchy group
+        function createHierarchy(el) {
+            return new CheckboxGroup(el);
+        }
+
+        // public: add en element that effects all checkboxes in given context
+        function createDriver(el, context, state) {
+            var checkboxes = getCheckboxes(context);
+            if (state === 'inverse') {
+                el.addEventListener('click', function () {
+                    checkboxes.forEach(function (thisCheckbox) {
+                        thisCheckbox.checked = !thisCheckbox.checked;
+                        triggerChange(thisCheckbox);
+                    });
+                });
+            } else {
+                el.addEventListener('click', function () {
+                    checkboxes.forEach(function (thisCheckbox) {
+                        thisCheckbox.checked = state;
+                        triggerChange(thisCheckbox);
+                    });
+                });
+            }
+        }
+
+        // public: initialize with default elements
+        function init() {
+            Array.prototype.slice.call(initEls, 0).forEach(function (el) {
+                create(el);
+            });
+            Array.prototype.slice.call(initHierarchies, 0).forEach(function (el) {
+                createHierarchy(el);
+            });
+            Array.prototype.slice.call(initDrivers, 0).forEach(function (el) {
+                var context = document.querySelector(el.getAttribute('data-context')),
+                    state;
+                if (el.classList.contains('check-all')) {
+                    state = true;
+                } else if (el.classList.contains('uncheck-all')) {
+                    state = false;
+                } else if (el.classList.contains('invert-all')) {
+                    state = 'inverse';
+                }
+                createDriver(el, context, state);
+            });
+            updateCounts();
+        }
+
+        return {
+            create: create,
+            createHierarchy: createHierarchy,
+            createDriver: createDriver,
+            init: init
+        };
+
     }());
 
 
@@ -885,6 +1034,7 @@ var WZL = (function (window, document) {
         mosaics.init();
         textareas.init();
         activeLabels.init();
+        checkboxes.init();
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
     };
@@ -974,111 +1124,6 @@ var WZL = (function (window, document) {
     })();
 
 
-    // checkbox/radio events
-    function areAllChecked(els) {  // returns true if all elements in given set are checked
-        for (var i = els.length >>> 0; i--;) {
-            if (els[i].checked === false) {
-                return false;
-            }
-        }
-        return true;
-    }
-    function getCheckboxes(context) {  // gets valid checkboxes in given context
-        return toArray(context.querySelectorAll('input[type="checkbox"]:not(.checkbox-parent)'));
-    }
-    function updateCounts() {  // updates count elements with number of checked boxes in context
-        Array.prototype.forEach.call(document.getElementsByClassName('checked-count'), function (el) {
-            var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context')));
-
-            var count = checkboxes.reduce(function (count, checkbox) {
-                return count + checkbox.checked;
-            }, 0);
-
-            el.textContent = count + ' of ' + checkboxes.length;
-        });
-    }
-    updateCounts();
-    function triggerChange(el) {  // trigger events that fire on checkbox change
-        var event = document.createEvent('HTMLEvents');
-        event.initEvent('change', true, false);
-        el.dispatchEvent(event);
-    }
-    function changeCheckboxStates(context, action) {  // change all checkboxes in context with given action
-        var checkboxes = getCheckboxes(context);
-        Array.prototype.forEach.call(checkboxes, function (checkbox) {
-            if (action === 'on' && !checkbox.checked) {
-                checkbox.checked = true;
-                triggerChange(checkbox);
-            } else if (action === 'off' && checkbox.checked) {
-                checkbox.checked = false;
-                triggerChange(checkbox);
-            } else if (action === 'invert') {
-                checkbox.checked = !checkbox.checked;
-                triggerChange(checkbox);
-            }
-        });
-        updateCounts();
-    }
-    function changeParentLabel(el) {
-        var thisLabel = getParentsByTagName(el, 'label')[0];
-        thisLabel.classList.toggle('checked', el.checked);
-    }
-    // handle individual checkbox changes
-    Array.prototype.forEach.call(document.querySelectorAll('input[type=checkbox], input[type=radio]'), function (el) {
-        var isParent = el.classList.contains('checkbox-parent'),
-            isChild = el.classList.contains('checkbox-child');
-
-        changeParentLabel(el);
-
-        el.addEventListener('change', function() {
-            // hierarchical checkboxes
-            if ( isParent || isChild ) {
-                var groupEl = getParentsByClassName(el, 'checkbox-group')[0],
-                    parentBox = groupEl.getElementsByClassName('checkbox-parent')[0],
-                    childBoxes = groupEl.getElementsByClassName('checkbox-child');
-
-                if ( isParent ) {
-                    Array.prototype.forEach.call(childBoxes, function (childEl) {
-                        childEl.checked = el.checked;
-                    });
-                } else if ( !el.checked ) {
-                    parentBox.checked = false;
-                } else if (areAllChecked(childBoxes)) {
-                    parentBox.checked = true;
-                }
-
-                Array.prototype.forEach.call([parentBox].concat(toArray(childBoxes)), function (thisBox) {
-                    changeParentLabel(thisBox);
-                });
-
-            // standalone checkboxes
-            } else {
-                changeParentLabel(el);
-            }
-            updateCounts();
-        });
-    });
-    // handle check/uncheck/invert all
-    Array.prototype.forEach.call(document.querySelectorAll('.check-all, .uncheck-all, .invert-all'), function (el) {
-        var context = document.querySelector(el.getAttribute('data-context'));
-        if (context) {
-            if (el.classList.contains('check-all')) {
-                el.addEventListener('click', function() {
-                    changeCheckboxStates(context, 'on');
-                });
-            } else if (el.classList.contains('uncheck-all')) {
-                el.addEventListener('click', function() {
-                    changeCheckboxStates(context, 'off');
-                });
-            } else if (el.classList.contains('invert-all')) {
-                el.addEventListener('click', function() {
-                    changeCheckboxStates(context, 'invert');
-                });
-            }
-        }
-    });
-
-
     // sticky notification utilities
     // remove once position: sticky is supported 'enough'
     (function() {
@@ -1163,10 +1208,10 @@ var WZL = (function (window, document) {
         mosaics: mosaics,
         textareas: textareas,
         activeLabels: activeLabels,
+        checkboxes: checkboxes,
         init: init
     };
 
 }(window, document));
 
 WZL.init();
-
