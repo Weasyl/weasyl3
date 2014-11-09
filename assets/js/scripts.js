@@ -1148,79 +1148,63 @@ var WZL = (function () {
 
 
     // async uploads
-    function uploadFromElement(el, progressCallback, completedCallback) {
-        var file = el.files[0];
-        var url = el.getAttribute('data-upload-url');
-        url += '?name=' + encodeURIComponent(file.name);
-        url += '&type=' + encodeURIComponent(file.type);
-        var xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener('progress', function (e) {
-            progressCallback(e.loaded / e.total);
-        }, false);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 1) {
-                xhr.send(file);
-            } else if (xhr.readyState == 4) {
-                completedCallback(xhr);
-            }
-        };
-        xhr.open('PUT', url, true);
-    }
+    // TODO: test, optimize, make pretty on the frontend
+    (function () {
+        function uploadFromElement(el, progressCallback, completedCallback) {
+            var file = el.files[0],
+                url = el.getAttribute('data-upload-url'),
+                xhr = new XMLHttpRequest();
 
-    forEach(document.getElementsByTagName('form'), function (form) {
-        var uploadsInProgress = 0;
-        var attemptedFormSubmission = false;
-        var lastButtonPressed;
+            url += '?name=' + encodeURIComponent(file.name);
+            url += '&type=' + encodeURIComponent(file.type);
 
-        function uploadCompleted(success) {
-            --uploadsInProgress;
-            if (success && !uploadsInProgress && attemptedFormSubmission) {
-                window.setTimeout(function () {
-                    if (!uploadsInProgress) {
-                        lastButtonPressed.click();
-                    }
-                }, 100);
-            }
+            xhr.upload.addEventListener('progress', function (e) {
+                progressCallback(e.loaded / e.total);
+            }, false);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 1) {
+                    xhr.send(file);
+                } else if (xhr.readyState === 4) {
+                    completedCallback(xhr);
+                }
+            };
+            xhr.open('PUT', url, true);
         }
 
-        forEach(form.getElementsByTagName('button'), function (button) {
-            button.addEventListener('click', function (ev) {
-                if (!uploadsInProgress) return;
-                attemptedFormSubmission = true;
-                alert("can't submit; still uploading");
-                ev.preventDefault();
-                lastButtonPressed = button;
-            }, false);
-        });
+        forEach(document.getElementsByTagName('form'), function (form) {
+            forEach(form.getElementsByClassName('deform-file-upload'), function (el) {
+                var input = el.getElementsByClassName('file-input')[0],
+                    url = input.getAttribute('data-upload-url'),
+                    submit = form.querySelector('[type=submit]'),
+                    progress = document.getElementById(input.id + '-progress');
+                
+                if (!url) {
+                    return;
+                }
 
-        forEach(form.getElementsByClassName('deform-file-upload'), function (el) {
-            var input = el.getElementsByClassName('file-input')[0];
-            
-            if (!input.getAttribute('data-upload-url')) {
-                return;
-            }
-            var progress = document.getElementById(input.id + '-progress');
-            input.addEventListener('change', function (ev) {
-                progress.innerText = 'upload starting';
-                ++uploadsInProgress;
-                uploadFromElement(input, function (p) {
-                    progress.innerText = (p * 100).toFixed(2) + '%';
-                }, function (xhr) {
-                    var success = xhr.status == 200;
-                    uploadCompleted(success);
-                    if (!success) {
-                        progress.innerText = 'upload failed';
-                        return;
-                    }
-                    var uidElement = document.getElementById(input.id + '-uid');
-                    var response = JSON.parse(xhr.response);
-                    uidElement.value = response.uid;
-                    input.name = '';
-                    progress.innerText = 'uploaded';
-                });
-            }, false);
+                input.addEventListener('change', function () {
+                    progress.innerText = 'upload starting';
+                    submit.disabled = true;
+
+                    uploadFromElement(input, function (p) {
+                        progress.innerText = (p * 100).toFixed(2) + '%';
+                    }, function (xhr) {
+                        var success = xhr.status === 200;
+                        submit.disabled = false;
+                        if (!success) {
+                            progress.innerText = 'upload failed';
+                            return;
+                        }
+                        var uidElement = document.getElementById(input.id + '-uid');
+                        var response = JSON.parse(xhr.response);
+                        uidElement.value = response.uid;
+                        input.name = '';
+                        progress.innerText = 'uploaded';
+                    });
+                }, false);
+            });
         });
-    });
+    }());
 
 
 
