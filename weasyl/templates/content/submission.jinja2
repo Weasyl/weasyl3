@@ -98,7 +98,6 @@
           <div class="comment-new-box">
             <div class="comment-info">{{ f.user_link(request.current_user) }}</div>
             <div class="resizing-textarea comment-new-entry">
-              <div class="resize-ref" aria-hidden="true"></div>
               {{ _comment_form['comment'].serialize() | safe }}
             </div>
           </div>
