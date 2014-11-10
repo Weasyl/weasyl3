@@ -28,7 +28,7 @@ Weasyl root CA certificate
 --------------------------
 
 Some of the below instructions require fetching from
-<https://deploy.i.weasyl.com/>, which has a certificate signed by the Weasyl
+<https://deploy.weasyldev.com/>, which has a certificate signed by the Weasyl
 root CA. This certificate is available at
 <https://projects.weasyl.com/bin/uploads/ad/74/41/ad744132f16717f4c9f99ed91bce502a447286c3966d39b6ea855472ca790137.der>
 and will probably have to be installed for some of these steps to not fail with
@@ -60,10 +60,10 @@ Weasyl publishes packages for python 3.4, nginx 1.6.0, and libxml2 2.9.0 for
 Debian 7 systems, if one is more inclined to install the packages onto a local
 Debian 7 system instead of into a VM::
 
-  deb http://apt.i.weasyl.com/repos/apt/debian wheezy main
+  deb https://apt.weasyldev.com/repos/apt/debian wheezy main
 
 The signing key for the packages is available at
-<https://deploy.i.weasyl.com/weykent-key.asc>.
+<https://deploy.weasyldev.com/weykent-key.asc>.
 
 ImageMagick is also available from Weasyl's apt repository, but the package
 name is ``imagemagick-6.8.9``.
@@ -84,7 +84,7 @@ A database can then be created::
 
 And then the database can be populated::
 
-  $ curl https://deploy.i.weasyl.com/weasyl-latest.sql.xz | xzcat | psql weasyl
+  $ curl https://deploy.weasyldev.com/weasyl-latest.sql.xz | xzcat | psql weasyl
 
 It's safe to ignore any errors about a missing ``weasyl`` role.
 
