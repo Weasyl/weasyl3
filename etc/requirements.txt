@@ -1,4 +1,4 @@
-libweasyl>=0.7.0,<0.8.0
+libweasyl
 
 deform_jinja2==0.5-2
 Jinja2==2.7.2
