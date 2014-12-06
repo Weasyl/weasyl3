@@ -16,9 +16,11 @@ var WZL = (function () {
     // copy an array, or convert a nodelist to an array
     function toArray(arr) {
         var result = [];
-        for (var i = arr.length - 1; i--;) {
-            result[i] = arr[i];
+
+        for (var i = 0, l = arr.length; i < l; i++) {
+            result.push(arr[i]);
         }
+
         return result;
     }
 
