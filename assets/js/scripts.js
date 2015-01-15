@@ -47,7 +47,7 @@ var WZL = (function () {
 
     // get a timestamp
     function getTimestamp() {
-        return Date.now || new Date().getTime();
+        return new Date().getTime();
     }
 
     // throttle and debounce from underscore.js
