@@ -67,8 +67,10 @@ apt-get -y upgrade
 apt-get -y install \
     ffmpeg git-core imagemagick-wzl libffi-dev libpq-dev \
     libxml2-dev libxslt-dev memcached nginx \
-    pkg-config postgresql postgresql-contrib-9.1 \
-#   liblzma-dev nodejs-legacy python-dev python-virtualenv
+    pkg-config postgresql postgresql-contrib-9.1
+
+# Install weasyl3 specific packages here.
+apt-get -y install \
     npm python3.4-dev python3.4-venv ruby-sass
 
 sudo -u postgres dropdb weasyl
@@ -78,8 +80,7 @@ sudo -u postgres createdb -E UTF8 -O vagrant weasyl
 curl https://deploy.weasyldev.com/weasyl-latest.sql.xz \
     | xzcat | sudo -u vagrant psql weasyl
 
-#openssl req -subj '/CN=lo.weasyl.com' -nodes -new -newkey rsa:2048 \
-openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
+openssl req -subj '/CN=lo.weasyl.com' -nodes -new -newkey rsa:2048 \
     -keyout /etc/ssl/private/weasyl.key.pem -out /tmp/weasyl.req.pem
 openssl x509 -req -days 3650 -in /tmp/weasyl.req.pem \
     -signkey /etc/ssl/private/weasyl.key.pem -out /etc/ssl/private/weasyl.crt.pem
@@ -92,13 +93,11 @@ server {
     ssl_certificate /etc/ssl/private/weasyl.crt.pem;
     ssl_certificate_key /etc/ssl/private/weasyl.key.pem;
 
-#   server_name lo.weasyl.com;
-    server_name lo3.weasyl.com;
+    server_name lo.weasyl.com;
 
     rewrite "^(/static/(submission|character)/../../../../../../)(.+)-(.+)\$" \\$1\\$4 break;
 
     location /static {
-#       root /home/vagrant/weasyl-old;
         root /home/vagrant/weasyl3/weasyl;
         try_files \\$uri @proxy;
     }
@@ -148,10 +147,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "https://deploy.weasyldev.com/weasyl-debian76.box"
   config.vm.box_download_checksum = "58c6db2da40bc22bd03347f12af4c8ba06a7e1f73192d3202bae1071ef948cf4"
   config.vm.box_download_checksum_type = "sha256"
-# config.vm.hostname = "vagrant-weasyl-old"
   config.vm.hostname = "vagrant-weasyl3"
   config.vm.provision :shell, :privileged => true, :inline => $priv_script
   config.vm.provision :shell, :privileged => false, :inline => $unpriv_script
-# config.vm.network :forwarded_port, host: 8443, guest: 8443
   config.vm.network :forwarded_port, host: 8444, guest: 8443
 end
