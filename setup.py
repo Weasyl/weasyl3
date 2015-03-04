@@ -1,12 +1,14 @@
 from distutils.command.build import build as _build
 from distutils.core import Command
+import pip
 import subprocess
 
 from setuptools import setup
 from pip.req import parse_requirements
 
 
-reqs = [str(ir.req) for ir in parse_requirements('etc/requirements.txt')]
+requirements = parse_requirements('etc/requirements.txt',
+                                  session=pip.download.PipSession())
 
 
 class build_assets(Command):
@@ -47,7 +49,7 @@ setup(
     vcversioner={
         'version_module_paths': ['weasyl/_version.py'],
     },
-    install_requires=reqs,
+    install_requires=[str(ir.req) for ir in requirements],
     extras_require={
         'development': [
             'coverage',

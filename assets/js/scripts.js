@@ -25,29 +25,31 @@ var WZL = (function () {
     }
 
     // parent traversal helpers
-    function getParents(el) {
-        var result = [];
-        while (el !== document.documentElement) {
-            result.push(el);
-            el = el.parentNode;
+    function getClosestByTagName(el, tag) {
+        tag = tag.toUpperCase();
+
+        while ((el = el.parentNode)) {
+            if (el.nodeName === tag) {
+                return el;
+            }
         }
-        return result;
+
+        return null;
     }
-    function getParentsByTagName(el, tag) {
-        tag = tag.toLowerCase();
-        return getParents(el).filter(function (candidate) {
-            return candidate.tagName.toLowerCase() === tag;
-        });
-    }
-    function getParentsByClassName(el, cl) {
-        return getParents(el).filter(function (candidate) {
-            return candidate.classList.contains(cl);
-        });
+
+    function getClosestByClassName(el, cl) {
+        while ((el = el.parentNode)) {
+            if (el.classList.contains(cl)) {
+                return el;
+            }
+        }
+
+        return null;
     }
 
     // get a timestamp
     function getTimestamp() {
-        return Date.now || new Date().getTime();
+        return new Date().getTime();
     }
 
     // throttle and debounce from underscore.js
@@ -752,7 +754,7 @@ var WZL = (function () {
 
         function Textarea(el) {
             this.el = el;
-            this.container = getParentsByClassName(el, 'comment-new-box')[0];
+            this.container = getClosestByClassName(el, 'comment-new-box');
             this.textarea = el.getElementsByTagName('textarea')[0];
             this.ref = document.createElement('div');
 
@@ -908,7 +910,7 @@ var WZL = (function () {
 
         // things that should happen on generic checkbox click
         function updateLabel(el) {
-            var label = getParentsByTagName(el, 'label')[0];
+            var label = getClosestByTagName(el, 'label');
             if (el.checked) {
                 label.classList.add('checked');
             } else {
