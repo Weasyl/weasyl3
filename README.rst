@@ -50,7 +50,7 @@ one then runs::
 
   $ make host-run
 
-Weasyl will then start running on <https://lo3.weasyl.com:28443/>.
+Weasyl will then start running on <https://lo3.weasyl.com:8444/>.
 
 
 Fetching packages from weasyl
