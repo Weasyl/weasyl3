@@ -67,7 +67,7 @@ apt-get -y upgrade
 apt-get -y install \
     ffmpeg git-core imagemagick-wzl libffi-dev libpq-dev \
     libxml2-dev libxslt-dev memcached nginx \
-    pkg-config postgresql postgresql-contrib-9.1
+    pkg-config postgresql-9.4 postgresql-contrib-9.4
 
 # Install weasyl3 specific packages here.
 apt-get -y install \

@@ -13,8 +13,8 @@ the things that are necessary to develop on it:
   debian-esque systems)
 - node 0.10.5 or greater and npm (``npm`` executable; ``npm`` package from
   `nodesource`_ on debian-esque systems)
-- postgresql 9.1 or greater, including development headers and HSTORE
-  (``postgresql-contrib-9.1`` and ``libpq-dev`` packages on debian-esque
+- postgresql 9.4 or greater, including development headers and HSTORE
+  (``postgresql-contrib-9.4`` and ``libpq-dev`` packages on debian-esque
   systems)
 - libxml2 and libxslt, including development headers (``libxml2-dev`` and
   ``libxslt-dev`` packages on debian-esque systems)
