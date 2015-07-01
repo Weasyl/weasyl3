@@ -66,7 +66,7 @@ The signing key for the packages is available at
 <https://deploy.weasyldev.com/weykent-key.asc>.
 
 ImageMagick is also available from Weasyl's apt repository, but the package
-name is ``imagemagick-6.8.9``.
+name is ``imagemagick-wzl``.
 
 
 Non-Vagrant installation
