@@ -1,12 +1,14 @@
 from distutils.command.build import build as _build
 from distutils.core import Command
+import pip
 import subprocess
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from pip.req import parse_requirements
 
 
-reqs = [str(ir.req) for ir in parse_requirements('etc/requirements.txt')]
+requirements = parse_requirements('etc/requirements.txt',
+                                  session=pip.download.PipSession())
 
 
 class build_assets(Command):
@@ -34,7 +36,9 @@ class build(_build):
 
 setup(
     name='weasyl',
-    packages=find_packages(),
+    packages=[
+        'weasyl', 'weasyl.panels', 'weasyl.views',
+    ],
     package_data={
         'weasyl': [
             'static/*/*', 'templates/*.jinja2', 'templates/*/*.jinja2',
@@ -45,7 +49,20 @@ setup(
     vcversioner={
         'version_module_paths': ['weasyl/_version.py'],
     },
-    install_requires=reqs,
+    install_requires=[str(ir.req) for ir in requirements],
+    extras_require={
+        'development': [
+            'coverage',
+            'flake8',
+            'pytest',
+            'sphinxcontrib-httpdomain',
+            'sphinxcontrib-zopeext',
+            'sphinx',
+            'testfixtures',
+            'vcversioner',
+            'webtest',
+        ],
+    },
     entry_points={
         'paste.app_factory': [
             'main=weasyl.wsgi:make_app',

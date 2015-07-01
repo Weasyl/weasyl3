@@ -4,7 +4,7 @@ import sys
 from pyramid.threadlocal import get_current_request
 import raven
 
-from .sessions import make_session_id
+from libweasyl.security import generate_key
 
 
 log = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class SentryMiddleware:
             return self.app(environ, start_response)
         except Exception:
             exc_info = sys.exc_info()
-        request_id = make_session_id(8)
+        request_id = generate_key(8)
         event_id, = self.log_error(exc_info, request_id=request_id)
         start_response(
             '500 Internal Server Error',

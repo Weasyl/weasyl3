@@ -22,14 +22,16 @@ def groupfinder(userid, request):
 
     Note that this doesn't validate the userid; it's assumed that the
     authentication policy will only return valid userids from their
-    ``unauthenticated_userid`` methods. In practice this works out just fine
-    since Weasyl controls all of the used authentication policies.
+    :py:meth:`~pyramid.interfaces.IAuthenticationPolicy.unauthenticated_userid`
+    methods. In practice this works out just fine since Weasyl controls all of
+    the used authentication policies.
 
     The only additional groups returned by this function correspond to staff
     roles. That is: ``g:director``, ``g:admin``, ``g:mod``, and ``g:tech``.
 
     :param userid: An integer--a userid Weasyl knows about.
-    :param request: The current pyramid request. *(unused)*
+    :param request: The current pyramid :py:class:`~pyramid.request.Request`.
+        *(unused)*
     """
     return staff.groups.get(userid, [])
 

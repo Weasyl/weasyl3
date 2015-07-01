@@ -3,6 +3,9 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
+# Changes to the priv_script section of this Vagrantfile should be reflected
+# in its weasyl-old counterpart at weasyl/weasyl-old:Vagrantfile !
+
 $priv_script = <<SCRIPT
 
 apt-get update
@@ -52,43 +55,45 @@ update-ca-certificates
 echo >/etc/apt/sources.list.d/nodesource.list \
     'deb https://deb.nodesource.com/node wheezy main'
 echo >/etc/apt/sources.list.d/weasyl.list \
-    'deb http://apt.i.weasyl.com/repos/apt/debian wheezy main'
+    'deb http://apt.weasyldev.com/repos/apt/debian wheezy main'
 
-wget -O- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-wget -O- https://deploy.i.weasyl.com/weykent-key.asc | apt-key add -
+curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+curl https://deploy.weasyldev.com/weykent-key.asc | apt-key add -
 
 apt-get update
 apt-mark hold grub-pc
 apt-get -y upgrade
 
 apt-get -y install \
-    python3.4-dev python3.4-venv imagemagick-6.8.9 libreadline-dev \
-    git-core postgresql postgresql-contrib-9.1 libpq-dev memcached nginx \
-    libxml2-dev libxslt-dev pkg-config npm ruby-sass openssh-client openssh-server
+    ffmpeg git-core imagemagick-wzl libffi-dev libpq-dev \
+    libxml2-dev libxslt-dev memcached nginx \
+    pkg-config postgresql-9.4 postgresql-contrib-9.4
 
-sudo -u postgres psql -c 'DROP DATABASE weasyl'
-sudo -u postgres psql -c 'DROP USER vagrant'
+# Install weasyl3 specific packages here.
+apt-get -y install \
+    npm python3.4-dev python3.4-venv ruby-sass
+
+sudo -u postgres dropdb weasyl
+sudo -u postgres dropuser vagrant
 sudo -u postgres createuser -drs vagrant
 sudo -u postgres createdb -E UTF8 -O vagrant weasyl
-wget -O- https://deploy.i.weasyl.com/weasyl-latest.sql.xz \
+curl https://deploy.weasyldev.com/weasyl-latest.sql.xz \
     | xzcat | sudo -u vagrant psql weasyl
 
-openssl req -subj '/CN=lo3.weasyl.com' -nodes -new -newkey rsa:2048 \
-    -keyout /etc/ssl/private/weasyl3.key.pem -out /tmp/weasyl3.req.pem
-openssl x509 -req -days 3650 -in /tmp/weasyl3.req.pem \
-    -signkey /etc/ssl/private/weasyl3.key.pem -out /etc/ssl/private/weasyl3.crt.pem
+openssl req -subj '/CN=lo.weasyl.com' -nodes -new -newkey rsa:2048 \
+    -keyout /etc/ssl/private/weasyl.key.pem -out /tmp/weasyl.req.pem
+openssl x509 -req -days 3650 -in /tmp/weasyl.req.pem \
+    -signkey /etc/ssl/private/weasyl.key.pem -out /etc/ssl/private/weasyl.crt.pem
 
 cat >/etc/nginx/sites-available/weasyl <<NGINX
 
 server {
-    listen 8080;
     listen 8443 ssl;
 
-    ssl on;
-    ssl_certificate /etc/ssl/private/weasyl3.crt.pem;
-    ssl_certificate_key /etc/ssl/private/weasyl3.key.pem;
+    ssl_certificate /etc/ssl/private/weasyl.crt.pem;
+    ssl_certificate_key /etc/ssl/private/weasyl.key.pem;
 
-    server_name lo3.weasyl.com;
+    server_name lo.weasyl.com;
 
     rewrite "^(/static/(submission|character)/../../../../../../)(.+)-(.+)\$" \\$1\\$4 break;
 
@@ -139,11 +144,11 @@ SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "weasyl-debian76"
-  config.vm.box_url = "https://deploy.i.weasyl.com/weasyl-debian76.box"
-  config.vm.box_download_insecure = true
+  config.vm.box_url = "https://deploy.weasyldev.com/weasyl-debian76.box"
   config.vm.box_download_checksum = "58c6db2da40bc22bd03347f12af4c8ba06a7e1f73192d3202bae1071ef948cf4"
   config.vm.box_download_checksum_type = "sha256"
+  config.vm.hostname = "vagrant-weasyl3"
   config.vm.provision :shell, :privileged => true, :inline => $priv_script
   config.vm.provision :shell, :privileged => false, :inline => $unpriv_script
-  config.vm.network :forwarded_port, host: 28443, guest: 8443
+  config.vm.network :forwarded_port, host: 8444, guest: 8443
 end
