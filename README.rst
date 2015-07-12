@@ -52,6 +52,12 @@ one then runs::
 
 Weasyl will then start running on <https://lo3.weasyl.com:8444/>.
 
+Once you have Weasyl3 running, it's strongly recommended that you also run::
+
+  $ make docs
+  
+This will create additional documentation to help familiarize you with the
+Weasyl3 environment.
 
 Fetching packages from weasyl
 -----------------------------
@@ -126,6 +132,12 @@ Otherwise, ``PYVENV`` must be specified to ``make``. For example, if
 
 Now, Weasyl 3 should be running on <https://lo3.weasyl.com:8443/>.
 
+Once you have Weasyl3 running, it's strongly recommended that you also run::
+
+  $ make docs
+  
+This will create additional documentation to help familiarize you with the
+Weasyl3 environment.
 
 .. _nodesource: https://github.com/nodesource/distributions
 .. _Vagrant: http://www.vagrantup.com
