@@ -1,6 +1,6 @@
 libweasyl
 
-deform_jinja2==0.5-2
+deform_jinja2==0.5.post2
 Jinja2==2.7.3
 MarkupSafe==0.23
 PasteDeploy==1.5.2
