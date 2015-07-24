@@ -6,9 +6,6 @@
 
 PYVENV ?= pyvenv
 
-# URL of package index
-PYPI := https://pypi.weasyldev.com/
-
 # Whether to use wheels
 USE_WHEEL := --no-use-wheel
 
@@ -27,13 +24,13 @@ all: .stamp-ve .stamp-egg-info assets
 
 # Creates python environment
 .stamp-ve: etc/requirements.txt
-	test -e ve || { $(PYVENV) ve; ve/bin/pip install -U pip setuptools; }
-	ve/bin/pip install -i $(PYPI) -r $< $(USE_WHEEL)
+	test -e ve || { $(PYVENV) ve; cp etc/pip.conf ve ; ve/bin/pip install -U pip setuptools; }
+	ve/bin/pip install $(USE_WHEEL) -r $<
 	touch $@
 
 # Installs weasyl package in develop mode
 .stamp-egg-info: setup.py .stamp-ve
-	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) $(EDITABLE) '.[development]'
+	ve/bin/pip install $(USE_WHEEL) $(EDITABLE) '.[development]'
 	touch $@
 
 # Vagrant/libweasyl setup
@@ -44,7 +41,7 @@ libweasyl:
 
 .PHONY: install-libweasyl
 install-libweasyl: .stamp-ve .stamp-egg-info libweasyl
-	ve/bin/pip install -i $(PYPI) $(USE_WHEEL) -Ue libweasyl
+	ve/bin/pip install $(USE_WHEEL) -Ue libweasyl
 
 .PHONY: host-install-libweasyl
 host-install-libweasyl: .vagrant
