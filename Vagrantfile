@@ -128,7 +128,6 @@ server {
 
 NGINX
 ln -fs /etc/nginx/sites-available/weasyl /etc/nginx/sites-enabled
-/etc/init.d/nginx restart
 
 SCRIPT
 
@@ -142,6 +141,12 @@ make install-libweasyl upgrade-db PYVENV=pyvenv-3.4 USE_WHEEL=--use-wheel
 
 SCRIPT
 
+$boot_script = <<SCRIPT
+
+/etc/init.d/nginx restart
+
+SCRIPT
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "weasyl-debian76"
   config.vm.box_url = "https://deploy.weasyldev.com/weasyl-debian76.box"
@@ -150,5 +155,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "vagrant-weasyl3"
   config.vm.provision :shell, :privileged => true, :inline => $priv_script
   config.vm.provision :shell, :privileged => false, :inline => $unpriv_script
+  config.vm.provision :shell, :privileged => true, :inline => $boot_script, :run => "always"
   config.vm.network :forwarded_port, host: 8444, guest: 8443
 end
