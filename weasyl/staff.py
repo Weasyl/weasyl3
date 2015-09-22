@@ -1,13 +1,13 @@
-from libweasyl import staff
+from libweasyl.staff import DIRECTORS, TECHNICAL, ADMINS, MODS
 
 groups = {}
 
 
 def init_groups():
     for principal, userlist in [
-            ('g:director', staff.DIRECTORS),
-            ('g:admin', staff.ADMINS),
-            ('g:mod', staff.MODS),
-            ('g:tech', staff.TECHNICAL)]:
+            ('g:director', DIRECTORS),
+            ('g:admin', ADMINS),
+            ('g:mod', MODS),
+            ('g:tech', TECHNICAL)]:
         for user in userlist:
             groups.setdefault(user, []).append(principal)
