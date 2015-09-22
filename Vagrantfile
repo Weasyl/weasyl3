@@ -138,6 +138,7 @@ $unpriv_script = <<SCRIPT
 ln -s /vagrant ~/weasyl3
 cd ~/weasyl3
 sed -e 's,^weasyl.static_root = /path/to/your/weasyl-old/checkout$,weasyl.static_root = /home/vagrant/weasyl3/weasyl/static,' <etc/development.ini.example >etc/development.ini
+sed -e 's,^weasyl.staff_config = /path/to/your/weasyl/staff/config/yaml$,weasyl.staff_config = /home/vagrant/weasyl3/etc/weasyl-staff.yaml,' --in-place etc/development.ini
 make install-libweasyl upgrade-db PYVENV=pyvenv-3.4 USE_WHEEL=--use-wheel
 
 SCRIPT

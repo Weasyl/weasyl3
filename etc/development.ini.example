@@ -23,6 +23,7 @@ cache.backend = dogpile.cache.memcached
 cache.arguments.url = 127.0.0.1:11211
 
 weasyl.static_root = /path/to/your/weasyl-old/checkout
+weasyl.staff_config = /path/to/your/weasyl/staff/config/yaml
 
 [filter:https]
 use = egg:PasteDeploy#prefix

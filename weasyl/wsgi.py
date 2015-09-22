@@ -20,7 +20,7 @@ from .resources import RootResource
 from .sessions import WeasylSession
 from .views.legacy import configure_urls
 from .views.login import login_forms
-from . import authentication, authorization, hacks, predicates
+from . import authentication, authorization, hacks, predicates, staff
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -119,8 +119,10 @@ def make_app(global_config, **settings):
         dbsession=DBSession,
         not_found_exception=httpexceptions.HTTPNotFound,
         base_file_path=settings['weasyl.static_root'],
+        staff_config_path=settings['weasyl.staff_config'],
         media_link_formatter_callback=format_media_link,
     )
+    staff.init_groups()
 
     config.include('pyramid_tm')
     config.include('pyramid_jinja2')

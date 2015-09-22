@@ -1,0 +1,38 @@
+# Members of Weasyl staff.
+#
+# This file is a temporary solution for testing and deployment. It
+# should be replaced in production with a file generated from ansible
+# and in development environments with a static file downloaded
+# alongside the sample database.
+
+directors:
+    - 1014   # Fiz
+    - 2061   # Ikani
+    - 2402   # SkylerBunny
+    - 5      # Taw
+    - 2008   # Tiger
+
+technical_staff:
+    - 1019   # Aden
+    - 5173   # Keet
+    - 5756   # Weykent
+
+admins:
+    - 23613  # Hendikins
+    - 3      # Kihari
+    - 2170   # Matt
+    - 2011   # MLR
+
+mods:
+    - 20418  # Novacaine
+    - 40212  # pinardilla
+
+developers:
+    - 38623  # 8BitFur
+    - 34165  # Charmander
+    - 15224  # Foximile
+    - 2475   # Kailys
+    - 8627   # Kauko
+    - 40163  # Ritty
+    - 24043  # rooshoes
+    - 2252   # SuburbanFox
