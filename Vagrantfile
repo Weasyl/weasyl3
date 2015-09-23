@@ -52,26 +52,31 @@ echo 'weasyl.crt' >> /etc/ca-certificates.conf
 
 update-ca-certificates
 
-echo >/etc/apt/sources.list.d/nodesource.list \
-    'deb https://deb.nodesource.com/node wheezy main'
 echo >/etc/apt/sources.list.d/weasyl.list \
-    'deb http://apt.weasyldev.com/repos/apt/debian wheezy main'
+    'deb http://apt.weasyldev.com/repos/apt/debian jessie main'
 
-curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 curl https://deploy.weasyldev.com/weykent-key.asc | apt-key add -
 
 apt-get update
 apt-mark hold grub-pc
-apt-get -y upgrade
+apt-get -y dist-upgrade
+
+# Provides split-dns for Weasyl VPN users (otherwise unused)
+mkdir -p /etc/dnsmasq.d/
+echo "server=/i.weasyl.com/10.10.10.103" > /etc/dnsmasq.d/i.weasyl.com
+apt-get install -y dnsmasq
+echo "prepend domain-name-servers 127.0.0.1;" >> /etc/dhcp/dhclient.conf
+dhclient -x
+dhclient eth0
 
 apt-get -y install \
-    ffmpeg git-core imagemagick-wzl libffi-dev libpq-dev \
-    libxml2-dev libxslt-dev memcached nginx \
-    pkg-config postgresql-9.4 postgresql-contrib-9.4
+    git-core libffi-dev libmagickcore-dev libpam-systemd libpq-dev \
+    libxml2-dev libxslt-dev memcached nginx pkg-config \
+    postgresql-9.4 postgresql-contrib-9.4
 
 # Install weasyl3 specific packages here.
 apt-get -y install \
-    npm python3.4-dev python3.4-venv ruby-sass
+    nodejs-legacy npm python3.4-dev python3.4-venv ruby-sass
 
 sudo -u postgres dropdb weasyl
 sudo -u postgres dropuser vagrant
@@ -135,6 +140,7 @@ SCRIPT
 
 $unpriv_script = <<SCRIPT
 
+# Install libweasyl into the weasyl3 directory and upgrade this VM's DB.
 ln -s /vagrant ~/weasyl3
 cd ~/weasyl3
 sed -e 's,^weasyl.static_root = /path/to/your/weasyl-old/checkout$,weasyl.static_root = /home/vagrant/weasyl3/weasyl/static,' <etc/development.ini.example >etc/development.ini
@@ -143,12 +149,19 @@ make install-libweasyl upgrade-db PYVENV=pyvenv-3.4 USE_WHEEL=--use-wheel
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "weasyl-debian76"
-  config.vm.box_url = "https://deploy.weasyldev.com/weasyl-debian76.box"
-  config.vm.box_download_checksum = "58c6db2da40bc22bd03347f12af4c8ba06a7e1f73192d3202bae1071ef948cf4"
+  config.vm.box = "weasyl-debian81.box"
+  config.vm.box_url = "https://deploy.weasyldev.com/weasyl-debian81.box"
+  config.vm.box_download_checksum = "34592e65ebd4753d6f74a54b019e36d1ce006010cb4f03ed8ec131824f45ff9b"
   config.vm.box_download_checksum_type = "sha256"
   config.vm.hostname = "vagrant-weasyl3"
   config.vm.provision :shell, :privileged => true, :inline => $priv_script
   config.vm.provision :shell, :privileged => false, :inline => $unpriv_script
   config.vm.network :forwarded_port, host: 8444, guest: 8443
+  # Increase memory.
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+  config.vm.provider "vmware_fusion" do |v|
+    v.vmx["memsize"] = "1024"
+  end
 end
