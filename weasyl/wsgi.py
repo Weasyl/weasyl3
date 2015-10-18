@@ -20,6 +20,7 @@ from .resources import RootResource
 from .sessions import WeasylSession
 from .views.legacy import configure_urls
 from .views.login import login_forms
+from .views.report import report_forms
 from . import authentication, authorization, hacks, predicates
 
 
@@ -136,6 +137,7 @@ def make_app(global_config, **settings):
     config.add_request_method(is_api_request, reify=True)
     config.add_request_method(is_debug_on, reify=True)
     config.add_request_method(login_forms, reify=True)
+    config.add_request_method(report_forms, reify=True)
     config.add_tween(
         'weasyl.sessions.session_tween_factory',
         under='pyramid_tm.tm_tween_factory')

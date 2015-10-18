@@ -2,6 +2,17 @@
 
 {% block title %}{{ submission.title }}{% endblock %}
 {% block body %}
+<div id="report-modal" class="modal">
+      <div class="screen toggle" data-toggle-target="#report-modal"></div>
+      <div class="content">
+        <button class="modal-close toggle" data-toggle-target="#report-modal" aria-hidden="true">[close]</button>
+        <header class="primary-title-wrap">
+          <h2 class="title primary text-grad">Report</h2>
+        </header>
+        {{ f.report_form(request.report_forms['submission'], None) }}
+      </div>
+</div><!-- #report-modal -->
+
 <section class="sub-container">
   <header class="primary-title-wrap">
     <h1 class="title primary text-grad">{{ submission.title }}</h1>
@@ -26,7 +37,7 @@
   <ul class="sub-actions action-list layout-block text-align-center">
     <li><a href="#" class="action"><span class="icon icon-action-star"></span> Favorite</a></li>
     <li><a href="#" class="action"><span class="icon icon-action-heart"></span> Recommend</a></li>
-    <li><a href="#" class="action"><span class="icon icon-action-warning"></span> Report</a></li>
+    <li><a href="./report" class="action toggle" data-toggle-target="#report-modal"><span class="icon icon-action-warning"></span> Report</a></li>
   </ul>
 </section><!-- .sub-container -->
 

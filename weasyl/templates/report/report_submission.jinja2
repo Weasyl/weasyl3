@@ -1,0 +1,11 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Report{% endblock %}
+{% block body %}
+<div class="content">
+  <header class="primary-title-wrap">
+    <h2 class="title primary text-grad">Report</h2>
+  </header>
+  {{ f.login_form(_form, _errors, label_class='side') }}
+</div><!-- .content -->
+{% endblock %}

@@ -15,6 +15,7 @@ from libweasyl.models.site import SiteUpdate
 from ..resources import RootResource, SubmissionResource, SubmissionsResource
 from .decorators import also_api_view
 from .forms import CommentForm, form_renderer
+from .report import SubmissionReportForm
 
 
 log = logging.getLogger(__name__)
@@ -22,6 +23,13 @@ log = logging.getLogger(__name__)
 
 def comment_success(context, request, appstruct):
     log.debug('comment success: %r', appstruct)
+    if request.is_api_request:
+        return render_to_response('json', {'status': 'ok'}, request=request)
+    return httpexceptions.HTTPSeeOther('/')
+
+
+def report_success(context, request, appstruct):
+    log.debug('report success: %r', appstruct)
     if request.is_api_request:
         return render_to_response('json', {'status': 'ok'}, request=request)
     return httpexceptions.HTTPSeeOther('/')

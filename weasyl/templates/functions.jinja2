@@ -59,6 +59,20 @@
 </form>
 {% endmacro %}
 
+{% macro report_form(form, errors, label_class='') %}
+<form action="{{ request.resource_path(None, 'report') }}" method="post" class="form modal-width content-block">
+  {{ form_errors(errors) }}
+  {{ form['csrf_token'].serialize() | safe }}
+  {{ form['report_type'].serialize(label_class=label_class + ' content-block') | safe }}
+  {{ form['report_comment'].serialize(label_class=label_class + ' content-block') | safe }}
+  <div class="pagination">
+    <button type="submit" name="report" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
+      Submit
+    </button>
+  </div>
+</form>
+{% endmacro %}
+
 {% macro submission_thumb(submission, klass='grid-item', with_caption=True, with_user=True) %}
 <figure class="{{ klass }}" data-init-aspect="{{ submission.submission_media['aspect_ratio'] }}">
   <a href="{{ request.path_for(submission) }}" class="thumb-container">
