@@ -60,7 +60,7 @@
 {% endmacro %}
 
 {% macro report_form(form, errors, label_class='') %}
-<form action="{{ request.resource_path(None, 'report') }}" method="post" class="form modal-width content-block">
+<form action="{{ request.resource_path(context, 'report') }}" method="post" class="form modal-width content-block">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
   {{ form['report_type'].serialize(label_class=label_class + ' content-block') | safe }}
