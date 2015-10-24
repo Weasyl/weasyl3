@@ -9,6 +9,8 @@ from pyramid.security import remember, forget
 from pyramid.view import view_config
 from pyramid import httpexceptions
 
+from libweasyl.exceptions import ExpectedWeasylError
+from libweasyl.models.content import Report, ReportComment, Submission
 from ..resources import RootResource, SubmissionResource
 from .forms import Form, FormView, User
 
@@ -34,15 +36,27 @@ violation_choices = (
 
 
 class SubmissionReportForm(CSRFSchema):
-    report_type = c.SchemaNode(
+    violation = c.SchemaNode(
         c.String(),
         widget=w.SelectWidget(values=violation_choices))
-    report_comment = c.SchemaNode(
+    content = c.SchemaNode(
         c.String(), description="Additional Comments", widget=w.TextAreaWidget(
-        css_class='comment-entry', placeholder="Additional Comments\u2026"))
+            css_class='comment-entry', placeholder="Additional Comments\u2026"))
 
     def validator(self, form, values):
-        pass
+        request = form.bindings['request']
+        try:
+            # XXX: Missing a lot here. Mainly PoC right now.
+            # This obviously doesn't make sense. Probably want a better way to get this.
+            now = Submission.now()
+            rep = Report(urgency=0, opened_at=now, target_sub=request.context.submission.submitid)
+            Report.dbsession.add(rep)
+            repcom = ReportComment(report=rep, violation=values['violation'], userid=12345, unixtime=now,
+                                   content=values['content'])
+            Report.dbsession.add(repcom)
+            Report.dbsession.flush()
+        except ExpectedWeasylError as e:
+            raise c.Invalid(form, e.args[0]) from e
 
 
 @view_config(name='report', context=SubmissionResource, renderer='report/report_submission.jinja2', permission='report', api='false')
@@ -50,16 +64,8 @@ class ReportSubmissionView(FormView):
     schema = SubmissionReportForm()
     buttons = 'submit',
 
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
-    def __call__(self):
-        return Response('hello')
-
-    def report_success(self, appstruct):
-        return httpexceptions.HTTPSeeOther(
-            '/', headers=remember(self.request, appstruct['user'].userid))
+    def submit_success(self, appstruct):
+        return httpexceptions.HTTPSeeOther('/')
 
 
 def report_forms(request):
