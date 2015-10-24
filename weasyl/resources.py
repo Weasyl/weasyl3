@@ -77,6 +77,11 @@ class SubmissionResource:
             return False
         return Authenticated in principals
 
+    def permits_report(self, principals):
+        if not self.permits_view(principals):
+            return False
+        return Authenticated in principals
+
 
 class UsersResource:
     def __init__(self, request):
