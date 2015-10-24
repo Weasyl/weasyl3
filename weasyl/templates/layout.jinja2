@@ -42,6 +42,9 @@
           <p class="user">Logged in as {{ f.user_link(request.current_user) }}</p>
           <a href="#" class="action small">Messages <span class="icon icon-ha-note"></span></a>
           <a href="#" class="action small">Settings <span class="icon icon-ha-gear"></span></a>
+          {% if request.current_user.is_staff %}
+          <a href="{{ request.resource_path(None, 'mod') }}" class="action small">Moderate <span class="icon icon-ha-gear"></span></a>
+          {% endif %}
           <a href="#" class="action small">Sign out <span class="icon icon-ha-exit"></span></a>
         </div><!-- .header-actions -->
       </div><!-- /header-actions-container -->
