@@ -63,8 +63,8 @@
 <form action="{{ request.resource_path(context, 'report') }}" method="post" class="form modal-width content-block">
   {{ form_errors(errors) }}
   {{ form['csrf_token'].serialize() | safe }}
-  {{ form['report_type'].serialize(label_class=label_class + ' content-block') | safe }}
-  {{ form['report_comment'].serialize(label_class=label_class + ' content-block') | safe }}
+  {{ form['violation'].serialize(label_class=label_class + ' content-block') | safe }}
+  {{ form['content'].serialize(label_class=label_class + ' content-block') | safe }}
   <div class="pagination">
     <button type="submit" name="submit" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
       Submit
