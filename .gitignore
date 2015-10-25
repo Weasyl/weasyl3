@@ -15,6 +15,7 @@ __pycache__
 /.stamp-*
 /.coverage
 /htmlcov
+/.eggs
 
 # os crud #
 .DS_Store

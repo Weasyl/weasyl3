@@ -13,8 +13,8 @@ the things that are necessary to develop on it:
   debian-esque systems)
 - node 0.10.5 or greater and npm (``npm`` executable; ``npm`` package from
   `nodesource`_ on debian-esque systems)
-- postgresql 9.1 or greater, including development headers and HSTORE
-  (``postgresql-contrib-9.1`` and ``libpq-dev`` packages on debian-esque
+- postgresql 9.4 or greater, including development headers and HSTORE
+  (``postgresql-contrib-9.4`` and ``libpq-dev`` packages on debian-esque
   systems)
 - libxml2 and libxslt, including development headers (``libxml2-dev`` and
   ``libxslt-dev`` packages on debian-esque systems)
@@ -50,8 +50,14 @@ one then runs::
 
   $ make host-run
 
-Weasyl will then start running on <https://lo3.weasyl.com:28443/>.
+Weasyl will then start running on <https://lo3.weasyl.com:8444/>.
 
+Once you have Weasyl3 running, it's strongly recommended that you also run::
+
+  $ make docs
+  
+This will create additional documentation to help familiarize you with the
+Weasyl3 environment.
 
 Fetching packages from weasyl
 -----------------------------
@@ -66,7 +72,7 @@ The signing key for the packages is available at
 <https://deploy.weasyldev.com/weykent-key.asc>.
 
 ImageMagick is also available from Weasyl's apt repository, but the package
-name is ``imagemagick-6.8.9``.
+name is ``imagemagick-wzl``.
 
 
 Non-Vagrant installation
@@ -126,6 +132,12 @@ Otherwise, ``PYVENV`` must be specified to ``make``. For example, if
 
 Now, Weasyl 3 should be running on <https://lo3.weasyl.com:8443/>.
 
+Once you have Weasyl3 running, it's strongly recommended that you also run::
+
+  $ make docs
+  
+This will create additional documentation to help familiarize you with the
+Weasyl3 environment.
 
 .. _nodesource: https://github.com/nodesource/distributions
 .. _Vagrant: http://www.vagrantup.com

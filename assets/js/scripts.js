@@ -1,827 +1,1082 @@
-(function() {
+var WZL = (function () {
+
     'use strict';
 
-    var forEach = Array.prototype.forEach;
-    var DOMTokenList;
+    ////////////////////////
+    //  helper functions  //
+    ////////////////////////
 
-    var classListSupported = document.documentElement.classList && (function () {
-        var testElement = document.createElement('div');
-        testElement.classList.toggle('test', false);
-        return !testElement.classList.contains('test');
-    })();
+    // forEach shortcut, for use on nodelists
+    function forEach(arr, fn) {
+        for (var idx = arr.length - 1; idx >= 0; idx--) {
+            fn(arr[idx], idx);
+        }
+    }
 
-    if (!classListSupported && Object.defineProperty && typeof HTMLElement !== 'undefined') {
-        DOMTokenList = function DOMTokenList() {
-            throw new TypeError('Illegal constructor.');
+    // copy an array, or convert a nodelist to an array
+    function toArray(arr) {
+        var result = [];
+
+        for (var i = 0, l = arr.length; i < l; i++) {
+            result.push(arr[i]);
+        }
+
+        return result;
+    }
+
+    // parent traversal helpers
+    function getClosestByTagName(el, tag) {
+        tag = tag.toUpperCase();
+
+        while ((el = el.parentNode)) {
+            if (el.nodeName === tag) {
+                return el;
+            }
+        }
+
+        return null;
+    }
+
+    function getClosestByClassName(el, cl) {
+        while ((el = el.parentNode)) {
+            if (el.classList.contains(cl)) {
+                return el;
+            }
+        }
+
+        return null;
+    }
+
+    // get a timestamp
+    function getTimestamp() {
+        return new Date().getTime();
+    }
+
+    // throttle and debounce from underscore.js
+    function throttle(func, wait, options) {
+        var context, args, result,
+            timeout = null,
+            previous = 0;
+        if (!options) {
+            options = {};
+        }
+        var later = function () {
+            previous = options.leading === false ? 0 : getTimestamp();
+            timeout = null;
+            result = func.apply(context, args);
+            if (!timeout) {
+                context = args = null;
+            }
         };
-
-        DOMTokenList.prototype.add = function() {
-            var classes = this._element.className.match(/\S+/g) || [];
-
-            for (var i = 0; i < arguments.length; i++) {
-                var class_ = arguments[i];
-
-                if (classes.indexOf(class_) === -1) {
-                    this._element.className += ' ' + class_;
+        return function () {
+            var now = getTimestamp();
+            if (!previous && options.leading === false) {
+                previous = now;
+            }
+            var remaining = wait - (now - previous);
+            context = this;
+            args = arguments;
+            if (remaining <= 0 || remaining > wait) {
+                clearTimeout(timeout);
+                timeout = null;
+                previous = now;
+                result = func.apply(context, args);
+                if (!timeout) {
+                    context = args = null;
                 }
+            } else if (!timeout && options.trailing !== false) {
+                timeout = setTimeout(later, remaining);
             }
+            return result;
         };
-
-        DOMTokenList.prototype.remove = function() {
-            var classes = this._element.className.match(/\S+/g) || [];
-            var remove = Array.prototype.slice.call(arguments);
-
-            this._element.className = classes.filter(function(existingClass) {
-                return remove.indexOf(existingClass) === -1;
-            }).join(' ');
-        };
-
-        DOMTokenList.prototype.toggle = function(class_, to) {
-            if (to === undefined) {
-                to = !this.contains(class_);
-            }
-
-            if (to) {
-                this.add(class_);
+    }
+    function debounce(func, wait, immediate) {
+        var timeout, args, context, timestamp, result;
+        var later = function () {
+            var last = getTimestamp() - timestamp;
+            if (last < wait && last > 0) {
+                timeout = setTimeout(later, wait - last);
             } else {
-                this.remove(class_);
+                timeout = null;
+                if (!immediate) {
+                    result = func.apply(context, args);
+                    if (!timeout) {
+                        context = args = null;
+                    }
+                }
             }
-
-            return to;
         };
-
-        DOMTokenList.prototype.contains = function(class_) {
-            var classes = this._element.className.match(/\S+/g) || [];
-
-            return classes.indexOf(class_) !== -1;
+        return function () {
+            context = this;
+            args = arguments;
+            timestamp = getTimestamp();
+            var callNow = immediate && !timeout;
+            if (!timeout) {
+                timeout = setTimeout(later, wait);
+            }
+            if (callNow) {
+                result = func.apply(context, args);
+                context = args = null;
+            }
+            return result;
         };
-
-        Object.defineProperty(DOMTokenList.prototype, 'length', {
-            get: function() {
-                var classes = this._element.className.match(/\S+/g) || [];
-
-                return classes.length;
-            }
-        });
-
-        Object.defineProperty(HTMLElement.prototype, 'classList', {
-            get: function() {
-                return Object.create(DOMTokenList.prototype, {
-                    _element: {
-                        value: this,
-                        writable: false
-                    }
-                });
-            }
-        });
     }
 
-
-    // helper function: nodelist to array
-    function toArray(obj) {
-        var array = [];
-        for (var i = obj.length >>> 0; i--;) {
-            array[i] = obj[i];
-        }
-        return array;
-    }
-
-
-    // helper functions: get parents
-    function getParents(obj) {
-        var parents = [];
-        while ( obj !== document.documentElement ) {
-            parents.push(obj);
-            obj = obj.parentNode;
-        }
-        return parents;
-    }
-
-    function getParentsByTagName(obj, tag) {
-        tag = tag.toLowerCase();
-
-        return getParents(obj).filter(function(el) {
-            return el.tagName.toLowerCase() === tag;
-        });
-    }
-
-    function getParentsByClassName(obj, cl) {
-        return getParents(obj).filter(function(el) {
-            return el.classList.contains(cl);
-        });
-    }
-
-
-    // debounced window resize event
-    (function() {
-        if (!window.addEventListener || !document.createEvent) {
-            return;
-        }
-
-        var event = document.createEvent('Event');
-        event.initEvent('resize:end', false, false);
-
-        function dispatchResizeEndEvent() {
-            return window.dispatchEvent(event);
-        }
-
-        var initialOrientation = window.orientation;
-        var resizeDebounceTimeout = null;
-
-        function debounce() {
-            var currentOrientation = window.orientation;
-
-            if (currentOrientation !== initialOrientation) {
-                dispatchResizeEndEvent();
-                initialOrientation = currentOrientation;
-            } else {
-                clearTimeout(resizeDebounceTimeout);
-                resizeDebounceTimeout = setTimeout(dispatchResizeEndEvent, 100);
-            }
-        }
-
-        window.addEventListener('resize', debounce, false);
-    })();
-
-
-    // weasyl mosaic thumbnail layout
-    function wzlMosaic(el) {
-        var maxBlockWidth = 96,
-            aspectRatios = [0.33, 0.66, 1, 1.5, 3],
-            grid = [],
-            tiles, tileCount, containerWidth, blockDim, columnCount, globalOffset;
-
-        el.classList.add('enabled');
-
-        // create a new grid row of empty cells at specified y position
-        function newGridRow(row) {
-            grid[row] = [];
-            for ( var i = 0; i < columnCount; i++ ) {
-                grid[row].push(0);
-            }
-            console.log('created new grid row at ' + row);
-        }
-
-        // set up container properties
-        function setupContainer() {
-            console.log('setting up container...');
-            globalOffset = 0;
-
-            el.setAttribute('style', 'display: block !important;');  // infinite loop if no width to go on
-            el.parentNode.setAttribute('style', 'display: block !important;');
-            containerWidth = el.offsetWidth;
-            el.removeAttribute('style');
-            el.parentNode.removeAttribute('style');
-
-            console.log('container width: ' + containerWidth);
-            columnCount = Math.ceil(containerWidth / maxBlockWidth);
-            blockDim = Math.floor(containerWidth / columnCount);
-
-            // wipe existing grid (if any) and create three empy grid rows to work within
-            grid.length = 0;
-            console.log('wiped existing grid');
-            newGridRow(0); newGridRow(1); newGridRow(2);
-            console.log('created starter rows');
-
-            // ragged top - randomize layout of first two rows
-            if ( el.classList.contains('ragged') ) {
-                for (var d = 0; d < columnCount; d++) {
-                    if (Math.random() < 0.5) {
-                        grid[0][d] = 1;
-                        if (Math.random() < 0.4) {
-                            grid[1][d] = 1;
-                        }
-                    }
-                }
-                console.log('created ragged gaps');
-            }
-        }
-
-        // process tile properties
-        function setupTiles(offset) {
-            console.log('setting up tiles ...');
-            if ( !offset ) { offset = 0; }
-            tiles = toArray(el.getElementsByClassName('item'));
-            tileCount = tiles.length;
-            console.log(tileCount + ' tiles in set');
-
-            var offsetTiles = tiles.slice(offset);
-            for ( var i = 0; i < offsetTiles.length; i++ ) {
-                var thisTile = offsetTiles[i],
-                    aspectRatio = parseFloat(thisTile.getAttribute('data-init-aspect')),
-                    closestRatio = null,
-                    thumbImage = thisTile.querySelector('.thumb').getAttribute('src'),
-                    childA = thisTile.querySelector('a');
-                console.log('Processing the following tile:');
-                console.log(thisTile);
-
-                // set as background image in order to let the browser handle sizing
-                childA.style.backgroundImage = 'url("' + thumbImage + '")';
-                console.log('backgroundImage set');
-
-                // assign closest aspect
-                for ( var j = 0; j < aspectRatios.length; j++ ) {
-                    if (closestRatio === null || Math.abs(aspectRatios[j] - aspectRatio) < Math.abs(closestRatio - aspectRatio)) {
-                        closestRatio = aspectRatios[j];
-                    }
-                }
-                thisTile.setAttribute('data-snapped-aspect', closestRatio);
-                thisTile.setAttribute('data-placed', 0);
-                console.log('aspect ratio set: ' + closestRatio);
-
-                // assign cell dimensions and denote resizeability
-                if (closestRatio === 0.33) {
-                    thisTile.setAttribute('data-sizeX', 1);
-                    thisTile.setAttribute('data-sizeY', 3);
-                    thisTile.setAttribute('data-resizeable2', 0);
-                    thisTile.setAttribute('data-resizeable1', 0);
-                } else if (closestRatio === 0.66) {
-                    thisTile.setAttribute('data-sizeX', 2);
-                    thisTile.setAttribute('data-sizeY', 3);
-                    thisTile.setAttribute('data-resizeable2', 0);
-                    thisTile.setAttribute('data-resizeable1', 1);
-                    thisTile.setAttribute('data-size1X', 1);
-                    thisTile.setAttribute('data-size1Y', 2);
-                } else if (closestRatio === 1) {
-                    thisTile.setAttribute('data-sizeX', 3);
-                    thisTile.setAttribute('data-sizeY', 3);
-                    thisTile.setAttribute('data-resizeable2', 1);
-                    thisTile.setAttribute('data-size2X', 2);
-                    thisTile.setAttribute('data-size2Y', 2);
-                    thisTile.setAttribute('data-resizeable1', 1);
-                    thisTile.setAttribute('data-size1X', 1);
-                    thisTile.setAttribute('data-size1Y', 1);
-                } else if (closestRatio === 1.5) {
-                    thisTile.setAttribute('data-sizeX', 3);
-                    thisTile.setAttribute('data-sizeY', 2);
-                    thisTile.setAttribute('data-resizeable2', 1);
-                    thisTile.setAttribute('data-size2X', 2);
-                    thisTile.setAttribute('data-size2Y', 1);
-                    thisTile.setAttribute('data-resizeable1', 0);
-                } else if (closestRatio === 3) {
-                    thisTile.setAttribute('data-sizeX', 3);
-                    thisTile.setAttribute('data-sizeY', 1);
-                    thisTile.setAttribute('data-resizeable2', 0);
-                    thisTile.setAttribute('data-resizeable1', 0);
-                }
-                console.log('cell data applied to tile');
-            }
-        }
-
-        // the fun part
-        function mosaicLayout(isAppend) {
-            console.log('Fitting tiles ...');
-            var curTile = 0,
-                isLookahead = false,
-                posX = 0,
-                posY = 0;
-
-            // if appending to existing data, find starting row
-            if (isAppend) {
-                for ( var i = grid.length - 1; i >= 0; i-- ) {
-                    if ( grid[i].indexOf(0) !== -1) {
-                        posY = i;
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            // function to find empty spaces to the right of a given point
-            function findSpaceFromPoint(posX, posY) {
-                console.log('Finding space from ' + posX + ', ' + posY + ' ...');
-                if (posX >= columnCount) {
-                    return [false, posX];
-                }
-                var availableSpace = 0;
-
-                while ( grid[posY][posX] === 1 ) {
-                    if (posX >= columnCount) {
-                        return [false, posX];
-                    }
-                    posX++;
-                }
-                var shiftedX = posX;
-
-                while (posX < columnCount) {
-                    availableSpace++;
-                    posX++;
-                    if ( grid[posY][posX] === 1 ) {
-                        break;
-                    }
-                }
-
-                console.log('space available: ' + availableSpace);
-                return [availableSpace, shiftedX];
-            }
-
-            // function to place a tile into the grid
-            function placeTile(t) {
-                console.log('Placing tile into the grid ...');
-                tiles[t].setAttribute('data-tilePosX', posX);
-                tiles[t].setAttribute('data-tilePosY', posY);
-                tiles[t].setAttribute('data-placed', 1);
-
-                for (var i = 0; i < tileSizeX; i++) {
-                    for (var j = 0; j < tileSizeY; j++) {
-                        var fitX = posX + i,
-                            fitY = posY + j;
-                        grid[fitY][fitX] = 1;
-                    }
-                }
-
-                posX += tileSizeX;
-            }
-
-            // walk through and fit each tile
-            while (curTile < tileCount) {
-                console.log('fitting a tile ...');
-
-                if (isLookahead) {
-                    isLookahead = false;
-                } else {
-                    curTile = 0;
-                    for (var a = 0; a < tileCount; a++) {
-                        var aa = tiles[a].getAttribute('data-placed');
-                        if ( aa < 1 ) {
-                            curTile = a;
-                            break;
-                        }
-                        curTile++;
-                    }
-                }
-                // because we mess with the iterated var
-                if (curTile >= tileCount) {
-                    break;
-                }
-
-                var thisTile = tiles[curTile],
-                    tileSizeX = parseInt(thisTile.getAttribute('data-sizeX')),
-                    tileSizeY = parseInt(thisTile.getAttribute('data-sizeY'));
-
-                // get space available right now
-                console.log('tile dimensions: ' + tileSizeX + ', ' + tileSizeY);
-                var spaceAvail = findSpaceFromPoint(posX, posY);
-
-                // if reached end of row without finding space
-                while (spaceAvail[0] === false || spaceAvail[0] <= 0) {
-                    posY++;
-                    posX = 0;
-                    newGridRow(posY + 2);
-                    spaceAvail = findSpaceFromPoint(posX, posY);
-                }
-                posX = spaceAvail[1];
-
-                // can this fit?
-                if ( tileSizeX <= spaceAvail[0] ) {
-                    console.log('found space');
-                    placeTile(curTile);
-                } else if ( spaceAvail[0] >= 2 && thisTile.getAttribute('data-resizeable2') == 1 ) {
-                    console.log('shrank tile to 2 units wide');
-                    tileSizeX = parseInt(thisTile.getAttribute('data-size2X'));
-                    tileSizeY = parseInt(thisTile.getAttribute('data-size2Y'));
-                    thisTile.setAttribute('data-sizeX', tileSizeX);
-                    thisTile.setAttribute('data-sizeY', tileSizeY);
-                    placeTile(curTile);
-                } else if ( spaceAvail[0] >= 1 && thisTile.getAttribute('data-resizeable1') == 1 ) {
-                    console.log('shrank tile to 1 unit wide');
-                    tileSizeX = parseInt(thisTile.getAttribute('data-size1X'));
-                    tileSizeY = parseInt(thisTile.getAttribute('data-size1Y'));
-                    thisTile.setAttribute('data-sizeX', tileSizeX);
-                    thisTile.setAttribute('data-sizeY', tileSizeY);
-                    placeTile(curTile);
-                } else {
-                    console.log('didn’t find space');
-                    var b = 0;
-                    var foundTile = false;
-                    for ( b = curTile + 1; b < tileCount; b++ ) {
-                        if ( tiles[b].getAttribute('data-placed') < 1 ) {
-                            foundTile = true;
-                            break;
-                        }
-                    }
-                    if (foundTile) {
-                        console.log('looking ahead ... ');
-                        foundTile = false;
-                        isLookahead = true;
-                        curTile = b;
-                        continue;
-                    }
-                    // if didn't find a suitable tile, do what we can with remaining space
-                    if (posX < columnCount) {
-                        console.log('advancing x position, trying again');
-                        posX++;
-                        continue;
-                    } else {
-                        console.log('making new row, trying again');
-                        posX = 0;
-                        posY++;
-                        newGridRow(posY + 2);
-                        continue;
-                    }
-                }
-            }
-        }
-
-        // place each tile into css layout
-        function drawTiles(offset) {
-            console.log('placing tiles into css layout ...');
-            if (!offset) {
-                offset = 0;
-            }
-
-            for ( var i = offset; i < tileCount; i++ ) {
-                var thisTile = tiles[i],
-                    thisInfo = thisTile.querySelector('.info'),
-                    thisWidth = parseInt(thisTile.getAttribute('data-sizeX')) * blockDim,
-                    thisHeight = parseInt(thisTile.getAttribute('data-sizeY')) * blockDim,
-                    thisPosX = parseInt(thisTile.getAttribute('data-tilePosX')) * blockDim,
-                    thisPosY = parseInt(thisTile.getAttribute('data-tilePosY')) * blockDim;
-                console.log(thisTile);
-
-                thisTile.style.width = thisWidth + 'px';
-                thisTile.style.height = thisHeight + 'px';
-                thisTile.style.left = thisPosX + 'px';
-                thisTile.style.top = thisPosY + 'px';
-                console.log('applied style attributes');
-
-                // position info tooltips
-                thisInfo.style.width = (blockDim * 3) + 'px';
-                thisInfo.style.marginLeft = 0;
-                thisInfo.classList.remove('edge-left');
-                thisInfo.classList.remove('edge-right');
-
-                if ( thisPosX < blockDim ) {
-                    thisInfo.classList.add('edge-left');
-                } else if ( containerWidth - thisPosX - thisWidth < blockDim ) {
-                    thisInfo.classList.add('edge-right');
-                } else {
-                    thisInfo.style.marginLeft = (-blockDim * 3/2) + 'px';
-                }
-                console.log('positioned info tooltip');
-
-                globalOffset++;
-            }
-
-            // trim grid
-            console.log('trimming excess grid rows ...');
-            var trimLength = 0;
-            for (var n = grid.length - 1; n >= 0; n--) {
-                if (grid[n].indexOf(1) !== -1) {
-                    break;
-                }
-
-                trimLength++;
-            }
-            console.log('grid trimmed');
-            // and set height of container
-            el.style.height = ((grid.length - trimLength) * blockDim) + 'px';
-            console.log('container height set');
-
-            // for (var k = 0; k < grid.length; k++) {
-            //     console.log(grid[k]);
-            // }
-        }
-
-        // light the fuse
-        console.log('starting initial run ...');
-        setupContainer();
-        setupTiles();
-        mosaicLayout();
-        drawTiles();
-
-        // recalculate on resize
-        window.addEventListener('resize:end', function() {
-            console.log('resize event detected, recalculating mosaic ...');
-            setupContainer();
-            setupTiles();
-            mosaicLayout();
-            drawTiles();
-        }, false);
-
-        // hover intent
-        var hoverDelay, hoverDebounce = false;
-        el.addEventListener('mouseenter', function() {
-            if ( !hoverDebounce ) {
-                hoverDebounce = true;
-                hoverDelay = setTimeout(function() {
-                    el.classList.add('hovered');
-                }, 940);
-            }
-        });
-        console.log('added mouseenter handler');
-        el.addEventListener('mouseleave', function() {
-            hoverDebounce = false;
-            clearTimeout(hoverDelay);
-            el.classList.remove('hovered');
-        });
-        console.log('added mouseleave handler');
-    }
-
-
-    // generic toggles
-    // <el class="toggle" data-toggle-target="[next|parentnext|css selector]" />
-    function wzlToggles(el) {
-        var toggleTarget = el.getAttribute('data-toggle-target'),
-            targetObject = null;
-
-        if ( toggleTarget === 'next' ) {
-            targetObject = el.nextElementSibling;
-        } else if ( toggleTarget === 'parentnext' ) {
-            targetObject = el.parentNode.nextElementSibling;
-        } else if ( toggleTarget === 'parentparentnext' ) {
-            targetObject = el.parentNode.parentNode.nextElementSibling;
-        }
-
-        if ( targetObject ) {
-            targetObject.classList.toggle('active');
-        } else if ( toggleTarget !== null ) {
-            forEach.call(document.querySelectorAll(toggleTarget), function(targetEl) {
-                targetEl.classList.toggle('active');
-            });
-        }
-
-        el.classList.toggle('active');
-        // window.dispatchEvent(new Event('resize'));
-    }
-
-
-    // shared height elements
-    // <el class="shared-height" data-height-group="[string]">
-    (function() {
-        var heightEls = document.querySelectorAll('.shared-height'),
-            heightGroups = [], uniqueHeightGroups = [];
-
-        // get height groups together
-        for ( var i = 0; i < heightEls.length; i++ ) {
-            heightGroups.push(heightEls[i].getAttribute('data-height-group'));
-        }
-        uniqueHeightGroups = heightGroups.filter(function(val, pos) {
-            return heightGroups.indexOf(val) === pos;
-        });
-
-        function evenHeights() {
-            var i, j, el;
-
-            // blank slate
-            for ( i = 0; i < heightEls.length; i++ ) {
-                heightEls[i].style.minHeight = 'auto';
-            }
-            // iterate over groups
-            for ( i = 0; i < uniqueHeightGroups.length; i++ ) {
-                var thisHeight, lastHeight = 1, maxHeight = 2,
-                    groupEls = document.querySelectorAll('.shared-height[data-height-group="' + uniqueHeightGroups[i] + '"]');
-                for ( j = 0; j < groupEls.length; j++ ) {
-                    el = groupEls[j];
-                    thisHeight = parseInt(el.clientHeight);
-                    if ( thisHeight > lastHeight ) {
-                        maxHeight = thisHeight;
-                    }
-                    lastHeight = thisHeight;
-                }
-                for ( j = 0; j < groupEls.length; j++ ) {
-                    el = groupEls[j];
-                    el.style.minHeight = maxHeight + 'px';
-                }
-            }
-        }
-
-        window.addEventListener('load', evenHeights);
-        window.addEventListener('resize', evenHeights);
-    })();
-
-
-    // active form labels
-    function wzlLabels(el) {
-        var input = el.getElementsByTagName('input')[0] || el.getElementsByTagName('textarea')[0];
-        el.classList.add('enabled');
-        function checkFilled() {
-            if ( input.value !== '' ) {
-                el.classList.add('has-contents');
-            } else {
-                el.classList.remove('has-contents');
-            }
-        }
-        checkFilled();
-        window.addEventListener('load', checkFilled);
-
-        input.addEventListener('focus', function() {
-            el.classList.add('active');
-        });
-        input.addEventListener('blur', function() {
-            el.classList.remove('active');
-            checkFilled();
-        });
-    }
-
-
-    // art zoom
-    forEach.call(document.getElementsByClassName('sub-zoom-toggle'), function(el) {
-        el.addEventListener('click', function(ev) {
-            ev.preventDefault();
-            el.classList.toggle('active');
-            document.querySelector('.page-header').classList.toggle('hide');
-            document.querySelector('.page-footer').classList.toggle('hide');
-            var artSiblings = document.getElementById('main').children;
-            for ( var i = 0; i < artSiblings.length; i++ ) {
-                if ( !artSiblings[i].classList.contains('sub-container') ) {
-                    artSiblings[i].classList.toggle('hide');
-                }
-            }
-            document.body.classList.toggle('zoomed');
-        });
-    });
-
-
-    // modal escape listener
-    (function() {
-        var modals = document.getElementsByClassName('modal');
-        if ( modals.length > 0 ) {
-            window.addEventListener('keydown', function(ev) {
-                if ( ev.keyCode === 27 ) {
-                    for ( var i = 0; i < modals.length; i++ ) {
-                        modals[i].classList.remove('active');
-                    }
-                }
-            });
-        }
-    })();
-
-
-    // resizing textareas
-    function textareas(parentEl) {
-        var el = parentEl.getElementsByTagName('textarea')[0],
-            ref = parentEl.getElementsByClassName('resize-ref')[0],
-            container = getParentsByClassName(el, 'comment-new-box')[0];
-
-        function doCopy() {
-            // copies textarea value to reference element
-            // appends additional <br /> so IE respects trailing whitespace
-            ref.innerHTML = el.value.replace(/\n/g, '<br />') + ' <br /> ';
-        }
-        doCopy();
-
-        el.addEventListener('input', doCopy, false);
-
-        // adds appropriate class to container element for focus visualization
-        if (container) {
-            el.addEventListener('focus', function() {
-                container.classList.add('highlight');
-            });
-            el.addEventListener('blur', function() {
-                if (el.value.length === 0) {
-                    container.classList.remove('highlight');
-                }
-            });
-        }
-    }
-    forEach.call(document.getElementsByClassName('resizing-textarea'), function(el) {
-        textareas(el);
-    });
-
-
-    // checkbox/radio events
-    function areAllChecked(els) {  // returns true if all elements in given set are checked
-        for (var i = els.length >>> 0; i--;) {
-            if (els[i].checked === false) {
-                return false;
-            }
-        }
-        return true;
-    }
-    function getCheckboxes(context) {  // gets valid checkboxes in given context
-        return toArray(context.querySelectorAll('input[type="checkbox"]:not(.checkbox-parent)'));
-    }
-    function updateCounts() {  // updates count elements with number of checked boxes in context
-        forEach.call(document.getElementsByClassName('checked-count'), function(el) {
-            var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context')));
-
-            var count = checkboxes.reduce(function (count, checkbox) {
-                return count + checkbox.checked;
-            }, 0);
-
-            el.textContent = count + ' of ' + checkboxes.length;
-        });
-    }
-    updateCounts();
-    function triggerChange(el) {  // trigger events that fire on checkbox change
+    // trigger a change event on an element
+    function triggerChange(el) {
         var event = document.createEvent('HTMLEvents');
         event.initEvent('change', true, false);
         el.dispatchEvent(event);
     }
-    function changeCheckboxStates(context, action) {  // change all checkboxes in context with given action
-        var checkboxes = getCheckboxes(context);
-        forEach.call(checkboxes, function(checkbox) {
-            if (action === 'on' && !checkbox.checked) {
-                checkbox.checked = true;
-                triggerChange(checkbox);
-            } else if (action === 'off' && checkbox.checked) {
-                checkbox.checked = false;
-                triggerChange(checkbox);
-            } else if (action === 'invert') {
-                checkbox.checked = !checkbox.checked;
-                triggerChange(checkbox);
+
+
+
+    ///////////////////////
+    //  generic toggles  //
+    ///////////////////////
+
+    // usage:
+    // <el class="toggle" data-toggle-target="[next|parentnext|css-selector]" />
+    // <el class="toggle-target" />
+
+    var toggles = (function () {
+        // use this module on .toggle elements by default
+        var initEls = document.getElementsByClassName('toggle'),
+            list = [];
+
+        // individual toggle object; stores element and targets
+        function Toggle(el) {
+            var that = this;
+            this.origin = el;
+            this.targets = findTargets(el);
+            el.addEventListener('click', function (ev) {
+                ev.preventDefault();
+                that.activate();
+            });
+        }
+
+        // parses a target string and returns a matching array
+        function findTargets(el) {
+            var targetString = el.getAttribute('data-toggle-target');
+            if (!targetString) {
+                return [];
             }
-        });
-        updateCounts();
-    }
-    function changeParentLabel(el) {
-        var thisLabel = getParentsByTagName(el, 'label')[0];
-        thisLabel.classList.toggle('checked', el.checked);
-    }
-    // handle individual checkbox changes
-    forEach.call(document.querySelectorAll('input[type=checkbox], input[type=radio]'), function(el) {
-        var isParent = el.classList.contains('checkbox-parent'),
-            isChild = el.classList.contains('checkbox-child');
+            if (targetString === 'next') {
+                return [el.nextElementSibling];
+            }
+            if (targetString === 'parentnext') {
+                return [el.parentNode.nextElementSibling];
+            }
+            if (targetString === 'parentparentnext') {
+                return [el.parentNode.parentNode.nextElementSibling];
+            }
+            return toArray(document.querySelectorAll(targetString));
+        }
 
-        changeParentLabel(el);
+        // make toggle go
+        Toggle.prototype.activate = function () {
+            [this.origin].concat(this.targets).forEach(function (el) {
+                el.classList.toggle('active');
+            });
+        };
 
-        el.addEventListener('change', function() {
-            // hierarchical checkboxes
-            if ( isParent || isChild ) {
-                var groupEl = getParentsByClassName(el, 'checkbox-group')[0],
-                    parentBox = groupEl.getElementsByClassName('checkbox-parent')[0],
-                    childBoxes = groupEl.getElementsByClassName('checkbox-child');
+        // public: make node or nodeList toggleable
+        function create(el) {
+            var result = new Toggle(el);
+            list.push(result);
+            return result;
+        }
 
-                if ( isParent ) {
-                    forEach.call(childBoxes, function(childEl) {
-                        childEl.checked = el.checked;
-                    });
-                } else if ( !el.checked ) {
-                    parentBox.checked = false;
-                } else if (areAllChecked(childBoxes)) {
-                    parentBox.checked = true;
+        // public: initialize by adding default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
+
+
+
+    /////////////////////////////
+    //  simple tabs/slideshow  //
+    /////////////////////////////
+
+    // usage:
+    // <div class="tabs [automated]?">
+    //      <el class="tab" />
+    //      <el class="tab" />
+    //      <el class="pane" />
+    //      <el class="pane" />
+    // </div>
+
+    var tabs = (function () {
+        var initEls = document.getElementsByClassName('tabs'),
+            // TODO: consider exposing defaults
+            defaults = {
+                automated: false,
+                automationClass: 'automated',
+                tabSelector: '.tab',
+                paneSelector: '.pane',
+                slideDuration: 4000
+            },
+            list = [];
+
+        function TabGroup(container, options) {
+            var that = this;
+
+            this.container = container;
+            this.automated = options.automated;
+            this.tabs = toArray(container.querySelectorAll(options.tabSelector));
+            this.panes = toArray(container.querySelectorAll(options.paneSelector));
+            this.slideDuration = options.slideDuration;
+
+            this.active = 0;
+            this.count = Math.max(this.tabs.length, this.panes.length);
+
+            this.changeTo(0);
+
+            this.tabs.forEach(function (tab, index) {
+                tab.addEventListener('click', function (ev) {
+                    ev.preventDefault();
+                    if (that.automated) {
+                        that.pause();
+                    }
+                    that.changeTo(index);
+                    if (that.automated) {
+                        that.play();
+                    }
+                });
+            });
+
+            if (this.automated) {
+                this.play();
+            }
+        }
+
+        // switch current tabgroup to specified index
+        TabGroup.prototype.changeTo = function (index) {
+            this.tabs.concat(this.panes).forEach(function (el) {
+                el.classList.remove('active');
+                el.classList.remove('next');
+                el.classList.remove('prev');
+            });
+
+            if (index === 'next') {
+                index = this.nextIndex();
+            }
+            if (index === 'prev') {
+                index = this.prevIndex();
+            }
+
+            this.active = index;
+
+            if (this.tabs[index]) { this.tabs[index].classList.add('active'); }
+            if (this.panes[index]) { this.panes[index].classList.add('active'); }
+            if (this.tabs[this.nextIndex()]) { this.tabs[this.nextIndex()].classList.add('next'); }
+            if (this.panes[this.nextIndex()]) { this.panes[this.nextIndex()].classList.add('next'); }
+            if (this.tabs[this.prevIndex()]) { this.tabs[this.prevIndex()].classList.add('prev'); }
+            if (this.panes[this.prevIndex()]) { this.panes[this.prevIndex()].classList.add('prev'); }
+        };
+
+        // returns index of the next tab; wraps around to 0
+        TabGroup.prototype.nextIndex = function () {
+            return (this.active + 1) % this.count;
+        };
+
+        // returns index of the previous tab; wraps around from 0
+        TabGroup.prototype.prevIndex = function () {
+            return this.active <= 0 ? this.count - 1 : this.active - 1;
+        };
+
+        // start automated slideshow
+        TabGroup.prototype.play = function () {
+            var that = this;
+            that.container.classList.add('playing');
+            that.timer = setInterval(function () {
+                that.changeTo('next');
+            }, that.slideDuration);
+        };
+
+        // pause automated slideshow
+        TabGroup.prototype.pause = function () {
+            var that = this;
+            that.container.classList.remove('playing');
+            clearInterval(that.timer);
+        };
+
+        // public: add tab functionality to element
+        function create(container, options) {
+            options.automated = options.automated || defaults.automated;
+            options.tabSelector = options.tabSelector || defaults.tabSelector;
+            options.paneSelector = options.paneSelector || defaults.paneSelector;
+            options.slideDuration = options.slideDuration || defaults.slideDuration;
+            var result = new TabGroup(container, options);
+            list.push(result);
+            return result;
+        }
+
+        // public: initialize by adding default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el, {
+                    automated: el.classList.contains(defaults.automationClass)
+                });
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
+
+
+
+    //////////////////////////////
+    //  shared height elements  //
+    //////////////////////////////
+
+    // usage:
+    // <el class="shared-height" data-height-group="[string]" />
+    // assumes box-sizing: border-box;
+
+    var sharedHeights = (function () {
+        var initEls = document.getElementsByClassName('shared-height'),
+            list = {};
+
+        // public: update all shared-height elements
+        function update() {
+            var g, thisGroup, heights, maxHeight;
+
+            function resetHeight(el) {
+                el.style.minHeight = 0;
+                heights.push(el.offsetHeight);
+            }
+            function applyHeight(el) {
+                el.style.minHeight = maxHeight + 'px';
+            }
+
+            for (g in list) {
+                if (list.hasOwnProperty(g)) {
+                    thisGroup = list[g];
+                    heights = [];
+                    thisGroup.forEach(resetHeight);
+                    maxHeight = Math.max.apply(null, heights);
+                    thisGroup.forEach(applyHeight);
+                }
+            }
+        }
+
+        // public: add a shared-height element
+        function create(el, group) {
+            if (!list[group]) {
+                list[group] = [];
+            }
+            list[group].push(el);
+            return el;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el, el.getAttribute('data-height-group'));
+            });
+            update();
+        }
+
+        var debouncedUpdate = debounce(update, 75);
+        window.addEventListener('resize', debouncedUpdate);
+
+        return {
+            create: create,
+            list: list,
+            update: update,
+            init: init
+        };
+    }());
+
+
+
+    /////////////////////
+    //  mosaics/tiles  //
+    /////////////////////
+
+    var mosaics = (function () {
+        var initEls = document.getElementsByClassName('mosaic'),
+            defaults = {
+                blockSize: 96,
+                maxBlocksPerTile: 3,
+                ragged: false,
+                tileClass: 'item'
+            },
+            list = [];
+
+        function Mosaic(el, options) {
+            var that = this;
+
+            // personal properties
+            this.el = el;
+            this.grid = [];
+            this.tiles = [];
+            this.maxBlockSize = options.blockSize || defaults.blockSize;
+            this.maxBlocksPerTile = options.maxBlocksPerTile || defaults.maxBlocksPerTile;
+            this.ragged = options.ragged || defaults.ragged;
+            this.tileClass = options.tileClass || defaults.tileClass;
+
+            // calculated properties
+            this.blockSize = 0;
+            this.containerWidth = 0;
+            this.columns = 0;
+            this.calculateProps();
+
+            // process tiles
+            this.initTiles();
+
+            // calculate layout
+            this.layout();
+
+            // draw layout
+            this.draw();
+
+            el.classList.add('enabled');
+
+            window.addEventListener('resize', debounce(function () {
+                that.refresh();
+            }, 400));
+        }
+
+        // initializes an empty grid row or set of grid rows
+        Mosaic.prototype.createGridRow = function (row, endRow) {
+            endRow = endRow || row;
+            for (; row <= endRow; row++) {
+                this.grid[row] = [];
+                for (var i = 0; i < this.columns; i++) {
+                    this.grid[row].push(false);
+                }
+            }
+        };
+
+        // calculates derived container properties
+        Mosaic.prototype.calculateProps = function () {
+            // avoid infinite loop that happens when we can't get width
+            this.el.setAttribute('style', 'display: block !important;');
+            this.el.parentNode.setAttribute('style', 'display: block !important;');
+            this.containerWidth = this.el.offsetWidth;
+            this.el.removeAttribute('style');
+            this.el.parentNode.removeAttribute('style');
+
+            this.columns = Math.ceil(this.containerWidth / this.maxBlockSize);
+            this.blockSize = Math.floor(this.containerWidth / this.columns);
+        };
+
+        // inventory and track tiles in this container
+        Mosaic.prototype.initTiles = function () {
+            var that = this;
+            forEach(that.el.getElementsByClassName(that.tileClass), function (tile) {
+                that.tiles.push(new Tile(tile, that.maxBlocksPerTile));
+            });
+        };
+
+        // the good part
+        Mosaic.prototype.layout = function () {
+            var that = this,
+                currentIndex = 0,
+                isLookahead = false,
+                cursorX = 0,
+                cursorY = 0,
+                thisTile, availableSpace, backupTile,
+                foundBackupTile = false;
+
+            // reset to a fresh slate
+            this.grid.length = 0;
+            this.createGridRow(0, this.maxBlocksPerTile - 1);
+            if (this.ragged) {
+                for (var i = 0; i < this.columns; i++) {
+                    if (Math.random() < 0.5) {
+                        this.grid[0][i] = true;
+                        if (Math.random() < 0.4) {
+                            this.grid[1][i] = true;
+                        }
+                    }
+                }
+            }
+            this.tiles.forEach(function (tile) {
+                tile.placed = false;
+            });
+
+            // helper: finds available space to the right of a given grid point
+            function findSpaceFromPoint(x, y) {
+                var availableSpace = 0,
+                    offsetX;
+
+                // reject if at end of row
+                if (x >= that.columns) {
+                    return [false, x];
+                }
+                // jump to next available space, or reject if none
+                while (that.grid[y][x]) {
+                    if (x >= that.columns) {
+                        return [false, x];
+                    }
+                    x++;
                 }
 
-                forEach.call([parentBox].concat(toArray(childBoxes)), function(thisBox) {
-                    changeParentLabel(thisBox);
-                });
-
-            // standalone checkboxes
-            } else {
-                changeParentLabel(el);
+                // count available spaces, then return
+                offsetX = x;
+                while (x < that.columns) {
+                    availableSpace++;
+                    x++;
+                    if (that.grid[y][x]) {
+                        break;
+                    }
+                }
+                return [availableSpace, offsetX];
             }
+
+            // helper: reserves grid space for a given tile
+            function placeTile(tile) {
+                tile.posX = cursorX;
+                tile.posY = cursorY;
+                tile.placed = true;
+
+                for (var i = 0; i < tile.sizeX; i++) {
+                    for (var j = 0; j < tile.sizeY; j++) {
+                        that.grid[cursorY + j][cursorX + i] = true;
+                    }
+                }
+                cursorX += tile.sizeX;
+            }
+
+            // fit each tile
+            while (currentIndex < this.tiles.length) {
+                // if this is a lookahead, skip iterator mod
+                if (isLookahead) {
+                    isLookahead = false;
+                // otherwise, find earliest unplaced tile
+                } else {
+                    currentIndex = 0;
+                    for (var i = 0; i < this.tiles.length; i++) {
+                        if (!this.tiles[i].placed) {
+                            currentIndex = i;
+                            break;
+                        }
+                        currentIndex++;
+                    }
+                }
+                // extra check because we mess with iterator condition
+                if (currentIndex >= this.tiles.length) {
+                    break;
+                }
+
+                // some quick references
+                thisTile = this.tiles[currentIndex];
+                thisTile.sizeX = thisTile.maxSizeX;
+                thisTile.sizeY = thisTile.maxSizeY;
+
+                // get space available from current cursor point
+                availableSpace = findSpaceFromPoint(cursorX, cursorY);
+
+                // if we've reached the end of the row without a place, go to a new row
+                while (availableSpace[0] === false || availableSpace[0] <= 0) {
+                    cursorY++;
+                    cursorX = 0;
+                    this.createGridRow(cursorY + this.maxBlocksPerTile - 1);
+                    availableSpace = findSpaceFromPoint(cursorX, cursorY);
+                }
+                cursorX = availableSpace[1];
+
+                // shrink tile if needed
+                while (availableSpace[0] < thisTile.sizeX && thisTile.sizeX > 1 && thisTile.sizeY > 1) {
+                    if (thisTile.sizeX % 2 === 0 && thisTile.sizeY % 2 === 0) {
+                        thisTile.sizeX /= 2;
+                        thisTile.sizeY /= 2;
+                    } else {
+                        thisTile.sizeX -= 1;
+                        thisTile.sizeY -= 1;
+                    }
+                }
+                // place tile if we can
+                if (availableSpace[0] >= thisTile.sizeX) {
+                    placeTile(thisTile);
+                // fall back if we can't place this tile
+                } else {
+                    // search upcoming tiles for a possible candidate
+                    for (backupTile = currentIndex + 1; backupTile < this.tiles.length; backupTile++) {
+                        if (!this.tiles[backupTile].placed) {
+                            foundBackupTile = true;
+                            break;
+                        }
+                    }
+                    if (foundBackupTile) {
+                        foundBackupTile = false;
+                        isLookahead = true;
+                        currentIndex = backupTile;
+                        continue;
+                    }
+                    // if no other candidate found, make due
+                    // if we can, advance the x position and try again
+                    if (cursorX < this.columns) {
+                        cursorX++;
+                        continue;
+                    }
+                    // last resort, make a new row and try again
+                    cursorX = 0;
+                    cursorY++;
+                    this.createGridRow(cursorY + this.maxBlocksPerTile - 1);
+                    continue;
+                }
+            }
+        };
+
+        // translate grid data to css layout
+        Mosaic.prototype.draw = function () {
+            var that = this,
+                trimLength = 0,
+                halfMaxSize = Math.floor(that.maxBlocksPerTile / 2);
+
+            this.tiles.forEach(function (tile) {
+                tile.el.style.width = tile.sizeX * that.blockSize + 'px';
+                tile.el.style.height = tile.sizeY * that.blockSize + 'px';
+                tile.el.style.left = tile.posX * that.blockSize + 'px';
+                tile.el.style.top = tile.posY * that.blockSize + 'px';
+
+                // set up or reset info tooltip
+                tile.tooltip.style.width = that.blockSize * that.maxBlocksPerTile + 'px';
+                tile.tooltip.style.marginLeft = 0;
+                tile.tooltip.classList.remove('edge-left');
+                tile.tooltip.classList.remove('edge-right');
+
+                // position info tooltip
+                // left edge
+                if (tile.posX <= halfMaxSize) {
+                    tile.tooltip.classList.add('edge-left');
+                // right edge
+                } else if (tile.posX + tile.sizeX >= that.columns - halfMaxSize) {
+                    tile.tooltip.classList.add('edge-right');
+                // somewhere in the middle
+                } else {
+                    tile.tooltip.style.marginLeft = (-that.blockSize * that.maxBlocksPerTile / 2) + 'px';
+                }
+            });
+
+            // set height of container to avoid colliding with layout
+            for (var i = this.grid.length - 1; i >= 0; i--) {
+                if (this.grid[i].indexOf(true) !== -1) {
+                    break;
+                }
+                trimLength++;
+            }
+            this.el.style.height = ((this.grid.length - trimLength) * this.blockSize) + 'px';
+        };
+
+        // quick reference for refreshing the mosaic
+        Mosaic.prototype.refresh = function () {
+            this.calculateProps();
+            this.layout();
+            this.draw();
+        };
+
+        function Tile(el, maxSize) {
+            this.el = el;
+
+            // positioning properties
+            this.aspect = parseFloat(el.getAttribute('data-init-aspect'));
+            this.placed = false;
+            this.maxSizeX = maxSize;
+            this.maxSizeY = maxSize;
+            this.sizeX = maxSize;
+            this.sizeY = maxSize;
+            this.posX = 0;
+            this.posY = 0;
+
+            // children
+            this.image = el.querySelector('.thumb').getAttribute('src');
+            this.anchor = el.querySelector('a');
+            this.tooltip = el.querySelector('.info');
+
+            // set image as a bg to let the browser handle sizing
+            this.anchor.style.backgroundImage = 'url("' + this.image + '")';
+
+            // assign sizing
+            if (this.aspect < 1) {
+                this.maxSizeX = Math.ceil(maxSize * this.aspect);
+            } else if (this.aspect > 1) {
+                this.maxSizeY = Math.ceil(maxSize / this.aspect);
+            }
+        }
+
+
+        // public: add mosaic functionality to a container
+        function create(el, options) {
+            options = options || {};
+            var result = new Mosaic(el, options);
+            list.push(result);
+            return result;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el, {
+                    ragged: el.classList.contains('ragged')
+                });
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
+
+
+
+    //////////////////////////
+    //  resizing textareas  //
+    //////////////////////////
+
+    // usage:
+    // <div class="resizing-textarea">
+    //      <textarea></textarea>
+    // </div>
+
+    var textareas = (function () {
+        var initEls = document.getElementsByClassName('resizing-textarea'),
+            list = [];
+
+        function Textarea(el) {
+            this.el = el;
+            this.container = getClosestByClassName(el, 'comment-new-box');
+            this.textarea = el.getElementsByTagName('textarea')[0];
+            this.ref = document.createElement('div');
+
+            // set up reference element
+            this.ref.classList.add('resize-ref');
+            this.el.appendChild(this.ref);
+
+            // initial update + update on change
+            this.update();
+            this.textarea.addEventListener('input', this.update.bind(this));
+
+            // comment entry focus viz
+            if (this.container) {
+                this.textarea.addEventListener('focus', this.highlight.bind(this));
+                this.textarea.addEventListener('blur', this.unhighlight.bind(this));
+            }
+        }
+
+        // updates this textarea size
+        Textarea.prototype.update = function () {
+            // append additional space and break so IE respects any trailing whitespace
+            this.ref.innerHTML = this.textarea.value.replace(/\n/g, '<br />') + ' <br />&#160;';
+        };
+
+        Textarea.prototype.highlight = function () {
+            this.container.classList.add('highlight');
+        };
+
+        Textarea.prototype.unhighlight = function () {
+            if (this.textarea.value.length === 0) {
+                this.container.classList.remove('highlight');
+            }
+        };
+
+        // public: add a resizing textarea
+        function create(el) {
+            var result = new Textarea(el);
+            list.push(result);
+            return result;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
+
+
+
+    //////////////////////////
+    //  active form labels  //
+    //////////////////////////
+
+    // usage:
+    // <label class="active-label">
+    //      <span>label text</span>
+    //      <input />
+    // </label>
+
+    var activeLabels = (function () {
+        var initEls = document.getElementsByClassName('active-label'),
+            list = [];
+
+        // public: make an label active
+        function create(el) {
+            var input = el.getElementsByTagName('input')[0] ||
+                el.getElementsByTagName('textarea')[0];
+
+            function checkFilled() {
+                if (input.value !== '') {
+                    el.classList.add('has-contents');
+                } else {
+                    el.classList.remove('has-contents');
+                }
+            }
+
+            checkFilled();
+            input.addEventListener('focus', function () {
+                el.classList.add('active');
+            });
+            input.addEventListener('blur', function () {
+                el.classList.remove('active');
+                checkFilled();
+            });
+
+            el.classList.add('enabled');
+
+            list.push(el);
+            return el;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
+
+
+
+    /////////////////////////////
+    //  checkbox/radio events  //
+    /////////////////////////////
+
+    // tracks checkboxes for counts, hierarchies, and active/inactive labels
+    // in addition, covers check/uncheck/invert all functions
+
+    var checkboxes = (function () {
+        var initEls = document.querySelectorAll('input[type=checkbox], input[type=radio]'),
+            initHierarchies = document.getElementsByClassName('checkbox-group'),
+            initDrivers = document.querySelectorAll('.check-all, .uncheck-all, .invert-all'),
+            countEls = document.getElementsByClassName('checked-count');
+
+        // returns checkboxes within given context that are valid for counting
+        function getCheckboxes(context) {
+            return toArray(context.querySelectorAll('input[type="checkbox"]')).filter(function (el) {
+                return !el.classList.contains('checkbox-parent');
+            });
+        }
+
+        // returns true if all elements in a given set are :checked
+        function areAllChecked(els) {
+            return toArray(els).every(function (el) {
+                return el.checked;
+            });
+        }
+
+        // counts the number of checked elements inside the context of a given count element
+        function updateCounts() {
+            forEach(countEls, function (el) {
+                var checkboxes = getCheckboxes(document.querySelector(el.getAttribute('data-context'))),
+                    count = checkboxes.reduce(function (sum, el) {
+                        return sum + el.checked;
+                    }, 0);
+                el.textContent = count + ' of ' + checkboxes.length;
+            });
+        }
+
+        // things that should happen on generic checkbox click
+        function updateLabel(el) {
+            var label = getClosestByTagName(el, 'label');
+            if (el.checked) {
+                label.classList.add('checked');
+            } else {
+                label.classList.remove('checked');
+            }
+        }
+
+        function CheckboxGroup(el) {
+            var that = this;
+
+            this.container = el;
+            this.children = toArray(el.getElementsByClassName('checkbox-child'));
+            this.main = el.getElementsByClassName('checkbox-parent')[0];
+
+            this.children.forEach(function (el) {
+                el.addEventListener('change', function () {
+                    that.main.checked = areAllChecked(that.children);
+                    triggerChange(that.main);
+                });
+            });
+            this.main.addEventListener('click', function () {
+                var thisChecked = this.checked;
+                that.children.forEach(function (el) {
+                    el.checked = thisChecked;
+                    triggerChange(el);
+                });
+            });
+        }
+
+        // public: start tracking checkbox or radio button
+        function create(el) {
+            updateLabel(el);
+            el.addEventListener('change', function () {
+                updateLabel(this);
+                updateCounts();
+            });
+            return el;
+        }
+
+        // public: start tracking hierarchy group
+        function createHierarchy(el) {
+            return new CheckboxGroup(el);
+        }
+
+        // public: add en element that effects all checkboxes in given context
+        function createDriver(el, context, state) {
+            var checkboxes = getCheckboxes(context);
+            if (state === 'inverse') {
+                el.addEventListener('click', function () {
+                    checkboxes.forEach(function (thisCheckbox) {
+                        thisCheckbox.checked = !thisCheckbox.checked;
+                        triggerChange(thisCheckbox);
+                    });
+                });
+            } else {
+                el.addEventListener('click', function () {
+                    checkboxes.forEach(function (thisCheckbox) {
+                        thisCheckbox.checked = state;
+                        triggerChange(thisCheckbox);
+                    });
+                });
+            }
+        }
+
+        // public: initialize with default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el);
+            });
+            forEach(initHierarchies, function (el) {
+                createHierarchy(el);
+            });
+            forEach(initDrivers, function (el) {
+                var context = document.querySelector(el.getAttribute('data-context')),
+                    state;
+                if (el.classList.contains('check-all')) {
+                    state = true;
+                } else if (el.classList.contains('uncheck-all')) {
+                    state = false;
+                } else if (el.classList.contains('invert-all')) {
+                    state = 'inverse';
+                }
+                createDriver(el, context, state);
+            });
             updateCounts();
-        });
-    });
-    // handle check/uncheck/invert all
-    forEach.call(document.querySelectorAll('.check-all, .uncheck-all, .invert-all'), function(el) {
-        var context = document.querySelector(el.getAttribute('data-context'));
-        if (context) {
-            if (el.classList.contains('check-all')) {
-                el.addEventListener('click', function() {
-                    changeCheckboxStates(context, 'on');
-                });
-            } else if (el.classList.contains('uncheck-all')) {
-                el.addEventListener('click', function() {
-                    changeCheckboxStates(context, 'off');
-                });
-            } else if (el.classList.contains('invert-all')) {
-                el.addEventListener('click', function() {
-                    changeCheckboxStates(context, 'invert');
-                });
-            }
-        }
-    });
-
-
-    // sticky notification utilities
-    // remove once position: sticky is supported 'enough'
-    (function() {
-        var el = document.getElementsByClassName('sticky')[0],
-            mainCol = document.getElementsByClassName('col-layout-main')[0],
-            footer = document.getElementsByClassName('page-footer')[0],
-            refPos, elHeight, footerPos;
-
-        if (!el || !mainCol || !footer)
-            return;
-
-        function checkSticky() {
-            refPos = mainCol.getBoundingClientRect().top;
-            footerPos = footer.getBoundingClientRect().top;
-
-            if (refPos <= 0) {
-                el.classList.add('stuck');
-            } else {
-                el.classList.remove('stuck');
-            }
-            if (footerPos < elHeight) {
-                el.classList.add('blocked');
-            } else {
-                el.classList.remove('blocked');
-            }
         }
 
-        function setup() {
-            elHeight = el.offsetHeight;
-            mainCol.style.minHeight = elHeight + 'px';
-            checkSticky();
+        return {
+            create: create,
+            createHierarchy: createHierarchy,
+            createDriver: createDriver,
+            init: init
+        };
+
+    }());
+
+
+
+    ///////////////////////
+    //  sticky elements  //
+    ///////////////////////
+
+    // remove this once position: sticky is supported 'enough'
+
+    var sticky = (function () {
+        var initEls = document.getElementsByClassName('sticky'),
+            initContainer = document.getElementsByClassName('col-layout-main')[0],
+            initBottomBound = document.getElementsByClassName('page-footer')[0],
+            list = [];
+
+
+        function Sticky(el, container, bottomBound) {
+            var that = this;
+
+            this.el = el;
+            this.container = container;
+            this.bottomBound = bottomBound;
+            this.elHeight = el.offsetHeight;
+
+            this.calculatProperties();
+
+            window.addEventListener('resize', debounce(function () {
+                that.calculatProperties();
+            }, 400));
+
+            document.addEventListener('scroll', throttle(function () {
+                that.checkSticky();
+            }, 24));
         }
 
-        window.addEventListener('load', setup);
-        window.addEventListener('resize:end', setup, false);
-        document.addEventListener('scroll', checkSticky);
-    })();
+        // calculate necessary properties
+        // this is also called in the window resize event section
+        Sticky.prototype.calculatProperties = function () {
+            this.elHeight = this.el.offsetHeight;
+            this.container.style.minHeight = this.elHeight + 'px';
+        };
+
+        Sticky.prototype.checkSticky = function () {
+            var refPos = this.container.getBoundingClientRect().top,
+                bottomBoundPos = this.bottomBound ? this.bottomBound.getBoundingClientRect().top : null;
+            this.el.classList.toggle('stuck', refPos <= 0);
+            if (bottomBoundPos) {
+                this.el.classList.toggle('blocked', bottomBoundPos < this.elHeight);
+            }
+        };
+
+        // public: make an element sticky
+        function create(el, container, bottomBound) {
+            var result = new Sticky(el, container, bottomBound);
+            list.push(result);
+            return result;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            forEach(initEls, function (el) {
+                create(el, initContainer, initBottomBound);
+            });
+        }
+
+        return {
+            create: create,
+            list: list,
+            init: init
+        };
+    }());
 
     function uploadFromElement(el, progressCallback, completedCallback) {
         var file = el.files[0];
@@ -898,32 +1153,155 @@
         });
     });
 
+
+    //////////////////////
+    //  initialization  //
+    //////////////////////
+
+    var init = function () {
+        toggles.init();
+        tabs.init();
+        sharedHeights.init();
+        mosaics.init();
+        textareas.init();
+        activeLabels.init();
+        checkboxes.init();
+        sticky.init();
+        document.documentElement.classList.remove('no-js');
+        document.documentElement.classList.add('js');
+    };
+
+
+
+    ////////////////////////////
+    //  misc small functions  //
+    ////////////////////////////
+
+    // miscellany that doesn't necessarily require an interface
+
+
+    // art zoom
+    forEach(document.getElementsByClassName('sub-zoom-toggle'), function (el) {
+        var togglingEls = toArray(
+            document.querySelectorAll('.page-header, .page-footer, #main > *')
+        ).filter(function (candidate) {
+            return !candidate.classList.contains('sub-container');
+        });
+        el.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            el.classList.toggle('active');
+            forEach(togglingEls, function (toggleThis) {
+                toggleThis.classList.toggle('hide');
+            });
+            document.body.classList.toggle('zoomed');
+        });
+    });
+
+
+    // modal escape listener
+    (function() {
+        var modals = document.getElementsByClassName('modal');
+        if ( modals.length > 0 ) {
+            window.addEventListener('keydown', function(ev) {
+                if ( ev.keyCode === 27 ) {
+                    for ( var i = 0; i < modals.length; i++ ) {
+                        modals[i].classList.remove('active');
+                    }
+                }
+            });
+        }
+    })();
+
+
     // show password fields
-    forEach.call(document.getElementsByClassName('show-password'), function(el) {
+    forEach(document.getElementsByClassName('show-password'), function (el) {
         var targetEls = document.querySelectorAll(el.getAttribute('data-target'));
-
         el.addEventListener('click', function(ev) {
             ev.preventDefault();
-
-            var isActive = el.classList.toggle('active');
-
-            for (var i = targetEls.length >>> 0; i--;) {
-                targetEls[i].type = isActive ? 'text' : 'password';
-            }
+            forEach(targetEls, function (targetEl) {
+                targetEl.type = el.classList.toggle('active') ? 'text' : 'password';
+            });
         });
     });
 
 
-    forEach.call(document.getElementsByClassName('mosaic'), wzlMosaic);
-    forEach.call(document.getElementsByClassName('active-label'), wzlLabels);
+    // async uploads
+    // TODO: test, optimize, make pretty on the frontend
+    (function () {
+        function uploadFromElement(el, progressCallback, completedCallback) {
+            var file = el.files[0],
+                url = el.getAttribute('data-upload-url'),
+                xhr = new XMLHttpRequest();
 
-    forEach.call(document.getElementsByClassName('toggle'), function(el) {
-        el.addEventListener('click', function(ev) {
-            ev.preventDefault();
-            wzlToggles(el);
+            url += '?name=' + encodeURIComponent(file.name);
+            url += '&type=' + encodeURIComponent(file.type);
+
+            xhr.upload.addEventListener('progress', function (e) {
+                progressCallback(e.loaded / e.total);
+            }, false);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 1) {
+                    xhr.send(file);
+                } else if (xhr.readyState === 4) {
+                    completedCallback(xhr);
+                }
+            };
+            xhr.open('PUT', url, true);
+        }
+
+        forEach(document.getElementsByTagName('form'), function (form) {
+            forEach(form.getElementsByClassName('deform-file-upload'), function (el) {
+                var input = el.getElementsByClassName('file-input')[0],
+                    url = input.getAttribute('data-upload-url'),
+                    submit = form.querySelector('[type=submit]'),
+                    progress = document.getElementById(input.id + '-progress');
+                
+                if (!url) {
+                    return;
+                }
+
+                input.addEventListener('change', function () {
+                    progress.innerText = 'upload starting';
+                    submit.disabled = true;
+
+                    uploadFromElement(input, function (p) {
+                        progress.innerText = (p * 100).toFixed(2) + '%';
+                    }, function (xhr) {
+                        var success = xhr.status === 200;
+                        submit.disabled = false;
+                        if (!success) {
+                            progress.innerText = 'upload failed';
+                            return;
+                        }
+                        var uidElement = document.getElementById(input.id + '-uid');
+                        var response = JSON.parse(xhr.response);
+                        uidElement.value = response.uid;
+                        input.name = '';
+                        progress.innerText = 'uploaded';
+                    });
+                }, false);
+            });
         });
-    });
+    }());
 
-    document.documentElement.classList.remove('no-js');
-    document.documentElement.classList.add('js');
-})();
+
+
+    //////////////
+    //  public  //
+    //////////////
+
+    return {
+        toggles: toggles,
+        tabs: tabs,
+        sharedHeights: sharedHeights,
+        mosaics: mosaics,
+        textareas: textareas,
+        activeLabels: activeLabels,
+        checkboxes: checkboxes,
+        sticky: sticky,
+        init: init
+    };
+
+}());
+
+WZL.init();
