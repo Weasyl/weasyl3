@@ -1,0 +1,41 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Moderate{% endblock %}
+{% block body %}
+<div id="modcontrol_content" class="content" style="padding-top:2em;">
+  <div class="form skinny">
+    <p style="font-size:1.3em;"><a href="/modcontrol/finduser">Search Users</a></p>
+    <br>
+
+    <p style="font-size:1.3em;"><a href="/modcontrol/suspenduser">User Suspensions</a></p>
+    <br>
+
+    <p style="font-size:1.3em;"><a href="/mod/reports">Reported content</a></p>
+    <br>
+
+    <form action="/modcontrol/contentbyuser">
+      <input type="text" name="name" class="input" style="margin-bottom: 1em" placeholder="Username">
+      <label class="input-checkbox checked">
+        <input type="checkbox" name="features" value="s" checked="">
+        Select submissions
+      </label>
+      <label class="input-checkbox checked">
+        <input type="checkbox" name="features" value="c" checked="">
+        Select characters
+      </label>
+      <label class="input-checkbox checked">
+        <input type="checkbox" name="features" value="j" checked="">
+        Select journals
+      </label>
+      <button type="submit" class="button" style="margin-top:5px;">Get Items by User</button>
+    </form>
+    <br>
+
+    <form action="/modcontrol/manageuser">
+      <input type="text" name="name" class="input"><br>
+      <button type="submit" class="button" style="margin-top:5px;">Manage User</button>
+    </form>
+    <br>
+  </div>
+</div>
+{% endblock %}
