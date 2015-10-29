@@ -1,0 +1,94 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}Moderate{% endblock %}
+{% block body %}
+<div id="reports_content" class="content">
+  {% if reports|length > 0 %}
+  {% for report in reports %}
+  <table>
+  <tbody><tr>
+    <td style="font-weight:bold;">Title</td>
+    <td style="font-weight:bold;">Direct Link</td>
+    <td style="font-weight:bold;">Content Owner</td>
+    <td style="font-weight:bold;">Violation(s)</td>
+    <td style="font-weight:bold;">Reporters</td>
+    <td style="font-weight:bold;">Opened On</td>
+    <td style="font-weight:bold;text-align:right;">Report Status</td>
+  </tr>
+
+  <tr style="color:#f00000;">
+    <td><a href="/modcontrol/report?reportid={{ report.reportid }}">{{ report.target.title }}</a></td>
+    <td>
+      <a href="#">
+        View submission
+      </a>
+    </td>
+    <td><a href="/~{{ report.target.owner.login_name }}">{{ report.target.owner.profile.username }}</a></td>
+    <td>{{ '; '.join(report_violations) }}</td>
+    <td>todo</td>
+    <td>{{ report.opened_at.strftime('%d %B %Y %I:%M:%S %p %Z') }}</td>
+    {% if report.status == "review" %}
+      <td class="right">
+        Under review by <a href="/~{{ report.owner.login_name }}">{{ report.owner.profile.username }}</a>
+      </td>
+    {% elif report.status == "closed" %}
+      <td class="right">
+        Closed by <a href="/~{{ report.owner.login_name }}">{{ report.owner.profile.username }}</a>
+        {{ report.closure_reason.value.replace('-', ' ') }}
+        on {{ report.closed_at.strftime('%d %B %Y %I:%M:%S %p %Z') }}
+      </td>
+    {% else %}
+      <td class="right">Open</td>
+    {% endif %}
+  </tr>
+  </tbody></table>
+  {% endfor %}
+  {% else %}
+  There are no reports to display.
+  {%  endif %}
+  <div id="report-filters" class="form">
+    <span style="float: right">
+      <form action="/mod/reports" method="get">
+        <label for="status">Report status</label>
+        <select name="status" class="input">
+          <option value=""></option>
+          <option value="open" selected="">Open/assigned reports</option>
+          <option value="closed">Closed reports</option>
+          <option value="all">All reports</option>
+        </select>
+        <label for="violation">Violation Type:</label>
+        <select id="violation" name="violation" class="input">
+          <option value="-1" selected="">All</option>
+          <option value="2010">Submission: Harassing content</option>
+          <option value="2020">Submission: Tracing or plagiarism</option>
+          <option value="2030">Submission: Rapidly flashing colors</option>
+          <option value="2040">Submission: Incorrect content rating</option>
+          <option value="2050">Submission: Perpetual incorrect tagging</option>
+          <option value="2060">Submission: Low-quality photography</option>
+          <option value="2070">Submission: Spamming or flooding</option>
+          <option value="2080">Submission: Meme or image macro</option>
+          <option value="2090">Submission: Unacceptable screenshot</option>
+          <option value="2100">Submission: Non-original audio upload</option>
+          <option value="2110">Submission: Illegal content</option>
+          <option value="2120">Submission: Photographic pornography</option>
+          <option value="2999">Submission: Other (please comment)</option>
+          <option value="3010">Character: Harassing content</option>
+          <option value="3020">Character: Spamming or flooding</option>
+          <option value="3030">Character: Illegal activity</option>
+          <option value="3999">Character: Other (please comment)</option>
+          <option value="4010">Journal: Harassing comment</option>
+          <option value="4020">Journal: Spamming or flooding</option>
+          <option value="4030">Journal: Inappropriate comment</option>
+          <option value="4999">Journal: Other (please comment)</option>
+        </select>
+        <label for="submitter">Owner username</label>
+        <input type="text" name="submitter" class="input" value="">
+        <div style="padding-top: 1em">
+          <button style="float: right" type="submit" class="button positive">Filter</button>
+        </div>
+      </form>
+    </span>
+  </div>
+
+</div>
+{% endblock %}
