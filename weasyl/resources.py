@@ -148,6 +148,11 @@ class DebugResource(MethodDispatchResource):
     pass
 
 
+class ModResource(MethodDispatchResource):
+    def permits_mod(self, principals):
+        return 'g:mod' in principals
+
+
 class RootResource(MethodDispatchResource):
     __name__ = ''
     __parent__ = None
@@ -155,6 +160,7 @@ class RootResource(MethodDispatchResource):
     segment_submissions = SubmissionsResource
     segment_users = UsersResource
     segment_api = APIResource
+    segment_mod = ModResource
 
     def __getitem__(self, segment):
         if segment.startswith('~'):
