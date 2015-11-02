@@ -1097,7 +1097,7 @@ var WZL = (function () {
         xhr.open('PUT', url, true);
     }
 
-    forEach.call(document.getElementsByTagName('form'), function (form) {
+    forEach(document.getElementsByTagName('form'), function (form) {
         var uploadsInProgress = 0;
         var attemptedFormSubmission = false;
         var lastButtonPressed;
@@ -1113,7 +1113,7 @@ var WZL = (function () {
             }
         }
 
-        forEach.call(form.getElementsByTagName('button'), function (button) {
+        forEach(form.getElementsByTagName('button'), function (button) {
             button.addEventListener('click', function (ev) {
                 if (!uploadsInProgress) {
                     return;
@@ -1125,7 +1125,7 @@ var WZL = (function () {
             }, false);
         });
 
-        forEach.call(form.getElementsByClassName('deform-file-upload'), function (el) {
+        forEach(form.getElementsByClassName('deform-file-upload'), function (el) {
             var input = el.getElementsByClassName('file-input')[0];
             if (!input.getAttribute('data-upload-url')) {
                 return;

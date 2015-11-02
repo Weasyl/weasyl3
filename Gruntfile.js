@@ -2,6 +2,12 @@ module.exports = function (grunt) {
     grunt.initConfig({
         uglify: {
             js: {
+            	/* uncomment these for debugging [there should be a better way of doing this...]
+            	options: {
+            		beautify: true,
+            		mangle: false
+            	},
+            	/*/
                 files: {
                     'assets/js/site.js': [
                         'assets/js/modernizr.js',
