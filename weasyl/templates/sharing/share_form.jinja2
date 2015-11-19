@@ -1,0 +1,51 @@
+{% if ajax %}
+    {% import 'functions.jinja2' as f with context %}
+{% else %}
+    {% extends "layout.jinja2" %}
+
+{% endif %}
+{% block body %}
+    <form action="" method="post" enctype="multipart/form-data">
+    {{ f.form_errors(_errors) }}
+    {{ _form['csrf_token'].serialize() | safe }}
+
+    {% if category != 'journal' %}
+        Submission file
+        {{ _form['submission'].serialize(async_upload=request.resource_path(None, 'share', 'upload')) | safe }}
+        Thumbnail
+        {{ _form['thumbnail'].serialize() | safe }}
+    {% endif %}
+
+    {{ _form['title'].serialize() | safe }}
+
+
+    {% if category in ('literary', 'multimedia') %}
+        {{ _form['embed_link'].serialize() | safe }}
+        {{ _form['cover'].serialize() | safe }}
+    {% endif %}
+
+    {% if category not in ('journal', 'character') %}
+        {{ _form['folder'].serialize()  | safe }}
+        {{ _form['subcategory'].serialize() | safe }}
+    {% endif %}
+
+    {% if category == 'journal' %}
+        {{ _form['content'].serialize() | safe }}
+    {% else %}
+        {{ _form['description'].serialize() | safe }}
+    {% endif %}
+
+    {% if category == 'character' %}
+        {{ _form['age'].serialize() | safe }}
+        {{ _form['gender'].serialize() | safe }}
+        {{ _form['height'].serialize() | safe }}
+        {{ _form['weight'].serialize() | safe }}
+        {{ _form['species'].serialize() | safe }}
+    {% endif %}
+
+
+    {{ _form['rating'].serialize() | safe }}
+    {{ _form['tags'].serialize() | safe }}
+    <button name="post">Submit</button>
+    </form>
+{% endblock %}

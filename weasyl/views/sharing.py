@@ -31,11 +31,25 @@ class BaseShareForm(CSRFSchema):
     rating = c.SchemaNode(forms.Rating(), description='Rating', widget=forms.rating_widget)
     description = c.SchemaNode(c.String(), description='Description', widget=w.TextAreaWidget())
     tags = c.SchemaNode(c.String(), description='Tags')
+    _category = None
+
+
+@view_config(context=ShareResource, renderer='sharing/share.jinja2')
+class BaseShareView(forms.FormView):
+    schema = BaseShareForm()
+    buttons = 'post'
+
+    def extra_fields(self):
+        fields = {'category': self.schema._category}
+        if 'ajax' in self.request.GET:
+            fields['ajax'] = True
+        return fields
 
 
 class ShareVisualForm(BaseShareForm):
     submission = c.SchemaNode(deform.FileData(), description='Submission file', widget=forms.upload_widget)
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(1))
+    _category = 'visual'
 
     def validator(self, form, values):
         request = form.bindings['request']
@@ -50,7 +64,7 @@ class ShareVisualForm(BaseShareForm):
         values['submission_obj'] = sub
 
 
-@view_config(name='visual', context=ShareResource, renderer='sharing/share.jinja2')
+@view_config(name='visual', context=ShareResource, renderer='sharing/share_form.jinja2')
 class ShareVisualView(forms.FormView):
     schema = ShareVisualForm()
     buttons = 'post',
@@ -60,7 +74,39 @@ class ShareVisualView(forms.FormView):
         return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
 
     def extra_fields(self):
-        return {'category': 'visual'}
+        fields = {'category': 'visual'}
+        if 'ajax' in self.request.GET:
+            fields['ajax'] = True
+        return fields
+
+
+class ShareCharacterForm(BaseShareForm):
+    submission = c.SchemaNode(deform.FileData(), description='Submission file', widget=forms.upload_widget)
+    title = c.SchemaNode(c.String(), description='Name')
+    age = c.SchemaNode(c.String(), description='Age')
+    gender = c.SchemaNode(c.String(), description='Gender')
+    height = c.SchemaNode(c.String(), description='Height')
+    weight = c.SchemaNode(c.String(), description='Weight')
+    species = c.SchemaNode(c.String(), description='Species')
+    _category = 'character'
+
+
+@view_config(name='character', context=ShareResource, renderer='sharing/share_form.jinja2')
+class ShareCharacterView(BaseShareView):
+    schema = ShareCharacterForm()
+
+
+class ShareJournalForm(CSRFSchema):
+    title = c.SchemaNode(c.String(), description='Title')
+    content = c.SchemaNode(c.String(), description='Content', widget=w.TextAreaWidget())
+    rating = c.SchemaNode(forms.Rating(), description='Rating', widget=forms.rating_widget)
+    tags = c.SchemaNode(c.String(), description='Tags')
+    _category = 'journal'
+
+
+@view_config(name='journal', context=ShareResource, renderer='sharing/share_form.jinja2')
+class ShareJournalView(BaseShareView):
+    schema = ShareJournalForm()
 
 
 class BaseShareLiteraryMultimediaForm(BaseShareForm):
@@ -90,7 +136,7 @@ class ShareLiteraryForm(BaseShareLiteraryMultimediaForm):
     _category = 'literary'
 
 
-@view_config(name='literary', context=ShareResource, renderer='sharing/share.jinja2')
+@view_config(name='literary', context=ShareResource, renderer='sharing/share_form.jinja2')
 class ShareLiteraryView(forms.FormView):
     schema = ShareLiteraryForm()
     buttons = 'post',
@@ -100,7 +146,10 @@ class ShareLiteraryView(forms.FormView):
         return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
 
     def extra_fields(self):
-        return {'category': 'literary'}
+        fields = {'category': 'literary'}
+        if 'ajax' in self.request.GET:
+            fields['ajax'] = True
+        return fields
 
 
 class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
@@ -108,7 +157,7 @@ class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
     _category = 'multimedia'
 
 
-@view_config(name='multimedia', context=ShareResource, renderer='sharing/share.jinja2')
+@view_config(name='multimedia', context=ShareResource, renderer='sharing/share_form.jinja2')
 class ShareMultimediaView(forms.FormView):
     schema = ShareMultimediaForm()
     buttons = 'post',
@@ -118,7 +167,10 @@ class ShareMultimediaView(forms.FormView):
         return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
 
     def extra_fields(self):
-        return {'category': 'multimedia'}
+        fields = {'category': 'multimedia'}
+        if 'ajax' in self.request.GET:
+            fields['ajax'] = True
+        return fields
 
 
 @view_config(name='upload', context=ShareResource, renderer='json', request_method='PUT')
