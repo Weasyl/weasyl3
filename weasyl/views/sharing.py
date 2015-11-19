@@ -31,7 +31,7 @@ class BaseShareForm(CSRFSchema):
     rating = c.SchemaNode(forms.Rating(), description='Rating', widget=forms.rating_widget)
     description = c.SchemaNode(c.String(), description='Description', widget=w.TextAreaWidget())
     tags = c.SchemaNode(c.String(), description='Tags')
-    _category = None
+    category = None
 
 
 @view_config(context=ShareResource, renderer='sharing/share.jinja2')
@@ -39,8 +39,12 @@ class BaseShareView(forms.FormView):
     schema = BaseShareForm()
     buttons = 'post'
 
+    def post_success(self, appstruct):
+        log.debug('share %s success: %r', self.schema.category, appstruct)
+        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
+
     def extra_fields(self):
-        fields = {'category': self.schema._category}
+        fields = {'category': self.schema.category}
         if 'ajax' in self.request.GET:
             fields['ajax'] = True
         return fields
@@ -49,7 +53,7 @@ class BaseShareView(forms.FormView):
 class ShareVisualForm(BaseShareForm):
     submission = c.SchemaNode(deform.FileData(), description='Submission file', widget=forms.upload_widget)
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(1))
-    _category = 'visual'
+    category = 'visual'
 
     def validator(self, form, values):
         request = form.bindings['request']
@@ -65,19 +69,8 @@ class ShareVisualForm(BaseShareForm):
 
 
 @view_config(name='visual', context=ShareResource, renderer='sharing/share_form.jinja2')
-class ShareVisualView(forms.FormView):
+class ShareVisualView(BaseShareView):
     schema = ShareVisualForm()
-    buttons = 'post',
-
-    def post_success(self, appstruct):
-        log.debug('share visual success: %r', appstruct)
-        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
-
-    def extra_fields(self):
-        fields = {'category': 'visual'}
-        if 'ajax' in self.request.GET:
-            fields['ajax'] = True
-        return fields
 
 
 class ShareCharacterForm(BaseShareForm):
@@ -88,7 +81,7 @@ class ShareCharacterForm(BaseShareForm):
     height = c.SchemaNode(c.String(), description='Height')
     weight = c.SchemaNode(c.String(), description='Weight')
     species = c.SchemaNode(c.String(), description='Species')
-    _category = 'character'
+    category = 'character'
 
 
 @view_config(name='character', context=ShareResource, renderer='sharing/share_form.jinja2')
@@ -97,11 +90,15 @@ class ShareCharacterView(BaseShareView):
 
 
 class ShareJournalForm(CSRFSchema):
+    """
+    Journal is a bit weird in that it doesnt have a lot of the fields
+    that are in every other form type, so it doesn't inherit from BaseShareForm
+    """
     title = c.SchemaNode(c.String(), description='Title')
     content = c.SchemaNode(c.String(), description='Content', widget=w.TextAreaWidget())
     rating = c.SchemaNode(forms.Rating(), description='Rating', widget=forms.rating_widget)
     tags = c.SchemaNode(c.String(), description='Tags')
-    _category = 'journal'
+    category = 'journal'
 
 
 @view_config(name='journal', context=ShareResource, renderer='sharing/share_form.jinja2')
@@ -114,8 +111,7 @@ class BaseShareLiteraryMultimediaForm(BaseShareForm):
         deform.FileData(), description='Submission file', missing=None, widget=forms.upload_widget)
     cover = c.SchemaNode(deform.FileData(), description='Cover image', missing=None, widget=forms.upload_widget)
     embed_link = c.SchemaNode(c.String(), description='Embed link', missing=None)
-
-    _category = None
+    category = None
 
     def validator(self, form, values):
         request = form.bindings['request']
@@ -124,7 +120,7 @@ class BaseShareLiteraryMultimediaForm(BaseShareForm):
                 submission_data=maybe_read(values, 'submission'), thumbnail_data=maybe_read(values, 'thumbnail'),
                 cover_data=maybe_read(values, 'cover'), embed_link=values['embed_link'], owner=request.current_user,
                 title=values['title'], rating=values['rating'], description=values['description'],
-                category=self._category, subtype=values['subcategory'].value, folder=values['folder'],
+                category=self.category, subtype=values['subcategory'].value, folder=values['folder'],
                 tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
@@ -133,44 +129,22 @@ class BaseShareLiteraryMultimediaForm(BaseShareForm):
 
 class ShareLiteraryForm(BaseShareLiteraryMultimediaForm):
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(2))
-    _category = 'literary'
+    category = 'literary'
 
 
 @view_config(name='literary', context=ShareResource, renderer='sharing/share_form.jinja2')
-class ShareLiteraryView(forms.FormView):
+class ShareLiteraryView(BaseShareView):
     schema = ShareLiteraryForm()
-    buttons = 'post',
-
-    def post_success(self, appstruct):
-        log.debug('share literary success: %r', appstruct)
-        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
-
-    def extra_fields(self):
-        fields = {'category': 'literary'}
-        if 'ajax' in self.request.GET:
-            fields['ajax'] = True
-        return fields
 
 
 class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(3))
-    _category = 'multimedia'
+    category = 'multimedia'
 
 
 @view_config(name='multimedia', context=ShareResource, renderer='sharing/share_form.jinja2')
-class ShareMultimediaView(forms.FormView):
+class ShareMultimediaView(BaseShareView):
     schema = ShareMultimediaForm()
-    buttons = 'post',
-
-    def post_success(self, appstruct):
-        log.debug('share multimedia success: %r', appstruct)
-        return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
-
-    def extra_fields(self):
-        fields = {'category': 'multimedia'}
-        if 'ajax' in self.request.GET:
-            fields['ajax'] = True
-        return fields
 
 
 @view_config(name='upload', context=ShareResource, renderer='json', request_method='PUT')
