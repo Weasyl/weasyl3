@@ -34,7 +34,7 @@ module.exports = function (grunt) {
         filerev: {
             options: {
                 encoding: 'utf8',
-                algorithm: 'sha256',
+                algorithm: 'sha512',
                 length: 8,
             },
             images: {
@@ -48,6 +48,10 @@ module.exports = function (grunt) {
             css: {
                 src: 'assets/css/site.css',
                 dest: 'weasyl/static/style',
+            },
+            fonts: {
+                src: 'assets/fonts/*.woff',
+                dest: 'weasyl/static/fonts',
             },
         },
 
@@ -75,7 +79,7 @@ module.exports = function (grunt) {
             },
             sass: {
                 files: ['assets/sass/*.sass'],
-                tasks: ['sass', 'filerev:images', 'filerev:js', 'usemin', 'filerev:css', 'filerev_assets'],
+                tasks: ['sass', 'filerev:images', 'filerev:fonts', 'filerev:js', 'usemin', 'filerev:css', 'filerev_assets'],
             },
         },
     });
@@ -91,6 +95,7 @@ module.exports = function (grunt) {
         'uglify',
         'sass',
         'filerev:images',
+        'filerev:fonts',
         'filerev:js',
         'usemin',
         'filerev:css',
