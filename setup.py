@@ -45,10 +45,6 @@ setup(
             'widgets/*.jinja2', 'assets.json',
         ],
     },
-    setup_requires=['vcversioner'],
-    vcversioner={
-        'version_module_paths': ['weasyl/_version.py'],
-    },
     install_requires=[str(ir.req) for ir in requirements],
     extras_require={
         'development': [
@@ -59,7 +55,6 @@ setup(
             'sphinxcontrib-zopeext',
             'sphinx',
             'testfixtures',
-            'vcversioner',
             'webtest',
         ],
     },

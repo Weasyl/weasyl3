@@ -1,4 +1,3 @@
-from ._version import __version__, __sha__
+import subprocess
 
-
-__all__ = ['__version__', '__sha__']
+__sha__ = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip()

@@ -119,6 +119,7 @@ def make_app(global_config, **settings):
         dbsession=DBSession,
         not_found_exception=httpexceptions.HTTPNotFound,
         base_file_path=settings['weasyl.static_root'],
+        staff_config_dict={},
         media_link_formatter_callback=format_media_link,
     )
 
