@@ -37,7 +37,7 @@ class BaseShareForm(CSRFSchema):
 @view_config(context=ShareResource, renderer='sharing/share.jinja2')
 class BaseShareView(forms.FormView):
     schema = BaseShareForm()
-    buttons = 'post'
+    buttons = ['post']
 
     def post_success(self, appstruct):
         log.debug('share %s success: %r', self.schema.category, appstruct)
