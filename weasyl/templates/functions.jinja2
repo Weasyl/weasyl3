@@ -22,7 +22,7 @@
 
 {% macro form_errors(errors) %}
 {% if errors %}
-<p>Some of the data you entered wasn't good:</p>
+<p>Some of the data you entered wasn’t good:</p>
 <ul>
   {%- for node, messages in errors -%}
   {%- set name = node.error_name | default(node.description) -%}
@@ -41,7 +41,7 @@
   {{ form['user'].serialize(label_class=label_class + ' content-block') | safe }}
   {{ form['password'].serialize(show_password_container=True, label_class=label_class + ' content-block') | safe }}
   <div class="pagination">
-    <button type="submit" name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
+    <button name="signin" class="action disclose" tabindex="1" {{ autofocus_submit(form) }}>
       Sign in
     </button>
   </div>
@@ -54,7 +54,7 @@
 
 {% macro logout_form() %}
 <form action="{{ request.resource_path(None, 'signout') }}" method="post">
-  <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+  <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}" />
   {{ caller() }}
 </form>
 {% endmacro %}

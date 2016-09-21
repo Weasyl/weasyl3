@@ -1225,67 +1225,6 @@ var WZL = (function () {
     });
 
 
-    // async uploads
-    // TODO: test, optimize, make pretty on the frontend
-    (function () {
-        function uploadFromElement(el, progressCallback, completedCallback) {
-            var file = el.files[0],
-                url = el.getAttribute('data-upload-url'),
-                xhr = new XMLHttpRequest();
-
-            url += '?name=' + encodeURIComponent(file.name);
-            url += '&type=' + encodeURIComponent(file.type);
-
-            xhr.upload.addEventListener('progress', function (e) {
-                progressCallback(e.loaded / e.total);
-            }, false);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 1) {
-                    xhr.send(file);
-                } else if (xhr.readyState === 4) {
-                    completedCallback(xhr);
-                }
-            };
-            xhr.open('PUT', url, true);
-        }
-
-        forEach(document.getElementsByTagName('form'), function (form) {
-            forEach(form.getElementsByClassName('deform-file-upload'), function (el) {
-                var input = el.getElementsByClassName('file-input')[0],
-                    url = input.getAttribute('data-upload-url'),
-                    submit = form.querySelector('[type=submit]'),
-                    progress = document.getElementById(input.id + '-progress');
-                
-                if (!url) {
-                    return;
-                }
-
-                input.addEventListener('change', function () {
-                    progress.innerText = 'upload starting';
-                    submit.disabled = true;
-
-                    uploadFromElement(input, function (p) {
-                        progress.innerText = (p * 100).toFixed(2) + '%';
-                    }, function (xhr) {
-                        var success = xhr.status === 200;
-                        submit.disabled = false;
-                        if (!success) {
-                            progress.innerText = 'upload failed';
-                            return;
-                        }
-                        var uidElement = document.getElementById(input.id + '-uid');
-                        var response = JSON.parse(xhr.response);
-                        uidElement.value = response.uid;
-                        input.name = '';
-                        progress.innerText = 'uploaded';
-                    });
-                }, false);
-            });
-        });
-    }());
-
-
-
     //////////////
     //  public  //
     //////////////

@@ -1,28 +1,23 @@
+{%- import 'functions.jinja2' as f with context -%}
+
 <!DOCTYPE html>
 <html class="no-js">
-  {% import 'functions.jinja2' as f with context %}
   <head>
-
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta content="IE=edge;chrome=1" http-equiv="X-UA-Compatible" />
+    <meta name="viewport" content="initial-scale=1" />
 
     <title>{% block title %}{% endblock %} | Weasyl</title>
 
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" type="text/css" />
-    <link rel="stylesheet" href="{{ 'assets/css/site.css' | asset_path }}" type="text/css" />
+    <link rel="stylesheet" href="{{ 'assets/css/site.css' | asset_path }}" />
 
-    <link rel="apple-touch-icon" href="{{ 'assets/images/favicon-iphone-76.png' | asset_path }}" sizes="76x76">
-    <link rel="apple-touch-icon" href="{{ 'assets/images/favicon-iphone-retina.png' | asset_path }}" sizes="120x120">
-    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-16.png' | asset_path }}" sizes="16x16">
-    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-96.png' | asset_path }}" sizes="96x96">
-    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-192.png' | asset_path }}" sizes="192x192">
-    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-32.png' | asset_path }}" sizes="32x32">
-
+    <link rel="apple-touch-icon" href="{{ 'assets/images/favicon-iphone-76.png' | asset_path }}" sizes="76x76" />
+    <link rel="apple-touch-icon" href="{{ 'assets/images/favicon-iphone-retina.png' | asset_path }}" sizes="120x120" />
+    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-16.png' | asset_path }}" sizes="16x16" />
+    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-96.png' | asset_path }}" sizes="96x96" />
+    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-192.png' | asset_path }}" sizes="192x192" />
+    <link rel="icon" type="image/png" href="{{ 'assets/images/favicon-32.png' | asset_path }}" sizes="32x32" />
   </head>
-
   <body>
-
     <a href="#main" id="skip-to-content">Skip to content</a>
 
     <div id="login-modal" class="modal">
@@ -48,9 +43,11 @@
         <button class="header-actions-toggle icon icon-gears toggle min-m" data-toggle-target="next" aria-hidden="true"></button>
         <div class="header-actions mobile-menu">
           <p class="user">Logged in as {{ f.user_link(request.current_user) }}</p>
-          <a href="#" class="action small">Messages <span class="icon icon-ha-note"></span></a>
-          <a href="#" class="action small">Settings <span class="icon icon-ha-gear"></span></a>
-          <a href="#" class="action small">Sign out <span class="icon icon-ha-exit"></span></a>
+          <a href="javascript:;" class="action small">Messages <span class="icon icon-ha-note"></span></a>
+          <a href="{{ request.resource_path(None, '~', 'settings') }}" class="action small">Settings <span class="icon icon-ha-gear"></span></a>
+          {% call f.logout_form() %}
+          <button name="signout" class="action small">Sign out <span class="icon icon-ha-exit"></span></button>
+          {% endcall %}
         </div><!-- .header-actions -->
       </div><!-- /header-actions-container -->
       {% else %}
@@ -63,13 +60,13 @@
       <nav class="header-nav{% if not request.current_user %} guest{% endif %} mobile-menu" role="navigation">
         <a href="{{ request.resource_path(None, 'explore') }}">Explore</a>
         {% if request.current_user %}
-	<a href="{{ request.resource_path(None, 'share') }}">Share</a>
+        <a href="{{ request.resource_path(None, 'share') }}">Share</a>
         {% endif %}
         <a href="https://forums.weasyl.com/">Forums</a>
         <a href="{{ request.resource_path(None, 'help') }}">Help</a>
         <form action="{{ request.resource_path(None, 'search') }}" method="get" class="header-search-form" role="search">
           <input type="text" name="s" class="header-search-input" placeholder="Search" />
-          <button type="submit" class="header-search-submit icon icon-search min-m"></button>
+          <button class="header-search-submit icon icon-search min-m"></button>
         </form>
       </nav>
 
@@ -81,9 +78,9 @@
 
     </header><!-- .page-header -->
 
-    {% block body_open %}<section role="main" id="main">{% endblock %}
+    {% block body_open %}<main id="main">{% endblock %}
       {% block body %}{% endblock %}
-    </section>
+    </main>
 
     <footer class="page-footer" role="contentinfo">
       <nav class="footer-nav grid">
@@ -99,7 +96,7 @@
           <dd><a href="{{ request.resource_path(None, '~', 'settings') }}">Settings</a></dd>
           <dd>
             {% call f.logout_form() %}
-            <button type="submit" name="signout" class="action disclose">Sign out</button>
+            <button name="signout" class="action disclose">Sign out</button>
             {% endcall %}
           </dd>
           {% else %}
@@ -151,6 +148,5 @@
     </footer>
 
     <script src="{{ 'assets/js/site.js' | asset_path }}"></script>
-
   </body>
 </html>

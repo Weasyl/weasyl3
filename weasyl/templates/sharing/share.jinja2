@@ -1,54 +1,32 @@
 {% extends "layout.jinja2" %}
+{% import 'functions.jinja2' as f with context %}
 
-{% block title %} {% if category %}Share {{ category.title() }} Works {% endif %}{% endblock %}
+{% block title %}Share{% endblock %}
+
 {% block body %}
 <header class="primary-title-wrap">
   <h2 class="title primary text-grad">Share {{ category }} works</h2>
 </header>
 <div class="content">
-  <!-- this will not go here permanently -->
-  <script>
-    function pickType(picked) {
-      console.log(picked);
-      var categories = document.getElementsByClassName('category');
-      for (var len = categories.length, i = 0; i < len; i++) {
-        //remove highlight class to each element
-        categories[i].classList.remove('highlight');
-      }
-      //highlight picked div
-      picked.parentNode.parentNode.classList.add('highlight');
-      var request = new XMLHttpRequest();
-      request.onreadystatechange = function() {
-        if (request.readyState == 4) {
-          document.getElementById('form-area').innerHTML = request.responseText;
-        }
-      };
-      request.open('get', picked.href+'?ajax=true', true)
-      request.send();
-      return false;
-    }
-  </script>
   <div class="category group">
-    <h3><a href="{{ request.resource_path(context, 'visual') }}" onclick="return pickType(this);">Visual</a></h3>
+    <h3><a href="{{ request.resource_path(context, 'visual') }}">Visual</a></h3>
     <p>putcher pitchers</p>
   </div>
   <div class="category group">
-    <h3><a href="{{ request.resource_path(context, 'character') }}" onclick="return pickType(this);">Character</a></h3>
+    <h3><a href="{{ request.resource_path(context, 'character') }}">Character</a></h3>
     <p>show me ur refs</p>
   </div>
   <div class="category group">
-    <h3><a href="{{ request.resource_path(context, 'literary') }}" onclick="return pickType(this);">Literary</a></h3>
+    <h3><a href="{{ request.resource_path(context, 'literary') }}">Literary</a></h3>
     <p>show me ur refs</p>
   </div>
   <div class="category group">
-    <h3><a href="{{ request.resource_path(context, 'multimedia') }}" onclick="return pickType(this);">Multimedia</a></h3>
+    <h3><a href="{{ request.resource_path(context, 'multimedia') }}">Multimedia</a></h3>
     <p>lemme get out my mixtape</p>
   </div>
   <div class="category group">
-    <h3><a href="{{ request.resource_path(context, 'journal') }}" onclick="return pickType(this);">Journal</a></h3>
+    <h3><a href="{{ request.resource_path(context, 'journal') }}">Journal</a></h3>
     <p>DEAR DIARY: IM LEAVING THE FANDOM FUR EVER</p>
   </div>
-  <hr />
-  <div id="form-area"></div>
 </div><!-- .content -->
 {% endblock %}

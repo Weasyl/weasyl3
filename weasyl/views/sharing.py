@@ -7,6 +7,7 @@ from pyramid_deform import CSRFSchema
 from pyramid.view import view_config
 from pyramid import httpexceptions
 
+from libweasyl.constants import Category
 from libweasyl.exceptions import ExpectedWeasylError
 from libweasyl.models.content import Submission
 from libweasyl.security import generate_key
@@ -29,7 +30,7 @@ class BaseShareForm(CSRFSchema):
     title = c.SchemaNode(c.String(), description='Title')
     folder = c.SchemaNode(forms.Folder(), description='Folder', widget=forms.folder_widget)
     rating = c.SchemaNode(forms.Rating(), description='Rating', widget=forms.rating_widget)
-    description = c.SchemaNode(c.String(), description='Description', widget=w.TextAreaWidget())
+    description = c.SchemaNode(c.String(), description='Description', widget=w.TextAreaWidget(), missing='')
     tags = c.SchemaNode(c.String(), description='Tags')
     category = None
 
@@ -44,16 +45,13 @@ class BaseShareView(forms.FormView):
         return httpexceptions.HTTPSeeOther(appstruct['submission_obj'].canonical_path(self.request))
 
     def extra_fields(self):
-        fields = {'category': self.schema.category}
-        if 'ajax' in self.request.GET:
-            fields['ajax'] = True
-        return fields
+        return {'category': self.schema.category}
 
 
 class ShareVisualForm(BaseShareForm):
     submission = c.SchemaNode(deform.FileData(), description='Submission file', widget=forms.upload_widget)
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(1))
-    category = 'visual'
+    category = Category.visual
 
     def validator(self, form, values):
         request = form.bindings['request']
@@ -61,7 +59,7 @@ class ShareVisualForm(BaseShareForm):
             sub = Submission.create(
                 submission_data=values['submission']['fp'].read(), thumbnail_data=maybe_read(values, 'thumbnail'),
                 owner=request.current_user, title=values['title'], rating=values['rating'],
-                description=values['description'], category='visual', subtype=values['subcategory'].value,
+                description=values['description'], category=self.category, subtype=values['subcategory'].value,
                 folder=values['folder'], tags=values['tags'].split())
         except ExpectedWeasylError as e:
             raise c.Invalid(form, e.args[0]) from e
@@ -129,7 +127,7 @@ class BaseShareLiteraryMultimediaForm(BaseShareForm):
 
 class ShareLiteraryForm(BaseShareLiteraryMultimediaForm):
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(2))
-    category = 'literary'
+    category = Category.literary
 
 
 @view_config(name='literary', context=ShareResource, renderer='sharing/share_form.jinja2')
@@ -139,7 +137,7 @@ class ShareLiteraryView(BaseShareView):
 
 class ShareMultimediaForm(BaseShareLiteraryMultimediaForm):
     subcategory = c.SchemaNode(forms.Subcategory(), description='Subcategory', widget=forms.subcategory_widget(3))
-    category = 'multimedia'
+    category = Category.multimedia
 
 
 @view_config(name='multimedia', context=ShareResource, renderer='sharing/share_form.jinja2')

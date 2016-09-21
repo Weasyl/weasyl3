@@ -1,13 +1,19 @@
-{% if ajax %}
-    {% import 'functions.jinja2' as f with context %}
-{% else %}
-    {% extends "layout.jinja2" %}
+{% extends "layout.jinja2" %}
 
-{% endif %}
+{%- block title -%}
+  Share {{ category.name.title() }} Works
+{%- endblock -%}
+
 {% block body %}
-    <form action="" method="post" enctype="multipart/form-data">
-    {{ f.form_errors(_errors) }}
+<header class="primary-title-wrap">
+  <h2 class="title primary text-grad">Share {{ category.name }} works</h2>
+</header>
+
+<div class="content">
+  <form action="" method="post" enctype="multipart/form-data">
     {{ _form['csrf_token'].serialize() | safe }}
+
+    {{ f.form_errors(_errors) }}
 
     {% if category != 'journal' %}
         Submission file
@@ -18,14 +24,13 @@
 
     {{ _form['title'].serialize() | safe }}
 
-
     {% if category in ('literary', 'multimedia') %}
         {{ _form['embed_link'].serialize() | safe }}
         {{ _form['cover'].serialize() | safe }}
     {% endif %}
 
     {% if category not in ('journal', 'character') %}
-        {{ _form['folder'].serialize()  | safe }}
+        {{ _form['folder'].serialize() | safe }}
         {{ _form['subcategory'].serialize() | safe }}
     {% endif %}
 
@@ -47,5 +52,6 @@
     {{ _form['rating'].serialize() | safe }}
     {{ _form['tags'].serialize() | safe }}
     <button name="post">Submit</button>
-    </form>
+  </form>
+</div>
 {% endblock %}

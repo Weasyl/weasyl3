@@ -4,10 +4,10 @@
 {% block body %}
 {% if not request.current_user %}
 <div class="home-guest-intro text-align-center">
-  <h1 class="title secondary text-grad max-m" aria-hidden="true">We're an art community</h1>
-  <h1 class="title primary text-grad min-m content-block">We're a community for artists and art lovers</h1>
+  <h1 class="title secondary text-grad max-m" aria-hidden="true">We’re an art community</h1>
+  <h1 class="title primary text-grad min-m content-block">We’re a community for artists and art lovers</h1>
   <p class="home-guest-spiel content-block reading-width min-m">We believe we can make a better art community. We pride ourselves in our transparency, features, blah and such. More text that says how great we are without actually saying "we're great"</p>
-  <p class="home-guest-actions"><a href="#" class="action small">Sign in</a> <span class="or type-secondary">or</span> <a href="#" class="action small">create a new account</a></p>
+  <p class="home-guest-actions"><a href="{{ request.resource_path(None, 'signin') }}" class="action small toggle" data-toggle-target="#login-modal">Sign in</a> <span class="or type-secondary">or</span> <a href="{{ request.resource_path(None, 'register') }}" class="action small">create a new account</a></p>
 </div><!-- .home-guest-intro -->
 {% else %}
 <button class="toggle home-views-toggle max-m" data-toggle-target="next" aria-hidden="true">
