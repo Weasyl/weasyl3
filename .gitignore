@@ -9,7 +9,6 @@ __pycache__
 /node_modules
 /.sass-cache
 /log.txt
-/.vagrant
 /ssl
 /libweasyl
 /.stamp-*
