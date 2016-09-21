@@ -465,10 +465,8 @@
             margin-bottom: $line*2
         .content &
             background: $bg-alt-lighter
-            .webkit-background-clip &
-                background-image: none
-                +prefix-w(background-clip, none)
-                +prefix-w(text-fill-color, $action-alt)
+            -webkit-background-clip: none
+            -webkit-text-fill-color: $action-alt
     .modal
         overflow: hidden
         max-height: 0
@@ -612,7 +610,7 @@
             bottom: 0
             background: $black-transparent
             z-index: -1
-        
+
 
 @media all and (max-width: $break-l - 1px)
     .min-l
@@ -622,8 +620,8 @@
 @media all and (min-width: $break-l)
     .max-l
         display: none !important
-        
-        
+
+
 @media all and (min-width: $break-w)
     .max-w
         display: none !important
