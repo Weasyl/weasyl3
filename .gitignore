@@ -16,3 +16,12 @@ __pycache__
 /.coverage
 /htmlcov
 /.eggs
+
+# Assets
+/assets/css
+/assets/js/site.js
+/weasyl/assets.json
+/weasyl/static
+
+# Docs
+/docs/build
