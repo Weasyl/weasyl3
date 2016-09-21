@@ -1,0 +1,30 @@
+<div class="deform-file-upload">
+  <input type="hidden" name="__start__" value="{{ field.name }}:mapping">
+  {% if cstruct.get('uid') %}
+  <div class="deform-replaces">
+    <input type="hidden" name="uid" value="{{ cstruct['uid'] }}"
+           id="{{ field.oid }}-uid">
+    <span id="{{ field.oid }}-filename">
+    {{ cstruct.get('filename') }}
+    </span>
+  </div>
+  {% elif async_upload %}
+  <input type="hidden" name="uid" id="{{ field.oid }}-uid">
+  {% endif %}
+  <input type="file" name="upload"
+         {% if field.widget.size %}
+         size="{{ field.widget.size }}"
+         {% endif %}
+         {% if field.widget.css_class %}
+         class="file-input {{ field.widget.css_class }}"
+         {% else %}
+         class="file-input"
+         {% endif %}
+         {% if async_upload %}
+         data-upload-url="{{ async_upload }}"
+         {% endif %}
+         id="{{ field.oid }}">
+  <input type="hidden" name="__end__" value="{{ field.name }}:mapping">
+  <span id="{{ field.oid }}-progress"></span>
+  {{ extra_html }}
+</div>

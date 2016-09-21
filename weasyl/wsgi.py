@@ -108,6 +108,9 @@ def make_app(global_config, **settings):
         relative_date = weasyl.filters.relative_date
     """
 
+    #XXX arbitrary location
+    settings['weasyl.upload_tempdir'] = "./tmpdata"
+
     config = Configurator(
         settings=settings,
         session_factory=WeasylSession,

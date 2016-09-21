@@ -143,12 +143,17 @@ class DebugResource(MethodDispatchResource):
     pass
 
 
+class ShareResource(MethodDispatchResource):
+    pass
+
+
 class RootResource(MethodDispatchResource):
     __name__ = ''
     __parent__ = None
 
     segment_submissions = SubmissionsResource
     segment_users = UsersResource
+    segment_share = ShareResource
     segment_api = APIResource
 
     def __getitem__(self, segment):

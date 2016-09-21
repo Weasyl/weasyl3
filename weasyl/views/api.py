@@ -1,8 +1,6 @@
-import json
 import logging
 
 import colander as c
-import deform.widget as w
 from oauthlib.oauth2 import FatalClientError, OAuth2Error
 from pyramid_deform import CSRFSchema
 from pyramid.security import remember
@@ -11,7 +9,7 @@ from pyramid import httpexceptions
 
 from libweasyl.exceptions import LoginFailed
 from libweasyl.models.api import OAuthConsumer
-from libweasyl.oauth import get_consumers_for_user, revoke_consumers_for_user, server
+from libweasyl.oauth import server
 import libweasyl
 import weasyl
 from .forms import JSON, User, form_renderer

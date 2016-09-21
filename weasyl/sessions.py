@@ -107,7 +107,7 @@ class WeasylSession(collections.MutableMapping):
         for k in self._static_fields:
             setattr(self._session_obj, k, additional_data.pop(k, None))
         self._session_obj.additional_data = additional_data
-        request.db.add(self._session_obj)
+        request.db.merge(self._session_obj)
         request.db.flush()
 
 

@@ -62,7 +62,7 @@
 {% macro submission_thumb(submission, klass='grid-item', with_caption=True, with_user=True) %}
 <figure class="{{ klass }}" data-init-aspect="{{ submission.submission_media['aspect_ratio'] }}">
   <a href="{{ request.path_for(submission) }}" class="thumb-container">
-    <img class="thumb" src="{{ submission.submission_media['display_url'] }}" alt="" />
+    <img class="thumb" src="{{ submission.popup_media['display_url'] }}" alt="" />
     <div class="rating {{ submission.rating.name }}">Rated {{ submission.rating.name }}</div>
     {% if with_caption -%}
     <figcaption class="info">
